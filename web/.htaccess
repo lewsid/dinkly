@@ -1,0 +1,11 @@
+Options -Indexes
+
+RewriteEngine On
+
+RewriteBase /
+RewriteRule ^/?(.*)/(.*)/(.*)/$ ?module=$1&view=$2&id=$3 [L]
+RewriteRule ^/?(.*)/(.*)/$ ?module=$1&view=$2 [L]
+RewriteRule ^/?(.*)/$ ?module=$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^.*[^/]$ /$0/ [L,R=301]
