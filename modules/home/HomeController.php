@@ -23,12 +23,18 @@ class HomeController extends Dinkly
 	{
 		AuthUser::logout();
 
-		return $this->loadModule('home');
+		header("Location: /");
+
+		return false;
 	}
 
 	public function loadUserList()
 	{
-		if(!AuthUser::isLoggedIn()) return $this->loadModule('home');
+		if(!AuthUser::isLoggedIn())
+		{
+			header("Location: /");
+			return false;
+		}
 
 		$this->users = AuthUserBundle::getAll();
 
