@@ -77,7 +77,6 @@ class Dinkly
 
   public function loadModule($module_name = null, $view_name = 'default', $draw_layout = true)
   {
-    if(!in_array($module_name, Dinkly::getValidModules())) { return false; }
     if(!$view_name) $view_name = 'default';
     
     //Get module controller
@@ -89,6 +88,8 @@ class Dinkly
     $view_function = "load" . $view_controller_name;
     if($controller->$view_function())
     {
+      if(!in_array($module_name, Dinkly::getValidModules())) { return false; }
+      
       //Migrate the scope of the declared variables to be local to the view
       $vars = get_object_vars($controller);
       foreach($vars as $name => $value) 
