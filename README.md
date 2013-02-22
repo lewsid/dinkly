@@ -1,7 +1,7 @@
 Dinkly v0.2
 ===========
 
-A humble little PHP Framework that takes minimal to a whole new level.
+A humble little PHP Framework.
 
 Features
 ========
