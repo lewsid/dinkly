@@ -81,7 +81,7 @@ class Dinkly
 
     $module_param = null; $view_param = 'default';
     if(isset($_GET['module'])) { $module_param = $_GET['module']; }
-    if(isset($_GET['view'])) { $module_param = $_GET['view']; }
+    if(isset($_GET['view'])) { $view_param = $_GET['view']; }
 
     if($module_param != $module_name || $view_param != $view_name)
     {

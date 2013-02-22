@@ -7,7 +7,7 @@
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml",
+                "url": "https://github.com/symfony/Yaml.git",
                 "reference": "f198ac28048eeceae852419c076123aaee59cd1c"
             },
             "dist": {
