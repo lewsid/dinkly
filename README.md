@@ -7,10 +7,14 @@ Features
 ========
 
 - Easy and flexible MVC architecture
+- YAML configuration and customization
 - Restful API
 - Bare-bones ORM
-- Data Fixtures
+- Data fixtures
 - Closure depenedency support
+- Authentication
+- Ready-to-go admin interface featuring Datatables
+- Twitter Bootstrap
 
 Setup
 =====
@@ -33,17 +37,17 @@ Setup
 Dinkly CLI Tools
 ================
 
-Generate Dinkly datamodel files (consumes all yml files under config/schema + will not overwrite existing custom classes):
+Generate Dinkly datamodel files (*will not* overwrite existing custom classes, but *will* drop and recreate tables):
 
-	`php tools/gen_models.php`
+	php tools/gen_models.php
 
 Generate a new Dinkly module:
 
-	`php tools/gen_module.php -m <module name>`
+	php tools/gen_module.php -m <module name>
 
 Load fixtures (preloads tables with data stored in yml files under config/fixtures)
 
-	`php tools/load_fixtures.php`
+	php tools/load_fixtures.php
 
 License
 =======
