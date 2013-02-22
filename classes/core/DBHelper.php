@@ -2,7 +2,7 @@
 
 /*
 
-  Database Helper Class (2008-2011)
+  Database Helper Class
   Christopher Lewis (lewsid@lewsid.com)
   
   Supported Public Functions:
@@ -120,6 +120,22 @@ class DBHelper
       $this->setError($strInsert);  
       return false;
     }
+  }
+
+  /* SQL insert; returns id on success */
+  public function CreateTable($strCreate)
+  {
+    $this->blError = false;
+    $this->arrDebug = debug_backtrace();
+        
+    if(mysql_query($strCreate, $this->dbConnection)) { return true; }
+    else
+    {
+      $this->setError($strInsert);  
+      return false;
+    }
+
+    return false;
   }
   
   /* SQL update; returns array of affected rows on success - shared with Delete() */

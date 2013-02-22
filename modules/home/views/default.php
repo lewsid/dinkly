@@ -1,8 +1,8 @@
 <div class="hero-unit">
   <div>
-  	<?php if(AuthUser::isLoggedIn()): ?>
+  	<?php if(AdminUser::isLoggedIn()): ?>
   	<h4>
-	  <h4>Logged in as <?php echo AuthUser::getUsername(); ?></h4>
+	  <h4>Logged in as <?php echo AdminUser::getUsername(); ?></h4>
   	</h4>
   	<?php endif; ?>
     <h1>

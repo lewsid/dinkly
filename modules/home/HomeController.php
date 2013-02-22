@@ -11,32 +11,36 @@ class HomeController extends Dinkly
 	{
 		if(isset($_POST['username']) && isset($_POST['password']))
 		{
-			AuthUser::authenticate($_POST['username'], $_POST['password']);
+			if(!AdminUser::authenticate($_POST['username'], $_POST['password']))
+			{
+				$_SESSION['dinkly']['badlogin'] = true;
+			}
+			else if(isset($_SESSION['dinkly']['badlogin'])) { unset($_SESSION['dinkly']['badlogin']); }
 		}
 
-		header("Location: /");
+		$this->loadModule('home');
 
 		return false;
 	}
 
 	public function loadLogout()
 	{
-		AuthUser::logout();
+		AdminUser::logout();
 
-		header("Location: /");
+		$this->loadModule('home');
 
 		return false;
 	}
 
 	public function loadUserList()
 	{
-		if(!AuthUser::isLoggedIn())
+		if(!AdminUser::isLoggedIn())
 		{
-			header("Location: /");
+			$this->loadModule('home');
 			return false;
 		}
 
-		$this->users = AuthUserBundle::getAll();
+		$this->users = AdminUserBundle::getAll();
 
 		return true;
 	}

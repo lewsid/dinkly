@@ -1,2 +1,3 @@
 app_name: Dinkly
 app_description: Just a humble little PHP MVC Framework.
+app_base_href: /

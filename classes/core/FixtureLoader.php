@@ -33,10 +33,10 @@ class FixtureLoader
       }
 
       $count = sizeof($fixture['records']);
-      echo "Inserting " . $count . " records into table '" . $fixture['table_name'] . "'";
+      echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
       foreach($fixture['records'] as $pos => $record)
       {
-        echo ".";
+        echo "...";
         $model = new $model_name();
         foreach($record as $col_name => $value)
         {

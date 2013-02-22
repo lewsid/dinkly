@@ -2,7 +2,7 @@
 
 //Define autoloader 
 function __autoload($class_name)
-{ 
+{
   //strip class name from namespaces
   if(stristr($class_name,  '\\'))
   {
@@ -28,9 +28,9 @@ function __autoload($class_name)
   $custom_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/custom/' . $class_name . '.php';
   
   //third-party exceptions
-  $yaml_file        = $_SERVER['APPLICATION_ROOT'] . '/classes/thirdparty/Yaml/' . $class_name . '.php';
-  $exception_file   = $_SERVER['APPLICATION_ROOT'] . '/classes/thirdparty/Yaml/Exception/' . $class_name . '.php';
-  $custom_file      = $_SERVER['APPLICATION_ROOT'] . '/classes/thirdparty/' . $class_name . '/' . $class_name . '.php';
+  $yaml_file        = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
+  $exception_file   = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/Exception/' . $class_name . '.php';
+  $custom_file      = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/' . $class_name . '/' . $class_name . '.php';
   
   if(file_exists($core_file))
   {

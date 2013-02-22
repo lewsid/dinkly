@@ -1,19 +1,7 @@
 <?php
 
-class AuthUser extends DBObject
+class AdminUser extends BaseAdminUser
 {
-	public $registry = array(
-	    'id'				=> 'Id',
-	    'created_at'		=> 'CreatedAt',
-	    'updated_at'		=> 'UpdatedAt',
-	    'username'			=> 'Username',
-	    'password'			=> 'Password',
-	    'last_login_at'		=> 'LastLoginAt',
-	    'login_count'		=> 'LoginCount'
-  	);
-  
-	public $dbTable = 'dinkly_user';
-
 	public function setPassword($password)
 	{
 		$this->Password = crypt($password);
@@ -52,12 +40,12 @@ class AuthUser extends DBObject
 	{
 		$dbo = new DBHelper(DBConfig::getDBCreds());		
 
-		$dbo->Select("select * from dinkly_user where username='" . mysql_real_escape_string($username) . "'");
+		$dbo->Select("select * from admin_user where username='" . mysql_real_escape_string($username) . "'");
 
 		//We found a match for the username      
 		if($result = $dbo->getResult())
 		{
-			$user = new AuthUser();
+			$user = new AdminUser();
 			$user->init($result[0]['id']);
 			$hashed_password = $result[0]['password'];
 
@@ -78,3 +66,4 @@ class AuthUser extends DBObject
 		return false;
 	}
 }
+

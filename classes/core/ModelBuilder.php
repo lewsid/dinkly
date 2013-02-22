@@ -4,20 +4,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class ModelBuilder
 {
-	public static function buildModel($model_name)
+	public static function buildModel($model_name, $raw_model)
 	{
-    $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schema/" . $model_name . ".yml";
-		
-    echo "Attempting to parse '" . $model_name . "' schema yaml...";
-    $raw_model = Yaml::parse($file_path);
-    $table_name = null;
-
-    if(isset($raw_model['table_name']))
-    {
-      $table_name = $raw_model['table_name'];
-      echo "success!\n";
-    }
-    else return false;
+    $table_name = $raw_model['table_name'];
 
     if(isset($raw_model['registry']))
     {
@@ -35,12 +24,16 @@ class ModelBuilder
         fwrite($fp, 'class Base' . $model_name . ' extends DBObject' . PHP_EOL . '{' . PHP_EOL);
         fwrite($fp, "\t" . 'public $registry = array(' . PHP_EOL);
 
-        foreach($raw_model['registry'] as $column)
+        foreach($raw_model['registry'] as $key => $column)
         {
-          $var_name = str_replace('_', ' ', $column);
+          $col_name = null;
+          if(is_array($column)) { $col_name = key($column); }
+          else { $col_name = $column; }
+
+          $var_name = str_replace('_', ' ', $col_name);
           $var_name = ucwords(strtolower($var_name));
           $var_name = str_replace(' ', '', $var_name);
-          fwrite($fp, "\t\t" . "'" . $column . "' => '" . $var_name . "'," . PHP_EOL);
+          fwrite($fp, "\t\t" . "'" . $col_name . "' => '" . $var_name . "'," . PHP_EOL);
         }
 
         fwrite($fp, "\t" . ');' . PHP_EOL . PHP_EOL);
@@ -116,6 +109,69 @@ class ModelBuilder
     }
 	}
 
+  public static function buildTable($model_name, $model_yaml)
+  {
+    $db = new DBHelper(DBConfig::getDBCreds());
+
+    echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
+
+    $db->Update("DROP TABLE IF EXISTS " . $model_yaml['table_name']);
+
+    $sql = "CREATE TABLE " . mysql_real_escape_string($model_yaml['table_name']) . " (";
+
+    $has_id = false; $pos = 0;
+    foreach($model_yaml['registry'] as $key => $column)
+    {
+      $pos++;
+      $col_name = null;
+      if(is_array($column)) { $col_name = key($column); }
+      else { $col_name = $column; }
+
+      switch($col_name)
+      {
+        case 'id':
+          $has_id = true;
+          $sql .= "`id` int(11) NOT NULL AUTO_INCREMENT";
+          break;
+
+        case 'created_at':
+          $sql .= "`created_at` datetime NOT NULL";
+          break;
+
+        case 'updated_at':
+          $sql .= "`updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP";
+          break;
+
+        default:
+          $sql .= "`" . $col_name . "` " . mysql_real_escape_string($column[$col_name]['type']);
+          if(isset($column[$col_name]['length'])) { $sql .= " (" . mysql_real_escape_string($column[$col_name]['length']) . ")"; }
+          if(!$column[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+          break;
+      }
+
+      if($pos == sizeof($model_yaml['registry']))
+      {
+        if($has_id) { $sql .= ", PRIMARY KEY (`id`)"; }
+      }
+      else { $sql .= ", "; }
+    }
+
+    $sql .= ") ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+    if($has_id) { $sql .= " AUTO_INCREMENT=1"; }
+
+    $sql .= ";";
+
+    if($db->CreateTable($sql))
+    {
+      echo "...success!\n";
+      return true;
+    }
+    else { echo "\n\n" . $sql . "\n\n"; print_r($db->getError()); echo "\n"; }
+
+    return false;
+  }
+
   public static function buildAll()
   {
     $all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schema/");
@@ -129,7 +185,18 @@ class ModelBuilder
 
     foreach($model_names as $model)
     {
-      self::buildModel($model);
+      $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schema/" . $model . ".yml";  
+      echo "Attempting to parse '" . $model . "' schema yaml...";
+      $model_yaml = Yaml::parse($file_path);  
+
+      if(isset($model_yaml['table_name']))
+      {
+        echo "success!\n";
+      }
+      else return false;
+      
+      self::buildModel($model, $model_yaml);
+      self::buildTable($model, $model_yaml);
     }
   }
 }

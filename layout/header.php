@@ -51,14 +51,14 @@
                 Home
               </a>
             </li>
-            <?php if(AuthUser::isLoggedIn()): ?>
+            <?php if(AdminUser::isLoggedIn()): ?>
             <li>
               <a href="/home/user_list/">
                 User List
               </a>
             </li>
             <?php endif; ?>
-            <?php if(AuthUser::isLoggedIn()): ?>
+            <?php if(AdminUser::isLoggedIn()): ?>
             <li>
               <a href="/home/logout/">
                 Logout
@@ -66,7 +66,7 @@
             </li>
             <?php endif; ?>
           </ul>
-          <?php if(!AuthUser::isLoggedIn()): ?>
+          <?php if(!AdminUser::isLoggedIn()): ?>
           <form id="sign-in-form" class="navbar-form pull-right" action="/home/login/" method="post">
             <input name="username" type="text" placeholder="Username" class="span2">
             <input name="password" type="password" placeholder="Password" class="span2">
@@ -79,3 +79,6 @@
       </div>
     </div>
     <div class="container">
+      <?php if(isset($_SESSION['dinkly']['badlogin'])): ?>
+      <div class="alert alert-error">Invalid login</div>
+      <?php endif; ?>

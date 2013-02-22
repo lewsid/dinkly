@@ -75,9 +75,32 @@ class Dinkly
     return $valid_modules;
   }
 
+  public function isNewContext($module_name = null, $view_name = '')
+  {
+    $set_path = false;
+
+    $module_param = null; $view_param = 'default';
+    if(isset($_GET['module'])) { $module_param = $_GET['module']; }
+    if(isset($_GET['view'])) { $module_param = $_GET['view']; }
+
+    if($module_param != $module_name || $view_param != $view_name)
+    {
+      $set_path = Dinkly::getConfigValue('app_base_href') . $module_name . '/';  
+      if($view_name != 'default') { $set_path .= $view_name . '/'; }
+    }
+
+    return $set_path;
+  }
+
   public function loadModule($module_name = null, $view_name = 'default', $draw_layout = true)
   {
     if(!$view_name) $view_name = 'default';
+
+    //Determine if we are currently on this module/view or not
+    if($new_path = $this->isNewContext($module_name, $view_name))
+    {
+      header("Location: " . $new_path);
+    }
     
     //Get module controller
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
