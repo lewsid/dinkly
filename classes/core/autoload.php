@@ -30,7 +30,7 @@ function __autoload($class_name)
   //third-party exceptions
   $yaml_file        = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
   $exception_file   = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/Exception/' . $class_name . '.php';
-  $custom_file      = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/' . $class_name . '/' . $class_name . '.php';
+  $custom_file      = $_SERVER['APPLICATION_ROOT'] . '/classes/thirdparty/' . $class_name . '/' . $class_name . '.php';
   
   if(file_exists($core_file))
   {
