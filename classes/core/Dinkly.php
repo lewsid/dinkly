@@ -97,7 +97,7 @@ class Dinkly
     if(!$view_name) $view_name = 'default';
 
     //Determine if we are currently on this module/view or not
-    if($new_path = $this->isNewContext($module_name, $view_name) && $redirect)
+    if(($new_path = $this->isNewContext($module_name, $view_name)) && $redirect)
     {
       header("Location: " . $new_path);
     }
