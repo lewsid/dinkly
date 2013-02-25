@@ -4,8 +4,34 @@ use Symfony\Component\Yaml\Yaml;
 
 class ModelBuilder
 {
-	public static function buildModel($model_name, $raw_model)
+  public static function parseModelYaml($model_name)
+  {
+    $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schema/" . $model_name . ".yml";  
+    echo "Attempting to parse '" . $model_name . "' schema yaml...";
+    $yaml = Yaml::parse($file_path); 
+
+    $table_name = $yaml['table_name'];
+
+    if(strlen($table_name) < 2)
+    {
+      echo "Failed to read a valid table name\n";
+      return false;
+    }
+    else
+    {
+      echo "Success!\n";
+      return $yaml;
+    }
+  }
+
+	public static function buildModel($model_name, $raw_model = false)
 	{
+    if(!$raw_model)
+    {
+      $raw_model = self::parseModelYaml($model_name);
+      if(!$raw_model) { return false; }
+    }
+
     $table_name = $raw_model['table_name'];
 
     if(isset($raw_model['registry']))
@@ -109,8 +135,14 @@ class ModelBuilder
     }
 	}
 
-  public static function buildTable($model_name, $model_yaml)
+  public static function buildTable($model_name, $model_yaml = false)
   {
+    if(!$model_yaml)
+    {
+      $model_yaml = self::parseModelYaml($model_name);
+      if(!$model_yaml) { return false; }
+    }
+
     $db = new DBHelper(DBConfig::getDBCreds());
 
     echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
@@ -172,7 +204,7 @@ class ModelBuilder
     return false;
   }
 
-  public static function buildAll()
+  public static function buildAll($insert_sql = false)
   {
     $all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schema/");
     
@@ -185,9 +217,7 @@ class ModelBuilder
 
     foreach($model_names as $model)
     {
-      $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schema/" . $model . ".yml";  
-      echo "Attempting to parse '" . $model . "' schema yaml...";
-      $model_yaml = Yaml::parse($file_path);  
+      $model_yaml = self::parseModelYaml($model);
 
       if(isset($model_yaml['table_name']))
       {
@@ -196,7 +226,11 @@ class ModelBuilder
       else return false;
       
       self::buildModel($model, $model_yaml);
-      self::buildTable($model, $model_yaml);
+
+      if($insert_sql)
+      {
+        self::buildTable($model, $model_yaml);
+      }
     }
   }
 }

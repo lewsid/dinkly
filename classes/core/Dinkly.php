@@ -92,12 +92,12 @@ class Dinkly
     return $set_path;
   }
 
-  public function loadModule($module_name = null, $view_name = 'default', $draw_layout = true)
+  public function loadModule($module_name = null, $view_name = 'default', $draw_layout = true, $redirect = false)
   {
     if(!$view_name) $view_name = 'default';
 
     //Determine if we are currently on this module/view or not
-    if($new_path = $this->isNewContext($module_name, $view_name))
+    if($new_path = $this->isNewContext($module_name, $view_name) && $redirect)
     {
       header("Location: " . $new_path);
     }
@@ -109,6 +109,7 @@ class Dinkly
     //Get this view's function
     $view_controller_name = self::convertToCamelCase($view_name, true);
     $view_function = "load" . $view_controller_name;
+
     if($controller->$view_function())
     {
       if(!in_array($module_name, Dinkly::getValidModules())) { return false; }

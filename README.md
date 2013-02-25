@@ -1,4 +1,4 @@
-Dinkly v0.2
+Dinkly v0.2.1
 ===========
 
 A humble little PHP Framework.
@@ -26,7 +26,7 @@ Setup
 
 3. Update models, create basic admin table:
 
-    `php tools/gen_models.php`
+    `php tools/gen_models.php -i`
 
 4. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
 
@@ -37,9 +37,13 @@ Setup
 Dinkly CLI Tools
 ================
 
-Generate Dinkly datamodel files (*will not* overwrite existing custom classes, but *will* drop and recreate tables):
+Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). To insert model sql, use the '-i' option:
 
-	php tools/gen_models.php
+	php tools/gen_models.php [-i]
+
+Generate a single Dinkly datamodel file. To insert model sql, use the '-i' option:
+
+	php tools/gen_models.php -m <module name> [-i]
 
 Generate a new Dinkly module:
 
