@@ -1,3 +1,4 @@
+connection_name: dinkly
 table_name: admin_user
 registry:
   - id
