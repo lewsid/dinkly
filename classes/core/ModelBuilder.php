@@ -4,10 +4,18 @@ use Symfony\Component\Yaml\Yaml;
 
 class ModelBuilder
 {
-  public static function parseModelYaml($model_name)
+  public static function parseModelYaml($schema, $model_name)
   {
-    $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schema/" . $model_name . ".yml";  
+    $file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/" 
+      . $schema . "/" . $model_name . ".yml";  
     echo "Attempting to parse '" . $model_name . "' schema yaml...";
+
+    if(!file_exists($file_path))
+    {
+      echo "Schema directory not found.\n";
+      return false;
+    }
+
     $yaml = Yaml::parse($file_path); 
 
     $table_name = $yaml['table_name'];
@@ -24,13 +32,10 @@ class ModelBuilder
     }
   }
 
-  public static function buildModel($model_name, $raw_model = false)
+  public static function buildModel($schema, $model_name)
   {
-    if(!$raw_model)
-    {
-      $raw_model = self::parseModelYaml($model_name);
-      if(!$raw_model) { return false; }
-    }
+    $raw_model = self::parseModelYaml($schema, $model_name);
+    if(!$raw_model) { return false; }
 
     $table_name = $raw_model['table_name'];
 
@@ -135,18 +140,15 @@ class ModelBuilder
     }
   }
 
-  public static function buildTable($model_name, $model_yaml = false)
+  public static function buildTable($schema, $model_name)
   {
-    if(!$model_yaml)
-    {
-      $model_yaml = self::parseModelYaml($model_name);
-      if(!$model_yaml) { return false; }
-    }
+    $model_yaml = self::parseModelYaml($schema, $model_name);
+    if(!$model_yaml) { return false; }
 
     $target_connection = null;
-    if(DBConfig::setActiveConnection($model_yaml['connection_name']))
+    if(DBConfig::setActiveConnection($schema))
     {
-      echo "Using database '" . $model_yaml['connection_name'] . "'...\n";
+      echo "Using database '" . $schema . "'...\n";
     }
     else
     {
@@ -157,7 +159,7 @@ class ModelBuilder
 
     $db = new DBHelper(DBConfig::getDBCreds());
 
-    $db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($model_yaml['connection_name']));
+    $db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($schema));
 
     $db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
@@ -220,32 +222,36 @@ class ModelBuilder
     return false;
   }
 
-  public static function buildAll($insert_sql = false)
+  public static function buildAll($schema, $insert_sql = false)
   {
-    $all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schema/");
-    
-    $model_names = array();
-    foreach($all_files as $file)
+    $all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
+
+    $schema_names = array();
+    foreach($all_folders as $folder)
     {
-      if($file != '.' && $file != '..' && stristr($file, '.yml'))
-        $model_names[] = str_replace('.yml', '', $file);
+      if(substr($folder, 0, 1) != '.')
+        $schema_names[] = $folder;
     }
 
-    foreach($model_names as $model)
+    foreach($schema_names as $schema)
     {
-      $model_yaml = self::parseModelYaml($model);
+      $all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
 
-      if(isset($model_yaml['table_name']))
+      $model_names = array();
+      foreach($all_files as $file)
       {
-        echo "success!\n";
+        if($file != '.' && $file != '..' && stristr($file, '.yml'))
+          $model_names[] = str_replace('.yml', '', $file);
       }
-      else return false;
-      
-      self::buildModel($model, $model_yaml);
 
-      if($insert_sql)
+      foreach($model_names as $model)
       {
-        self::buildTable($model, $model_yaml);
+        self::buildModel($schema, $model);
+
+        if($insert_sql)
+        {
+          self::buildTable($schema, $model);
+        }  
       }
     }
   }

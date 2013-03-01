@@ -1,5 +1,5 @@
-Dinkly v0.2.3
-=============
+Dinkly v0.2.31
+==============
 
 A humble little PHP Framework.
 
@@ -36,13 +36,13 @@ Setup
 Dinkly CLI Tools
 ================
 
-Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). To insert model sql, use the '-i' option.
+Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). Use the '-s' option to use the appropriate schema. To insert model sql, use the '-i' option.
 
-	php tools/gen_models.php [-i]
+	php tools/gen_models.php -s=<schema name> [-i]
 
-Generate a single Dinkly datamodel file. To insert model sql, use the '-i' option.
+Generate a single Dinkly datamodel file. Use the '-s' option to use the appropriate schema. To insert model sql, use the '-i' option.
 
-	php tools/gen_model.php -m=<model name> [-i]
+	php tools/gen_model.php -s=<schema name> -m=<model name> [-i]
 
 Generate a new Dinkly module.
 
