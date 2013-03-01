@@ -24,8 +24,8 @@ class ModelBuilder
     }
   }
 
-	public static function buildModel($model_name, $raw_model = false)
-	{
+  public static function buildModel($model_name, $raw_model = false)
+  {
     if(!$raw_model)
     {
       $raw_model = self::parseModelYaml($model_name);
@@ -133,7 +133,7 @@ class ModelBuilder
 
       return true;
     }
-	}
+  }
 
   public static function buildTable($model_name, $model_yaml = false)
   {
@@ -157,9 +157,13 @@ class ModelBuilder
 
     $db = new DBHelper(DBConfig::getDBCreds());
 
+    $db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($model_yaml['connection_name']));
+
+    $db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
+
     echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
 
-    $db->Update("DROP TABLE IF EXISTS " . $model_yaml['table_name']);
+    $db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
     $sql = "CREATE TABLE " . mysql_real_escape_string($model_yaml['table_name']) . " (";
 

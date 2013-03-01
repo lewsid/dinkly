@@ -19,20 +19,19 @@ Features
 Setup
 =====
 
-1. Create a MySQL database and update db.yml
-2. Update composer:
+1. Update composer:
 
     `php composer.phar update`
 
-3. Update models, create basic admin table:
+2. Update models, create basic admin table:
 
     `php tools/gen_models.php -i`
 
-4. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
+3. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
 
     `php tools/load_fixtures.php`
 
-5. Update base href value in config/config.yml as needed.
+4. Update base href value in config/config.yml as needed.
 
 Dinkly CLI Tools
 ================
