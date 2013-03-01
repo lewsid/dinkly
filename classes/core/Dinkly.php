@@ -6,9 +6,7 @@ class Dinkly
 {
   private $module_header;
 
-  public function __construct() { }
-
-  public static function init($enable_cache = true)
+  public function __construct($enable_cache = true)
   {
     session_start();
 

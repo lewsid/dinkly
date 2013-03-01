@@ -135,8 +135,21 @@ class ModelBuilder
     }
 	}
 
-  public static function buildTable($model_name, $model_yaml = false)
+  public static function buildTable($model_name, $model_yaml = false, $target_connection = null)
   {
+    if($target_connection)
+    {
+      if(DBConfig::setActiveConnection($target_connection))
+      {
+        echo "Using database '" . $target_connection . "'...\n";
+      }
+      else
+      {
+        echo "Invalid database name. Check db.yml for a matching database.\n";
+        return false;
+      }
+    }
+
     if(!$model_yaml)
     {
       $model_yaml = self::parseModelYaml($model_name);
@@ -204,7 +217,7 @@ class ModelBuilder
     return false;
   }
 
-  public static function buildAll($insert_sql = false)
+  public static function buildAll($insert_sql = false, $target_connection = null)
   {
     $all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schema/");
     
@@ -229,7 +242,7 @@ class ModelBuilder
 
       if($insert_sql)
       {
-        self::buildTable($model, $model_yaml);
+        self::buildTable($model, $model_yaml, $target_connection);
       }
     }
   }

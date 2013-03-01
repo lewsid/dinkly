@@ -2,6 +2,10 @@
 
 class HomeController extends Dinkly 
 {
+	public function __construct
+	{
+	}
+
 	public function loadDefault()
 	{
 		return true;

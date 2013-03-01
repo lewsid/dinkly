@@ -1,4 +1,4 @@
-Dinkly v0.2.1
+Dinkly v0.2.2
 ===========
 
 A humble little PHP Framework.
@@ -37,17 +37,17 @@ Setup
 Dinkly CLI Tools
 ================
 
-Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). To insert model sql, use the '-i' option:
+Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). To insert model sql, use the '-i' option. Override the default database connection with the '-c' option.
 
-	php tools/gen_models.php [-i]
+	php tools/gen_models.php [-i] [-c=<connection name>]
 
-Generate a single Dinkly datamodel file. To insert model sql, use the '-i' option:
+Generate a single Dinkly datamodel file. To insert model sql, use the '-i' option. Override the default database connection with the '-c' option.
 
-	php tools/gen_models.php -m <module name> [-i]
+	php tools/gen_model.php -m=<model name> [-i] [-c=<connection name>]
 
-Generate a new Dinkly module:
+Generate a new Dinkly module.
 
-	php tools/gen_module.php -m <module name>
+	php tools/gen_module.php -m=<module name>
 
 Load fixtures (preloads tables with data stored in yml files under config/fixtures)
 

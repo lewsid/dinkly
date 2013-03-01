@@ -1,4 +1,5 @@
-DB_HOST: localhost
-DB_USER: root
-DB_PASS: root
-DB_NAME: dinkly
+dinkly:
+    DB_HOST: localhost
+    DB_USER: root
+    DB_PASS: root
+    DB_NAME: dinkly

@@ -17,6 +17,8 @@ class ModuleBuilder extends Dinkly
 				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends Dinkly ' . PHP_EOL . '{' . PHP_EOL);
+				fwrite($fp, "\tpublic function _construct" . PHP_EOL . "\t{" . PHP_EOL);
+				fwrite($fp, "\t}" . PHP_EOL . PHP_EOL);
 				fwrite($fp, "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
