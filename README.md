@@ -29,7 +29,7 @@ Setup
 
 3. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
 
-    `php tools/load_fixtures.php`
+    `php tools/load_fixtures.php -s=dinkly`
 
 4. Update base href value in config/config.yml as needed.
 
