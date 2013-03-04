@@ -1,3 +1,10 @@
-app_name: Dinkly
-app_description: Just a humble little PHP MVC Framework.
-app_base_href: /
+admin:
+    default_app: true
+    app_name: Dinkly Admin
+    app_description: Just a humble little PHP MVC Framework.
+    base_href: /
+    default_module: home 
+api:
+    app_name: Dinkly API
+    base_href: /api
+    default_module: api

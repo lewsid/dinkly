@@ -2,9 +2,13 @@
 
 require_once('config/bootstrap.php');
 
-$options = getopt("m:");
-if(!isset($options['m']))
+$options = getopt("a:m:");
+if(!isset($options['a']))
 {
-	echo "\nPlease use the -m flag to indicate the desired module name to use.\nExample: php gen_module.php -m test_module\n\n";
+	echo "\nPlease use the -a flag to indicate which application this module will be contained in.\nExample: php gen_module.php -a=admin -m=test_module\n\n";
 }
-else { ModuleBuilder::buildModule($options['m']); }
+else if(!isset($options['m']))
+{
+	echo "\nPlease use the -m flag to indicate the desired module name to use.\nExample: php gen_module.php -a=admin -m=test_module\n\n";
+}
+else { DinklyBuilder::buildModule($options['a'], $options['m']); }

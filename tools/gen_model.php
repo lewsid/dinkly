@@ -5,7 +5,7 @@ require_once('config/bootstrap.php');
 $options = getopt("m:s:i");
 if(!isset($options['s']))
 {
-	echo "\nPlease use the -s flag to indicate which schema to use.\nExample: php gen_model.php -s=dinkly -m=fubar\n\n";
+	echo "\nPlease use the -s flag to indicate which schema set to use.\nExample: php gen_model.php -s=dinkly -m=fubar\n\n";
 	die();
 }
 if(!isset($options['m']))
@@ -14,7 +14,7 @@ if(!isset($options['m']))
 	die();
 }
 
-if(ModelBuilder::buildModel($options['s'], $options['m']))
+if(DinklyBuilder::buildModel($options['s'], $options['m']))
 {
-	if(isset($options['i'])) { ModelBuilder::buildTable($options['s'], $options['m']); }
+	if(isset($options['i'])) { DinklyBuilder::buildTable($options['s'], $options['m']); }
 }

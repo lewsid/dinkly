@@ -16,7 +16,8 @@ function __autoload($class_name)
   {
     $class_name = str_replace('()', '', $class_name);
     $module_name = Dinkly::convertFromCamelCase(str_replace('Controller', '', $class_name));
-    $controller_file = $_SERVER['APPLICATION_ROOT'] . "/modules/$module_name/" . $class_name . '.php';
+    $controller_file = $_SERVER['APPLICATION_ROOT'] . "/apps/" . Dinkly::getCurrentAppName() 
+      . "/modules/$module_name/" . $class_name . '.php';
 
     require_once $controller_file; 
     return true;

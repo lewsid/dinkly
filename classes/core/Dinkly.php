@@ -8,8 +8,6 @@ class Dinkly
 
   public function __construct($enable_cache = true)
   {
-    session_start();
-
     if(!isset($_SESSION['dinkly']) || !$enable_cache || isset($_GET['nocache'])) $_SESSION['dinkly'] = array();
   }
 
@@ -26,10 +24,13 @@ class Dinkly
     return $config;
   }
 
-  public static function getConfigValue($key)
+  public static function getConfigValue($key, $app_name = null)
   {
+    if(!$app_name)
+      $app_name = self::getCurrentAppName();
+
     $config = self::getConfig();
-    return $config[$key];
+    return $config[$app_name][$key];
   }
 
   public static function convertFromCamelCase($str)
@@ -56,7 +57,7 @@ class Dinkly
     if(!isset($_SESSION['dinkly']['valid_modules']))
     {
       $valid_modules = array();
-      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/modules/'))
+      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . self::getCurrentAppName() . '/modules/'))
       { 
         /* loop through directory. */ 
         while (false !== ($dir = readdir($handle)))
@@ -73,7 +74,7 @@ class Dinkly
     return $valid_modules;
   }
 
-  public function isNewContext($module_name = null, $view_name = '')
+  protected function isNewContext($app, $module_name = null, $view_name = '')
   {
     $set_path = false;
 
@@ -83,25 +84,58 @@ class Dinkly
 
     if($module_param != $module_name || $view_param != $view_name)
     {
-      $set_path = Dinkly::getConfigValue('app_base_href') . $module_name . '/';  
+      $set_path = Dinkly::getConfigValue('base_href') . $module_name . '/';  
       if($view_name != 'default') { $set_path .= $view_name . '/'; }
     }
 
     return $set_path;
   }
 
-  public function loadModule($module_name = null, $view_name = 'default', $draw_layout = true, $redirect = false)
+  public static function getCurrentAppName()
   {
+    $config = self::getConfig();
+
+    //Figure out what app we're in and if there's a matching route
+    $url_parts = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+    $app_route = '/'.$url_parts[1];
+
+    $default_app = null;
+    foreach($config as $app => $values)
+    {
+      if(isset($values['default_app']))
+      {
+          if($values['default_app'] == 'true')
+          {
+            $default_app = $app;
+          }
+      }
+      if($app_route == $values['base_href'])
+      {
+        return $app;
+      }
+    }
+
+    //No match found, return default
+    return $default_app;
+  }
+
+  public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true)
+  {    
     if(!$view_name) $view_name = 'default';
 
     //Determine if we are currently on this module/view or not
-    if(($new_path = $this->isNewContext($module_name, $view_name)) && $redirect)
+    if(($new_path = $this->isNewContext($app_name, $module_name, $view_name)) && $redirect)
     {
       header("Location: " . $new_path);
     }
-    
+
     //Get module controller
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
+    if(!file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . ".php"))
+    {
+      throw new Exception("No matching controller found");
+    }
+
     $controller = new $camel_module_name;
 
     //Get this view's function
@@ -118,22 +152,22 @@ class Dinkly
         $$name = $value;
 
       //Get module view
-      if(file_exists($_SERVER['APPLICATION_ROOT'] . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+      if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
       {
         if($draw_layout)
         {
-          if(file_exists($_SERVER['APPLICATION_ROOT'] . '/modules/' . $module_name . "/views/header.php"))
+          if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
           {
             ob_start();
-            include($_SERVER['APPLICATION_ROOT'] . '/modules/' . $module_name . "/views/header.php");
+            include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
             $header = ob_get_contents();
             ob_end_clean();
             $this->setModuleHeader($header);
           }
-          require_once($_SERVER['APPLICATION_ROOT'] . '/layout/header.php');
+          require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
         }
-        require_once($_SERVER['APPLICATION_ROOT'] . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-        if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/layout/footer.php'); }
+        require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
+        if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php'); }
       }
     }
   }

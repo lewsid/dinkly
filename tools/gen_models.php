@@ -13,4 +13,4 @@ if(isset($options['i']))
 {
 	$sql = true;
 }
-ModelBuilder::buildAll($options['s'], $sql);
+DinklyBuilder::buildAllModels($options['s'], $sql);

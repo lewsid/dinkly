@@ -1,4 +1,4 @@
-Dinkly v0.2.31
+Dinkly v0.2.4
 ==============
 
 A humble little PHP Framework.
@@ -25,7 +25,7 @@ Setup
 
 2. Update models, create basic admin table:
 
-    `php tools/gen_models.php -i`
+    `php tools/gen_models.php -s=dinkly -i`
 
 3. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
 
@@ -44,13 +44,18 @@ Generate a single Dinkly datamodel file. Use the '-s' option to use the appropri
 
 	php tools/gen_model.php -s=<schema name> -m=<model name> [-i]
 
-Generate a new Dinkly module.
-
-	php tools/gen_module.php -m=<module name>
-
 Load fixtures (preloads tables with data stored in yml files under config/fixtures)
 
 	php tools/load_fixtures.php
+
+Generate a new Dinkly application.
+
+	php tools/gen_app.php -a=<app name>
+
+Generate a new Dinkly module for a given application.
+
+	php tools/gen_module.php -a=<app name> -m=<module name>
+
 
 License
 =======
