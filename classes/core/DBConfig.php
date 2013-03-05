@@ -16,7 +16,7 @@ class DBConfig
     }
   }
 
-  public function hasConnection($connection_name)
+  public static function hasConnection($connection_name)
   {
     if(!isset($_SESSION['dinkly']['db_creds']))
     {
@@ -25,7 +25,7 @@ class DBConfig
     return array_key_exists($connection_name, $_SESSION['dinkly']['db_creds']);
   }
 
-  public function setActiveConnection($connection_name)
+  public static function setActiveConnection($connection_name)
   { 
     if(self::hasConnection($connection_name))
     {
@@ -54,4 +54,3 @@ class DBConfig
     return $dbh->getStatus();
   }
 }
-
