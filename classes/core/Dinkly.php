@@ -8,7 +8,79 @@ class Dinkly
 
   public function __construct($enable_cache = true)
   {
-    if(!isset($_SESSION['dinkly']) || !$enable_cache || isset($_GET['nocache'])) $_SESSION['dinkly'] = array();
+    if(!isset($_SESSION['dinkly']) || !$enable_cache) $_SESSION['dinkly'] = array();
+  }
+
+  public static function getCurrentAppName()
+  {
+    return $_SESSION['dinkly']['current_app_name'];
+  }
+
+  public function route($uri)
+  {
+    $current_app_name = $using_default = $module = $view = null;
+    $parameters = array();
+
+    $default_app_name = self::getDefaultApp(true);
+    $config = self::getConfig();
+
+    $uri_parts = array_filter(explode("/", $uri));
+
+    //Figure out the current app, assume the default if we don't get one in the URL
+    foreach($uri_parts as $part)
+    {
+      foreach($config as $app => $values)
+      {
+        if($part == $app)
+        {
+          $current_app_name = $app;
+
+          //kick the app off the uri and reindex
+          array_shift($uri_parts); 
+        }
+      }
+    }
+
+    //No match, set default app
+    if(!$current_app_name)
+    {
+      $current_app_name = $default_app_name;
+      $using_default = true;
+    }
+
+    $_SESSION['dinkly']['current_app_name'] = $current_app_name;
+    
+    //Reset indexes if needed
+    $uri_parts = array_values($uri_parts);
+
+    //Figure out the module and view
+    if(sizeof($uri_parts) == 1) { $module = $uri_parts[0]; $view = 'default'; }
+    else if(sizeof($uri_parts) == 2) { $module = $uri_parts[0]; $view = $uri_parts[1]; }
+    else if(sizeof($uri_parts) > 2)
+    {
+      for($i = 0; $i < sizeof($uri_parts); $i++)
+      {
+        if($i == 0) { $module = $uri_parts[0]; }
+        else if($i == 1) { $view = $uri_parts[1]; }
+        else
+        {
+          if(isset($uri_parts[$i+1]))
+          {
+            $parameters[$uri_parts[$i]] = $uri_parts[$i+1];
+            $i++;
+          }
+          else
+          {
+            $parameters[$part] = true;
+          }
+        }
+      }    
+    }
+
+    if(!$module) { $module = Dinkly::getConfigValue('default_module', $current_app_name); }
+    if(!$view) { $view = 'default'; }
+
+    $this->loadModule($current_app_name, $module, $view, false, true, $parameters);
   }
 
   public static function getConfig()
@@ -27,7 +99,7 @@ class Dinkly
   public static function getConfigValue($key, $app_name = null)
   {
     if(!$app_name)
-      $app_name = self::getCurrentAppName();
+      $app_name = self::getDefaultApp(true);
 
     $config = self::getConfig();
     return $config[$app_name][$key];
@@ -50,14 +122,14 @@ class Dinkly
     return preg_replace_callback('/_([a-z])/', $func, $str);
   }
 
-  protected static function getValidModules()
+  protected static function getValidModules($app_name)
   {
     $valid_modules = null;
 
     if(!isset($_SESSION['dinkly']['valid_modules']))
     {
       $valid_modules = array();
-      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . self::getCurrentAppName() . '/modules/'))
+      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
       { 
         /* loop through directory. */ 
         while (false !== ($dir = readdir($handle)))
@@ -74,59 +146,39 @@ class Dinkly
     return $valid_modules;
   }
 
-  protected function isNewContext($app, $module_name = null, $view_name = '')
-  {
-    $set_path = false;
-
-    $module_param = null; $view_param = 'default';
-    if(isset($_GET['module'])) { $module_param = $_GET['module']; }
-    if(isset($_GET['view'])) { $view_param = $_GET['view']; }
-
-    if($module_param != $module_name || $view_param != $view_name)
-    {
-      $set_path = Dinkly::getConfigValue('base_href') . $module_name . '/';  
-      if($view_name != 'default') { $set_path .= $view_name . '/'; }
-    }
-
-    return $set_path;
-  }
-
-  public static function getCurrentAppName()
+  public static function getDefaultApp($return_name = false)
   {
     $config = self::getConfig();
 
-    //Figure out what app we're in and if there's a matching route
-    $url_parts = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-    $app_route = '/'.$url_parts[1];
-
-    $default_app = null;
     foreach($config as $app => $values)
     {
       if(isset($values['default_app']))
       {
           if($values['default_app'] == 'true')
           {
-            $default_app = $app;
+            if($return_name)
+            {
+              return $app;
+            }
+            return $config[$app];
           }
       }
-      if($app_route == $values['base_href'])
-      {
-        return $app;
-      }
     }
-
-    //No match found, return default
-    return $default_app;
   }
 
-  public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true)
-  {    
+  public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
+  {
+    if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
+
     if(!$view_name) $view_name = 'default';
 
     //Determine if we are currently on this module/view or not
-    if(($new_path = $this->isNewContext($app_name, $module_name, $view_name)) && $redirect)
+    if($redirect)
     {
-      header("Location: " . $new_path);
+      $base_href = Dinkly::getConfigValue('base_href', $app_name);
+      if($base_href == '/') { $base_href = null; }
+      $path = $base_href . '/' . $module_name . '/' . $view_name;
+      header("Location: " . $path);
     }
 
     //Get module controller
@@ -142,9 +194,9 @@ class Dinkly
     $view_controller_name = self::convertToCamelCase($view_name, true);
     $view_function = "load" . $view_controller_name;
 
-    if($controller->$view_function())
+    if($controller->$view_function($parameters))
     {
-      if(!in_array($module_name, Dinkly::getValidModules())) { return false; }
+      if(!in_array($module_name, Dinkly::getValidModules($app_name))) { return false; }
       
       //Migrate the scope of the declared variables to be local to the view
       $vars = get_object_vars($controller);
