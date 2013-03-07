@@ -21,7 +21,7 @@ class AdminUser extends BaseAdminUser
 		$_SESSION['dinkly']['logged_id'] = $username;
 	}
 
-	public static function getUsername()
+	public static function getLoggedUsername()
 	{
 		if(isset($_SESSION['dinkly']['logged_username'])) { return $_SESSION['dinkly']['logged_username']; }
 		return false;

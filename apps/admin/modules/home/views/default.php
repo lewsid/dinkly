@@ -2,7 +2,7 @@
   <div>
   	<?php if(AdminUser::isLoggedIn()): ?>
   	<h4>
-	  <h4>Logged in as <?php echo AdminUser::getUsername(); ?></h4>
+	  <h4>Logged in as <?php echo AdminUser::getLoggedUsername(); ?></h4>
   	</h4>
   	<?php endif; ?>
     <h1>
