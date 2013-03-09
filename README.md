@@ -19,9 +19,9 @@ Features
 Setup
 =====
 
-1. Update composer:
+1. Install dependencies with composer:
 
-    `php composer.phar update`
+    `php composer.phar install`
 
 2. Update models, create basic admin table:
 
