@@ -285,15 +285,23 @@ class DinklyBuilder extends Dinkly
 		return false;
 	}
 
-	public static function buildAllModels($schema, $insert_sql = false)
+	public static function buildAllModels($schema = null, $insert_sql = false)
 	{
-		$all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
-
 		$schema_names = array();
-		foreach($all_folders as $folder)
+
+		if(!$schema)
 		{
-	  		if(substr($folder, 0, 1) != '.')
-	    	$schema_names[] = $folder;
+			$all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
+
+			foreach($all_folders as $folder)
+			{
+		  		if(substr($folder, 0, 1) != '.')
+		    	$schema_names[] = $folder;
+			}
+		}
+		else
+		{
+			$schema_names[] = $schema;
 		}
 
 		foreach($schema_names as $schema)
