@@ -10,35 +10,35 @@ class AdminUser extends BaseAdminUser
 
 	public static function isLoggedIn()
 	{
-		if(isset($_SESSION['dinkly']['logged_in'])) { return $_SESSION['dinkly']['logged_in']; }
+		if(isset($_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in'])) { return $_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in']; }
 		return false;
 	}
 
 	public static function setLoggedIn($val, $username)
 	{
-		$_SESSION['dinkly']['logged_in'] = $val;
-		$_SESSION['dinkly']['logged_username'] = $username;
-		$_SESSION['dinkly']['logged_id'] = $username;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in'] = $val;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'] = $username;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_id'] = $username;
 	}
 
 	public static function getLoggedUsername()
 	{
-		if(isset($_SESSION['dinkly']['logged_username'])) { return $_SESSION['dinkly']['logged_username']; }
+		if(isset($_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'])) { return $_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username']; }
 		return false;
 	}
 
 	public static function logout()
 	{	
-		$_SESSION['dinkly']['logged_in'] = null;
-		$_SESSION['dinkly']['logged_username'] = null;
-		$_SESSION['dinkly']['logged_id'] = null;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in'] = null;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'] = null;
+		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_id'] = null;
 	}
 
 	/* Returns 0 for complete fail, 1 for success and 2 if the account is locked */
 	/* Locks account after 5 failed attempts */
 	public static function authenticate($username, $input_password)
 	{
-		$dbo = new DBHelper(DBConfig::getDBCreds());		
+		$dbo = new DBHelper(DBConfig::getDBCreds());
 
 		$dbo->Select("select * from admin_user where username='" . mysql_real_escape_string($username) . "'");
 
