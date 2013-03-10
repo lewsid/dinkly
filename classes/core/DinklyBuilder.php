@@ -68,15 +68,22 @@ class DinklyBuilder extends Dinkly
 		}
 	}
 
-	public static function parseModelYaml($schema, $model_name)
+	public static function parseModelYaml($schema, $model_name, $verbose_output = true)
 	{
 		$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/" 
 		  . $schema . "/" . $model_name . ".yml";  
-		echo "Attempting to parse '" . $model_name . "' schema yaml...";
+
+		if($verbose_output)
+		{
+			echo "Attempting to parse '" . $model_name . "' schema yaml...";
+		}
 
 		if(!file_exists($file_path))
 		{
-			echo "Schema directory not found.\n";
+			if($verbose_output)
+			{
+				echo "Schema directory not found.\n";
+			}
 			return false;
 		}
 
@@ -86,12 +93,18 @@ class DinklyBuilder extends Dinkly
 
 		if(strlen($table_name) < 2)
 		{
-			echo "Failed to read a valid table name\n";
+			if($verbose_output)
+			{
+				echo "Failed to read a valid table name\n";
+			}
 			return false;
 		}
 		else
 		{
-			echo "Success!\n";
+			if($verbose_output)
+			{
+				echo "Success!\n";
+			}
 			return $yaml;
 		}
 	}
@@ -204,29 +217,53 @@ class DinklyBuilder extends Dinkly
 		}
 	}
 
-	public static function buildTable($schema, $model_name)
+	public static function buildTable($schema, $model_name, $verbose_output = true, $override_database_name = null)
 	{
-		$model_yaml = self::parseModelYaml($schema, $model_name);
+		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		if(!$model_yaml) { return false; }
 
 		$target_connection = null;
 		if(DBConfig::setActiveConnection($schema))
 		{
-			echo "Using database '" . $schema . "'...\n";
+			if($verbose_output)
+			{
+				echo "Using database '" . $schema . "'...\n";
+			}
 		}
 		else
 		{
-			echo "No matching connection information for '" . $model_yaml['connection_name'] . "' found in db.yml for a matching database.\n";
+			if($verbose_output)
+			{
+				echo "No matching connection information for '" . $model_yaml['connection_name'] . "' found in db.yml for a matching database.\n";
+			}
 			return false;
 		}
 
-		$db = new DBHelper(DBConfig::getDBCreds());
+		$creds = DBConfig::getDBCreds();
+		if($override_database_name)
+		{
+			$creds['DB_NAME'] = $override_database_name;
+		}
 
-		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($schema));
+		$db = new DBHelper($creds);
+
+		$db_name = mysql_real_escape_string($schema);
+		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
+
+		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
+
+		//We'll need to re-init the DBHelper to attach to the new database
+		if($override_database_name)
+		{
+			$db = new DBHelper($creds);
+		}
 
 		$db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
-		echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
+		if($verbose_output)
+		{
+			echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
+		}
 
 		$db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
@@ -277,10 +314,19 @@ class DinklyBuilder extends Dinkly
 
 		if($db->CreateTable($sql))
 		{
-			echo "...success!\n";
+			if($verbose_output)
+			{
+				echo "...success!\n";
+			}
 			return true;
 		}
-		else { echo "\n\n" . $sql . "\n\n"; print_r($db->getError()); echo "\n"; }
+		else
+		{
+			if($verbose_output)
+			{
+				echo "\n\n" . $sql . "\n\n"; print_r($db->getError()); echo "\n";
+			}
+		}
 
 		return false;
 	}
