@@ -25,17 +25,32 @@ class DBConfig
     return array_key_exists($connection_name, $_SESSION['dinkly']['db_creds']);
   }
 
-  public static function setActiveConnection($connection_name)
+  public static function setActiveConnection($connection)
   { 
-    if(self::hasConnection($connection_name))
+    //If connection is array, we can override the loaded configurations
+    if(is_array($connection))
     {
-      $_SESSION['dinkly']['db_creds']['active_db'] = $connection_name;
+      $active_db = $connection['DB_NAME'];
+
+      $_SESSION['dinkly']['db_creds'][$active_db] = $connection;
+
+      $_SESSION['dinkly']['db_creds']['active_db'] = $active_db;
+
       return true;
     }
+    else
+    {
+      if(self::hasConnection($connection))
+      {
+        $_SESSION['dinkly']['db_creds']['active_db'] = $connection;
+        return true;
+      }
+    }
+    
     return false;
   }
 
-  public static function getDBCreds()
+  public static function getDBCreds($connection_name = false)
   {
     if(!isset($_SESSION['dinkly']['db_creds']))
     {
@@ -44,7 +59,14 @@ class DBConfig
 
     $active_db = $_SESSION['dinkly']['db_creds']['active_db'];
 
-    return $_SESSION['dinkly']['db_creds'][$active_db];
+    if(!$connection_name)
+    {
+      return $_SESSION['dinkly']['db_creds'][$active_db];  
+    }
+    else
+    {
+      return $_SESSION['dinkly']['db_creds'][$connection_name];
+    }
   }
   
   public static function testDB()
@@ -54,3 +76,4 @@ class DBConfig
     return $dbh->getStatus();
   }
 }
+
