@@ -239,24 +239,14 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 
-		$creds = DBConfig::getDBCreds();
-		if($override_database_name)
-		{
-			$creds['DB_NAME'] = $override_database_name;
-		}
-
-		$db = new DBHelper($creds);
+		$db = new DBHelper(DBConfig::getDBCreds());
 
 		$db_name = mysql_real_escape_string($schema);
 		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
 
 		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
 
-		//We'll need to re-init the DBHelper to attach to the new database
-		if($override_database_name)
-		{
-			$db = new DBHelper($creds);
-		}
+		$db->selectDB($db_name);
 
 		$db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 

@@ -67,11 +67,17 @@ class DBHelper
     if($blPersist) { $this->dbConnection = mysql_connect($strHost, $strUser, $strPass); }
     else { $this->dbConnection = mysql_pconnect($strHost, $strUser, $strPass); }
     
-    if(mysql_select_db($strDatabase, $this->dbConnection)) { $this->blStatus = true; }
+    $blStatus = $this->selectDB($strDatabase);
+  }
+
+  public function selectDB($db_name)
+  {
+    if(mysql_select_db($db_name, $this->dbConnection)) { return true; }
+    return false;
   }
   
   /* Kill connection */
-  private function doKill() { mysql_close($this->dbConnection); }
+  public function doKill() { mysql_close($this->dbConnection); }
   
   /* Return last error in various formats. Default return is an array with all information. */
   public function getError($strMode = "all")

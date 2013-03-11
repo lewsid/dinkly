@@ -2,6 +2,7 @@ Todo
 ====
 
 # Graceful handling of bad URLs
-# Way better documentation
+# Hosted documentation
 # PHPDoc support
-# Improved parameter handling
+# PDO/mysqli Support
+# Unit tests
