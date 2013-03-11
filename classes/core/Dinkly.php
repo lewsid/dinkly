@@ -126,7 +126,7 @@ class Dinkly
   {
     $valid_modules = null;
 
-    if(!isset($_SESSION['dinkly']['valid_modules']))
+    if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]))
     {
       $valid_modules = array();
       if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
@@ -138,10 +138,10 @@ class Dinkly
         } 
         closedir($handle);
         
-        $_SESSION['dinkly']['valid_modules'] = $valid_modules;
+        $_SESSION['dinkly']['valid_modules_' . $app_name] = $valid_modules;
       }
     }
-    else { $valid_modules = $_SESSION['dinkly']['valid_modules']; }
+    else { $valid_modules = $_SESSION['dinkly']['valid_modules_' . $app_name]; }
 
     return $valid_modules;
   }
@@ -168,6 +168,7 @@ class Dinkly
 
   public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
   {
+
     if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 
     if(!$view_name) $view_name = 'default';
