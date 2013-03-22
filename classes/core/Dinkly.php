@@ -26,12 +26,17 @@ class Dinkly
 
     $uri_parts = array_filter(explode("/", $uri));
 
+    //If the URL is empty, give it a slash so it can match in the config
+    if($uri_parts == array()) { $uri_parts = array(0 => '/'); }
+
     //Figure out the current app, assume the default if we don't get one in the URL
     foreach($uri_parts as $part)
     {
       foreach($config as $app => $values)
       {
-        if($part == $app)
+        $base_href = str_replace('/', '', $values['base_href']);
+        if(strlen($base_href) == 0) { $base_href = '/'; }
+        if($part == $base_href)
         {
           $current_app_name = $app;
 
@@ -49,7 +54,7 @@ class Dinkly
     }
 
     $_SESSION['dinkly']['current_app_name'] = $current_app_name;
-    
+
     //Reset indexes if needed
     $uri_parts = array_values($uri_parts);
 
