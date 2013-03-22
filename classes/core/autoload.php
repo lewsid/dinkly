@@ -10,19 +10,6 @@ function __autoload($class_name)
     $class_name = $parts[sizeof($parts) - 1];
   }
 
-  //handle controller classes
-  $module_name = $controller_file = null;
-  if(stristr($class_name, 'Controller') && !stristr($class_name, 'DinklyController'))
-  {
-    $class_name = str_replace('()', '', $class_name);
-    $module_name = Dinkly::convertFromCamelCase(str_replace('Controller', '', $class_name));
-    $controller_file = $_SERVER['APPLICATION_ROOT'] . "/apps/" . Dinkly::getCurrentAppName() 
-      . "/modules/$module_name/" . $class_name . '.php';
-
-    require_once $controller_file; 
-    return true;
-  }
-
   //handle models
   $core_file  = $_SERVER['APPLICATION_ROOT'] . '/classes/core/' . $class_name . '.php';
   $base_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/base/' . $class_name . '.php';

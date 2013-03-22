@@ -173,7 +173,6 @@ class Dinkly
 
   public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
   {
-
     if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 
     if(!$view_name) $view_name = 'default';
@@ -199,11 +198,15 @@ class Dinkly
 
     //Get module controller
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
-    if(!file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . ".php"))
+    $controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . ".php";
+    
+    //Make sure it exists
+    if(!file_exists($controller_file))
     {
       throw new Exception("No matching controller found");
     }
 
+    require_once $controller_file; 
     $controller = new $camel_module_name;
 
     //Get this view's function
