@@ -222,7 +222,6 @@ class DinklyBuilder extends Dinkly
 		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		if(!$model_yaml) { return false; }
 
-		$target_connection = null;
 		if(DBConfig::setActiveConnection($schema))
 		{
 			if($verbose_output)
@@ -239,11 +238,11 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 
-		$db = new DBHelper(DBConfig::getDBCreds());
-
-		$db_name = mysql_real_escape_string($schema);
+		$creds = DBConfig::getDBCreds();
+		$db_name = mysql_real_escape_string($creds['DB_NAME']);
 		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
 
+		$db = new DBHelper(DBConfig::getDBCreds());
 		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
 
 		$db->selectDB($db_name);
@@ -366,18 +365,22 @@ class DinklyBuilder extends Dinkly
 	/* 
 		$truncate will truncate the table if set to true, or append records if false
 	*/
-	public static function loadFixture($set, $model_name, $truncate = true)
+	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true)
 	{
     	$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
 		
-		echo "Attempting to parse '" . $model_name . "' fixture yaml...";
+		if($verbose_output)
+		{
+			echo "Attempting to parse '" . $model_name . "' fixture yaml...";
+		}
+
 		$fixture = Yaml::parse($file_path);
 		$model_name = $bundle_name = null;
 
 		if(isset($fixture['table_name']))
 		{
 			$model_name = Dinkly::convertToCamelCase($fixture['table_name'], true);
-			echo "success!\n";
+			if($verbose_output) { echo "success!\n"; }
 		}
 		else return false;
 
@@ -385,18 +388,24 @@ class DinklyBuilder extends Dinkly
 		{
 			if($truncate)
 			{
-				echo "Truncating '" . $fixture['table_name']. "'...";
+				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
+				
 				$db = new DBHelper(DBConfig::getDBCreds());
 				$db->Update("truncate table " . $fixture['table_name']);
-				echo "success!\n";
+				
+				if($verbose_output) { echo "success!\n"; }
 			}
 
 			$count = sizeof($fixture['records']);
-			echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
+
+			if($verbose_output)
+			{
+				echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
+			}
 			
 			foreach($fixture['records'] as $pos => $record)
 			{
-				echo "...";
+				if($verbose_output) { echo "..."; }
 				$model = new $model_name();
 				foreach($record as $col_name => $value)
 				{
@@ -405,7 +414,8 @@ class DinklyBuilder extends Dinkly
 				}
 				$model->save();
 			}
-			echo "success!\n";
+
+			if($verbose_output) { echo "success!\n"; }
 
 			return true;
 		}
