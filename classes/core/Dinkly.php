@@ -200,10 +200,11 @@ class Dinkly
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
     $controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . ".php";
     
-    //Make sure it exists
+    //If the controller doesn't exist, point us to the default module
     if(!file_exists($controller_file))
     {
-      throw new Exception("No matching controller found");
+      $camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
+      $controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
     }
 
     require_once $controller_file; 
