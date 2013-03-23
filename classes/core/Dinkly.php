@@ -54,8 +54,6 @@ class Dinkly
       $using_default = true;
     }
 
-    echo $current_app_name; die();
-
     $_SESSION['dinkly']['current_app_name'] = $current_app_name;
 
     //Reset indexes if needed
