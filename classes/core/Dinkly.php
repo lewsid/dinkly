@@ -27,22 +27,23 @@ class Dinkly
     $uri_parts = array_filter(explode("/", $uri));
 
     //If the URL is empty, give it a slash so it can match in the config
-    if($uri_parts == array()) { $uri_parts = array(0 => '/'); }
+    if($uri_parts == array()) { $uri_parts = array(1 => '/'); }
 
     //Figure out the current app, assume the default if we don't get one in the URL
-    foreach($uri_parts as $part)
+    foreach($config as $app => $values)
     {
-      foreach($config as $app => $values)
+      $base_href = str_replace('/', '', $values['base_href']);
+      
+      if(strlen($base_href) == 0) { $base_href = '/'; }
+      
+      if($uri_parts[1] == $base_href)
       {
-        $base_href = str_replace('/', '', $values['base_href']);
-        if(strlen($base_href) == 0) { $base_href = '/'; }
-        if($part == $base_href)
-        {
-          $current_app_name = $app;
+        $current_app_name = $app;
 
-          //kick the app off the uri and reindex
-          array_shift($uri_parts); 
-        }
+        //kick the app off the uri and reindex
+        array_shift($uri_parts); 
+
+        break;
       }
     }
 
@@ -52,6 +53,8 @@ class Dinkly
       $current_app_name = $default_app_name;
       $using_default = true;
     }
+
+    echo $current_app_name; die();
 
     $_SESSION['dinkly']['current_app_name'] = $current_app_name;
 
