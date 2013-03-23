@@ -6,16 +6,15 @@ class Dinkly
 {
   private $module_header;
 
+  //***************************************************************************** NONSTATIC FUNCTIONS
+
+  //Init
   public function __construct($enable_cache = true)
   {
     if(!isset($_SESSION['dinkly']) || !$enable_cache) $_SESSION['dinkly'] = array();
   }
 
-  public static function getCurrentAppName()
-  {
-    return $_SESSION['dinkly']['current_app_name'];
-  }
-
+  //Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
   public function route($uri)
   {
     $current_app_name = $using_default = $module = $view = null;
@@ -89,89 +88,7 @@ class Dinkly
     $this->loadModule($current_app_name, $module, $view, false, true, $parameters);
   }
 
-  public static function getConfig()
-  {
-    $config = null;
-    if(!isset($_SESSION['dinkly']['config']))
-    {
-      $config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
-      $_SESSION['dinkly']['config'] = $config;
-    }
-    else { $config = $_SESSION['dinkly']['config']; }
-    
-    return $config;
-  }
-
-  public static function getConfigValue($key, $app_name = null)
-  {
-    if(!$app_name)
-      $app_name = self::getDefaultApp(true);
-
-    $config = self::getConfig();
-    return $config[$app_name][$key];
-  }
-
-  public static function convertFromCamelCase($str)
-  {
-    $str[0] = strtolower($str[0]);
-    $func = create_function('$c', 'return "_" . strtolower($c[1]);');
-    
-    return preg_replace_callback('/([A-Z])/', $func, $str);
-  }
-  
-  public static function convertToCamelCase($str, $capitalise_first_char = false)
-  {
-    if($capitalise_first_char) $str[0] = strtoupper($str[0]);
-
-    $func = create_function('$c', 'return strtoupper($c[1]);');
-    
-    return preg_replace_callback('/_([a-z])/', $func, $str);
-  }
-
-  protected static function getValidModules($app_name)
-  {
-    $valid_modules = null;
-
-    if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]))
-    {
-      $valid_modules = array();
-      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
-      { 
-        /* loop through directory. */ 
-        while (false !== ($dir = readdir($handle)))
-        { 
-          if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
-        } 
-        closedir($handle);
-        
-        $_SESSION['dinkly']['valid_modules_' . $app_name] = $valid_modules;
-      }
-    }
-    else { $valid_modules = $_SESSION['dinkly']['valid_modules_' . $app_name]; }
-
-    return $valid_modules;
-  }
-
-  public static function getDefaultApp($return_name = false)
-  {
-    $config = self::getConfig();
-
-    foreach($config as $app => $values)
-    {
-      if(isset($values['default_app']))
-      {
-          if($values['default_app'] == 'true')
-          {
-            if($return_name)
-            {
-              return $app;
-            }
-            return $config[$app];
-          }
-      }
-    }
-  }
-
+  //Dinkly's most badass function. Loads a desired module, and redirects if you ask it nicely.
   public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
   {
     if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
@@ -196,6 +113,10 @@ class Dinkly
 
       header("Location: " . $path);
     }
+
+    //Save these on the object so they can be retrieved as needed in controllers or views
+    $this->view = $view_name;
+    $this->module = $module_name;
 
     //Get module controller
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
@@ -245,7 +166,106 @@ class Dinkly
     }
   }
 
+  //Set the module header.
   public function setModuleHeader($header) { $this->module_header = $header; }
 
+  //Returns the contents of the module header.
   public function getModuleHeader() { return $this->module_header; }
+
+  //***************************************************************************** STATIC FUNCTIONS
+
+  //Return current application name
+  public static function getCurrentAppName()
+  {
+    return $_SESSION['dinkly']['current_app_name'];
+  }
+
+  //If the configuration file hasn't been loaded, do so. Returns the configuration array.
+  public static function getConfig()
+  {
+    $config = null;
+    if(!isset($_SESSION['dinkly']['config']))
+    {
+      $config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
+      $_SESSION['dinkly']['config'] = $config;
+    }
+    else { $config = $_SESSION['dinkly']['config']; }
+    
+    return $config;
+  }
+
+  //Need a specific configuration value? This is for you.
+  public static function getConfigValue($key, $app_name = null)
+  {
+    if(!$app_name)
+      $app_name = self::getDefaultApp(true);
+
+    $config = self::getConfig();
+    return $config[$app_name][$key];
+  }
+
+  //A little helper function to convert camel case class names to their underscore equivalents.
+  public static function convertFromCamelCase($str)
+  {
+    $str[0] = strtolower($str[0]);
+    $func = create_function('$c', 'return "_" . strtolower($c[1]);');
+    
+    return preg_replace_callback('/([A-Z])/', $func, $str);
+  }
+  
+  //Convert underscored string into camel case. Used for class loading.
+  public static function convertToCamelCase($str, $capitalise_first_char = false)
+  {
+    if($capitalise_first_char) $str[0] = strtoupper($str[0]);
+
+    $func = create_function('$c', 'return strtoupper($c[1]);');
+    
+    return preg_replace_callback('/_([a-z])/', $func, $str);
+  }
+
+  //Returns an array of valid modules, that is, they actually exist.
+  public static function getValidModules($app_name)
+  {
+    $valid_modules = null;
+
+    if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]))
+    {
+      $valid_modules = array();
+      if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+      { 
+        /* loop through directory. */ 
+        while (false !== ($dir = readdir($handle)))
+        { 
+          if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
+        } 
+        closedir($handle);
+        
+        $_SESSION['dinkly']['valid_modules_' . $app_name] = $valid_modules;
+      }
+    }
+    else { $valid_modules = $_SESSION['dinkly']['valid_modules_' . $app_name]; }
+
+    return $valid_modules;
+  }
+
+  //Return the default application configuration array.
+  public static function getDefaultApp($return_name = false)
+  {
+    $config = self::getConfig();
+
+    foreach($config as $app => $values)
+    {
+      if(isset($values['default_app']))
+      {
+          if($values['default_app'] == 'true')
+          {
+            if($return_name)
+            {
+              return $app;
+            }
+            return $config[$app];
+          }
+      }
+    }
+  }
 }
