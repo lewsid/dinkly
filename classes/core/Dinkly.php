@@ -172,6 +172,12 @@ class Dinkly
   //Returns the contents of the module header.
   public function getModuleHeader() { return $this->module_header; }
 
+  //Return the current context's view
+  public function getCurrentView() { return $this->view; }
+
+  //Return the current context's module
+  public function getCurrentModule() { return $this->module; }
+
   //***************************************************************************** STATIC FUNCTIONS
 
   //Return current application name

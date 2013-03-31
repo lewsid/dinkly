@@ -46,7 +46,7 @@ Generate a single Dinkly datamodel file. Use the '-s' option to use the appropri
 
 Load fixtures (preloads tables with data stored in yml files under config/fixtures)
 
-	php tools/load_fixtures.php
+	php tools/load_fixtures.php -s=<schema name>
 
 Generate a new Dinkly application.
 
