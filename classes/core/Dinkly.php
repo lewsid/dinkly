@@ -6,12 +6,6 @@ class Dinkly
 {
   private $module_header;
 
-  private $view_name;
-
-  private $module_name;
-
-  private $parameters;
-
   //***************************************************************************** NONSTATIC FUNCTIONS
 
   //Init
