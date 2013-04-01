@@ -6,6 +6,12 @@ class Dinkly
 {
   private $module_header;
 
+  private $view_name;
+
+  private $module_name;
+
+  private $parameters;
+
   //***************************************************************************** NONSTATIC FUNCTIONS
 
   //Init
@@ -184,6 +190,9 @@ class Dinkly
 
   //Return the current context's module
   public function getCurrentModule() { return $this->module; }
+
+  //Return parameters
+  public function getParameters() { return $this->parameters; }
 
   //***************************************************************************** STATIC FUNCTIONS
 
