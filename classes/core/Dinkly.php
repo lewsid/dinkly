@@ -117,6 +117,7 @@ class Dinkly
     //Save these on the object so they can be retrieved as needed in controllers or views
     $this->view = $view_name;
     $this->module = $module_name;
+    $this->parameters = $parameters;
 
     //Get module controller
     $camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
@@ -131,7 +132,7 @@ class Dinkly
 
     //Instantiate controller object
     require_once $controller_file; 
-    $controller = new $camel_module_name();
+    $controller = new $camel_module_name($this);
 
     //Migrate current dinkly variables over to our new controller
     $vars = get_object_vars($this);
