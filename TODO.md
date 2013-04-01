@@ -6,3 +6,4 @@ Todo
 # PDO/mysqli Support
 # Unit tests
 # Full namespacing support?
+# Make consistent tab indentation

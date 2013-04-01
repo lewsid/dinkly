@@ -129,8 +129,14 @@ class Dinkly
       $controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
     }
 
+    //Instantiate controller object
     require_once $controller_file; 
-    $controller = new $camel_module_name;
+    $controller = new $camel_module_name();
+
+    //Migrate current dinkly variables over to our new controller
+    $vars = get_object_vars($this);
+      foreach($vars as $name => $value) 
+        $controller->$name = $value;
 
     //Get this view's function
     $view_controller_name = self::convertToCamelCase($view_name, true);
@@ -139,7 +145,7 @@ class Dinkly
     if($controller->$view_function($parameters))
     {
       if(!in_array($module_name, Dinkly::getValidModules($app_name))) { return false; }
-      
+
       //Migrate the scope of the declared variables to be local to the view
       $vars = get_object_vars($controller);
       foreach($vars as $name => $value) 
