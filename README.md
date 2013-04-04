@@ -1,10 +1,10 @@
-Dinkly v0.2.5
-==============
+Dinkly v0.2.6
+=============
 
 A humble little PHP Framework.
 
 Features
-========
+--------
 
 - Easy and flexible MVC architecture
 - YAML configuration and customization
@@ -17,7 +17,7 @@ Features
 - Twitter Bootstrap
 
 Setup
-=====
+-----
 
 1. Install dependencies with composer:
 
@@ -34,7 +34,7 @@ Setup
 4. Update base href value in config/config.yml as needed.
 
 Dinkly CLI Tools
-================
+----------------
 
 Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). Use the '-s' option to use the appropriate schema. To insert model sql, use the '-i' option.
 
@@ -58,6 +58,6 @@ Generate a new Dinkly module for a given application.
 
 
 License
-=======
+-------
 
 Dinkly is open-sourced software licensed under the MIT License.
