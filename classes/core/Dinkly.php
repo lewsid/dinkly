@@ -6,6 +6,14 @@ class Dinkly
 {
   private $module_header;
 
+  protected $context;
+
+  protected $view;
+
+  protected $module;
+
+  protected $parameters;
+
   //***************************************************************************** NONSTATIC FUNCTIONS
 
   //Init
@@ -15,77 +23,91 @@ class Dinkly
   }
 
   //Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
-  public function route($uri)
+  public function route($uri = null)
   {
-    $current_app_name = $using_default = $module = $view = null;
-    $parameters = array();
+    $module = $view = null;
 
-    $default_app_name = self::getDefaultApp(true);
-    $config = self::getConfig();
+    $context = $this->getContext($uri);
 
-    $uri_parts = array_filter(explode("/", $uri));
+    $_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
-    //If the URL is empty, give it a slash so it can match in the config
-    if($uri_parts == array()) { $uri_parts = array(1 => '/'); }
+    $this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, true, $context['parameters']);
+  }
 
-    //Figure out the current app, assume the default if we don't get one in the URL
-    foreach($config as $app => $values)
+  public function getContext($uri = null)
+  {
+    if(!$this->context)
     {
-      $base_href = str_replace('/', '', $values['base_href']);
-      
-      if(strlen($base_href) == 0) { $base_href = '/'; }
-      
-      if($uri_parts[1] == $base_href)
+      if(!$uri) { $uri = $_SERVER['REQUEST_URI']; }
+
+      $current_app_name = $module = $view = null;
+      $context = $parameters = array();
+
+      $default_app_name = self::getDefaultApp(true);
+      $config = self::getConfig();
+
+      $uri_parts = array_filter(explode("/", $uri));
+
+      //If the URL is empty, give it a slash so it can match in the config
+      if($uri_parts == array()) { $uri_parts = array(1 => '/'); }
+
+      //Figure out the current app, assume the default if we don't get one in the URL
+      foreach($config as $app => $values)
       {
-        $current_app_name = $app;
-
-        //kick the app off the uri and reindex
-        array_shift($uri_parts); 
-
-        break;
-      }
-    }
-
-    //No match, set default app
-    if(!$current_app_name)
-    {
-      $current_app_name = $default_app_name;
-      $using_default = true;
-    }
-
-    $_SESSION['dinkly']['current_app_name'] = $current_app_name;
-
-    //Reset indexes if needed
-    $uri_parts = array_values($uri_parts);
-
-    //Figure out the module and view
-    if(sizeof($uri_parts) == 1) { $module = $uri_parts[0]; $view = 'default'; }
-    else if(sizeof($uri_parts) == 2) { $module = $uri_parts[0]; $view = $uri_parts[1]; }
-    else if(sizeof($uri_parts) > 2)
-    {
-      for($i = 0; $i < sizeof($uri_parts); $i++)
-      {
-        if($i == 0) { $module = $uri_parts[0]; }
-        else if($i == 1) { $view = $uri_parts[1]; }
-        else
+        $base_href = str_replace('/', '', $values['base_href']);
+        
+        if(strlen($base_href) == 0) { $base_href = '/'; }
+        
+        if($uri_parts[1] == $base_href)
         {
-          if(isset($uri_parts[$i+1]))
-          {
-            $parameters[$uri_parts[$i]] = $uri_parts[$i+1];
-            $i++;
-          }
+          $context['current_app_name'] = $app;
+
+          //kick the app off the uri and reindex
+          array_shift($uri_parts); 
+
+          break;
+        }
+      }
+
+      //No match, set default app
+      if(!isset($context['current_app_name'])) { $context['current_app_name'] = $default_app_name; }
+
+      //Reset indexes if needed
+      $uri_parts = array_values($uri_parts);
+
+      //Figure out the module and view
+      if(sizeof($uri_parts) == 1) { $context['module'] = $uri_parts[0]; $context['view'] = 'default'; }
+      else if(sizeof($uri_parts) == 2) { $context['module'] = $uri_parts[0]; $context['view'] = $uri_parts[1]; }
+      else if(sizeof($uri_parts) > 2)
+      {
+        for($i = 0; $i < sizeof($uri_parts); $i++)
+        {
+          if($i == 0) { $context['module'] = $uri_parts[0]; }
+          else if($i == 1) { $context['view'] = $uri_parts[1]; }
           else
           {
-            $parameters[$part] = true;
+            if(isset($uri_parts[$i+1]))
+            {
+              $parameters[$uri_parts[$i]] = $uri_parts[$i+1];
+              $i++;
+            }
+            else
+            {
+              $parameters[$part] = true;
+            }
           }
-        }
-      }    
+        }    
+      }
+
+      if(!isset($context['module'])) { $context['module'] = Dinkly::getConfigValue('default_module', $context['current_app_name']); }
+      if(!isset($context['view'])) { $context['view'] = 'default'; }
+
+      $context['parameters'] = $parameters;
+
+      $this->context = $context;
     }
 
-    if(!$module) { $module = Dinkly::getConfigValue('default_module', $current_app_name); }
-    if(!$view) { $view = 'default'; }
-
-    $this->loadModule($current_app_name, $module, $view, false, true, $parameters);
+    return $this->context;
   }
 
   //Dinkly's most badass function. Loads a desired module, and redirects if you ask it nicely.
@@ -132,7 +154,7 @@ class Dinkly
 
     //Instantiate controller object
     require_once $controller_file; 
-    $controller = new $camel_module_name($this);
+    $controller = new $camel_module_name();
 
     //Migrate current dinkly variables over to our new controller
     $vars = get_object_vars($this);
@@ -165,7 +187,7 @@ class Dinkly
             ob_end_clean();
             $this->setModuleHeader($header);
           }
-          require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
+          include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
         }
         require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
         if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php'); }
@@ -180,13 +202,37 @@ class Dinkly
   public function getModuleHeader() { return $this->module_header; }
 
   //Return the current context's view
-  public function getCurrentView() { return $this->view; }
+  public function getCurrentView()
+  {
+    if(!$this->view)
+    {
+      $context = $this->getContext();
+      $this->view = $context['view'];
+    }
+    return $this->view;
+  }
 
   //Return the current context's module
-  public function getCurrentModule() { return $this->module; }
+  public function getCurrentModule()
+  {
+    if(!$this->module)
+    {
+      $context = $this->getContext();
+      $this->module = $context['module'];
+    }
+    return $this->module;
+  }
 
   //Return parameters
-  public function getParameters() { return $this->parameters; }
+  public function getParameters()
+  {
+    if(!$this->parameters)
+    {
+      $context = $this->getContext();
+      $this->parameters = $context['parameters'];
+    }
+    return $this->parameters;
+  }
 
   //***************************************************************************** STATIC FUNCTIONS
 

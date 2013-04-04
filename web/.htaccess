@@ -13,6 +13,8 @@
 	RewriteEngine On
 </IfModule>
 
+RewriteCond %{REQUEST_URI} !(\.gif)|(\.jpg)|(\.png)|(\.css)|(\.js)|(\.php)$
+
 # For all files not found in the file system, reroute the request to the
 # "index.php" front controller, keeping the query string intact
 
