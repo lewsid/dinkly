@@ -93,7 +93,7 @@ class Dinkly
             }
             else
             {
-              $parameters[$part] = true;
+              $parameters[$uri_parts[$i]] = true;
             }
           }
         }    
