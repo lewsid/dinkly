@@ -168,7 +168,7 @@ class DinklyBuilder extends Dinkly
 				fwrite($fp, "\t" . 'public static function getAll()' . PHP_EOL . "\t" . '{' . PHP_EOL);
 				fwrite($fp, "\t\t" . '$db = new DBHelper(DBConfig::getDBCreds());' . PHP_EOL);
 				fwrite($fp, "\t\t" . '$peer_object = new ' . $model_name . ';' . PHP_EOL);
-				fwrite($fp, "\t\t" . 'if($db->Select($peer_object->getSelectQuery(), true))' . PHP_EOL);
+				fwrite($fp, "\t\t" . 'if($db->Select($peer_object->getSelectQuery()))' . PHP_EOL);
 				fwrite($fp, "\t\t" . '{' . PHP_EOL);
 				fwrite($fp, "\t\t\t" . '$peer_object->setDB($db);' . PHP_EOL);
 				fwrite($fp, "\t\t\t" . 'return self::handleResults($peer_object);' . PHP_EOL);

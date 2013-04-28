@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+v0.2.7
+------
+
+- Unnecessary parameter removed from DinklyBuilder.
+
 v0.2.6
 ------
 
