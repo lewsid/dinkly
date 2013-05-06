@@ -166,32 +166,35 @@ class Dinkly
     $view_controller_name = self::convertToCamelCase($view_name, true);
     $view_function = "load" . $view_controller_name;
 
-    if($controller->$view_function($parameters))
+    if(method_exists($controller,$view_function))
     {
-      if(!in_array($module_name, Dinkly::getValidModules($app_name))) { return false; }
-
-      //Migrate the scope of the declared variables to be local to the view
-      $vars = get_object_vars($controller);
-      foreach($vars as $name => $value) 
-        $$name = $value;
-
-      //Get module view
-      if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+      if($controller->$view_function($parameters))
       {
-        if($draw_layout)
+        if(!in_array($module_name, Dinkly::getValidModules($app_name))) { return false; }
+
+        //Migrate the scope of the declared variables to be local to the view
+        $vars = get_object_vars($controller);
+        foreach($vars as $name => $value) 
+          $$name = $value;
+
+        //Get module view
+        if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
         {
-          if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+          if($draw_layout)
           {
-            ob_start();
-            include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
-            $header = ob_get_contents();
-            ob_end_clean();
-            $this->setModuleHeader($header);
+            if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+            {
+              ob_start();
+              include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
+              $header = ob_get_contents();
+              ob_end_clean();
+              $this->setModuleHeader($header);
+            }
+            include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
           }
-          include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
+          require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
+          if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php'); }
         }
-        require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-        if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php'); }
       }
     }
   }
