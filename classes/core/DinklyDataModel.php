@@ -37,6 +37,8 @@ abstract class DinklyDataModel
 	public function __construct()
 	{
 		$this->db = self::fetchDB();
+
+		$this->isNew = true;
 		
 		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
 	}

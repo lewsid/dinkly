@@ -119,7 +119,7 @@ class DinklyBuilder extends Dinkly
 		if(isset($raw_model['registry']))
 		{
 			$base_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . ".php";
-			$base_bundle_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . "Bundle.php";
+			$base_collection_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . "Collection.php";
 
 	  		echo "Attempting to create/write base '" . $model_name . "' models...\n";
 
@@ -129,7 +129,7 @@ class DinklyBuilder extends Dinkly
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '# This is an auto-generated file. Please do not alter this file. Instead, make changes to the model file that extends it.');
 				fwrite($fp, PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class Base' . $model_name . ' extends DBObject' . PHP_EOL . '{' . PHP_EOL);
+				fwrite($fp, 'class Base' . $model_name . ' extends DinklyDataModel' . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\t" . 'public $registry = array(' . PHP_EOL);
 
 			    foreach($raw_model['registry'] as $key => $column)
@@ -158,26 +158,21 @@ class DinklyBuilder extends Dinkly
 				return false;
 			}
 
-			//create base bundle class
-			if($fp = fopen($base_bundle_file, 'w+'))
+			//create base collection class
+			if($fp = fopen($base_collection_file, 'w+'))
 			{
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '# This is an auto-generated file. Please do not alter it. Instead, make changes to the model file that extends it.');
 				fwrite($fp, PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class Base' . $model_name . 'Bundle extends DBObjectBundle' . PHP_EOL . '{' . PHP_EOL);
+				fwrite($fp, 'class Base' . $model_name . 'Collection extends DinklyDataCollection' . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\t" . 'public static function getAll()' . PHP_EOL . "\t" . '{' . PHP_EOL);
-				fwrite($fp, "\t\t" . '$db = new DBHelper(DinklyDataConfig::getDBCreds());' . PHP_EOL);
-				fwrite($fp, "\t\t" . '$peer_object = new ' . $model_name . ';' . PHP_EOL);
-				fwrite($fp, "\t\t" . 'if($db->Select($peer_object->getSelectQuery()))' . PHP_EOL);
-				fwrite($fp, "\t\t" . '{' . PHP_EOL);
-				fwrite($fp, "\t\t\t" . '$peer_object->setDB($db);' . PHP_EOL);
-				fwrite($fp, "\t\t\t" . 'return self::handleResults($peer_object);' . PHP_EOL);
-				fwrite($fp, "\t\t" . '}' . PHP_EOL);
+				fwrite($fp, "\t\t" . '$peer_object = new ' . $model_name . '();' . PHP_EOL);
+				fwrite($fp, "\t\t" . 'return self::getCollection($peer_object, $peer_object->getSelectQuery());' . PHP_EOL);
 				fwrite($fp, "\t" . '}' . PHP_EOL . '}');
 
 				fclose($fp);
 
-				echo "Successfully created base bundle model!\n";
+				echo "Successfully created base collection class!\n";
 			}
 			else
 			{
@@ -187,7 +182,7 @@ class DinklyBuilder extends Dinkly
 
 			//second, create the extensible model files, if one doesn't already exist (we never overwrite this one)
 			$custom_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . ".php";
-			$custom_bundle_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . "Bundle.php";
+			$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . "Collection.php";
 
 			if(!file_exists($custom_file))
 			{
@@ -203,18 +198,31 @@ class DinklyBuilder extends Dinkly
 			}
 			else echo "Custom '" . $model_name . "' model already exists - skipping.\n";
 
-			if(!file_exists($custom_bundle_file))
+			if(!file_exists($custom_collection_file))
 			{
-				$fp = fopen($custom_bundle_file, 'w+');
+				$fp = fopen($custom_collection_file, 'w+');
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class ' . $model_name . 'Bundle extends Base' . $model_name . 'Bundle' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
+				fwrite($fp, 'class ' . $model_name . 'Collection extends Base' . $model_name . 'Collection' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);
 			}
-			else echo "Custom '" . $model_name . "' bundle class already exists - skipping.\n";
+			else echo "Custom '" . $model_name . "' collection class already exists - skipping.\n";
 
 			return true;
 		}
+	}
+
+	public static function fetchDB($creds = null)
+	{
+		if(!$creds) $creds = DinklyDataConfig::getDBCreds();
+		
+		$db = new PDO(
+				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
+				$creds['DB_USER'],
+				$creds['DB_PASS']
+		);
+
+		return $db;
 	}
 
 	public static function buildTable($schema, $model_name, $verbose_output = true, $override_database_name = null)
@@ -242,19 +250,26 @@ class DinklyBuilder extends Dinkly
 		$db_name = mysql_real_escape_string($creds['DB_NAME']);
 		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
 
-		$db = new DBHelper(DinklyDataConfig::getDBCreds());
-		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
+		//Create database if it doesn't exist
+		$db = new PDO(
+				"mysql:host=".$creds['DB_HOST'].";",
+				$creds['DB_USER'],
+				$creds['DB_PASS']
+		);
+		$db->exec("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
 
-		$db->selectDB($db_name);
+		//Now connect to the new DB
+		$creds['DB_NAME'] = $db_name;
+		$db = self::fetchDB($creds);
 
-		$db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
+		$db->exec("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
 		if($verbose_output)
 		{
 			echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
 		}
 
-		$db->Update("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
+		$db->exec("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
 		$sql = "CREATE TABLE " . mysql_real_escape_string($model_yaml['table_name']) . " (";
 
@@ -301,23 +316,12 @@ class DinklyBuilder extends Dinkly
 
 		$sql .= ";";
 
-		if($db->CreateTable($sql))
-		{
-			if($verbose_output)
-			{
-				echo "...success!\n";
-			}
-			return true;
-		}
-		else
-		{
-			if($verbose_output)
-			{
-				echo "\n\n" . $sql . "\n\n"; print_r($db->getError()); echo "\n";
-			}
-		}
-
-		return false;
+		//Create the table
+		$db->exec($sql);
+		
+		if($verbose_output) echo "...success!\n";
+		
+		return true;
 	}
 
 	public static function buildAllModels($schema = null, $insert_sql = false)
@@ -375,7 +379,7 @@ class DinklyBuilder extends Dinkly
 		}
 
 		$fixture = Yaml::parse($file_path);
-		$model_name = $bundle_name = null;
+		$model_name = $collection_name = null;
 
 		if(isset($fixture['table_name']))
 		{
@@ -390,8 +394,8 @@ class DinklyBuilder extends Dinkly
 			{
 				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
 				
-				$db = new DBHelper(DinklyDataConfig::getDBCreds());
-				$db->Update("truncate table " . $fixture['table_name']);
+				$db = self::fetchDB();
+				$db->exec("truncate table " . $fixture['table_name']);
 				
 				if($verbose_output) { echo "success!\n"; }
 			}
