@@ -3,6 +3,7 @@ Dinkly v0.2.6
 
 A humble little PHP Framework.
 
+
 Features
 --------
 
@@ -16,6 +17,7 @@ Features
 - Ready-to-go admin interface featuring Datatables
 - Twitter Bootstrap
 
+
 Setup
 -----
 
@@ -27,11 +29,14 @@ Setup
 
     `php tools/gen_models.php -s=dinkly -i`
 
-3. Create a basic admin user (which can be changed in config/fixtures/AdminUser.yml):
+3. Create a basic admin user (which can be changed in config/fixtures/dinkly/AdminUser.yml):
 
     `php tools/load_fixtures.php -s=dinkly`
 
+    *Unless changed, the default credentials that shipa with Dinkly are bfett/password*
+
 4. Update base href value in config/config.yml as needed.
+
 
 Dinkly CLI Tools
 ----------------
@@ -55,6 +60,14 @@ Generate a new Dinkly application.
 Generate a new Dinkly module for a given application.
 
 	php tools/gen_module.php -a=<app name> -m=<module name>
+
+
+Notes
+-----
+
+Dinky stores configuration information in session. If you find yourself connnected to the wrong database, or in an otherwise scrambled situation, clear the session. There's also a handy trick for just wiping the Dinkly session:
+
+	`http://localhost/?nocache=1`
 
 
 License

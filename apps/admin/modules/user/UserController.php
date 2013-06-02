@@ -13,7 +13,7 @@ class UserController extends Dinkly
 
 	public function loadUserList()
 	{
-		$this->users = AdminUserBundle::getAll();
+		$this->users = AdminUserCollection::getAll();
 
 		return true;
 	}

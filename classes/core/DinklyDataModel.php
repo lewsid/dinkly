@@ -1,0 +1,267 @@
+<?php 
+
+/*
+
+	DBObject Class (2008-2011)
+	Christopher Lewis (lewsid@lewsid.com)
+	
+*/
+
+/****************************************************************************************************************
+
+	CHILD CLASS EXAMPLE:
+		
+		class User extends DBObject
+		{
+			public $registry = array(
+				'id'              => 'ID',
+				'created'         => 'Created',
+				'modified'        => 'Modified',
+				'is_deleted'      => 'Deleted',
+				'first_name'      => 'FirstName',
+				'last_name'       => 'LastName',
+			);
+			
+			public $dbTable = 'users';
+		}
+		
+	CHILD CLASS USAGE EXAMPLE:
+		
+		$user = new User();
+		$user->init(1);
+		echo $user->getCreated() 
+
+***************************************************************************************************************/
+
+abstract class DinklyDataModel
+{
+	protected $db;
+	protected $dbTable;
+	protected $isNew;
+	protected $regDirty = array();
+	protected $registry = array();
+	
+	public function __construct()
+	{
+		$this->db = self::fetchDB();
+		
+		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
+	}
+
+	public static function fetchDB()
+	{
+		$creds = DBConfig::getDBCreds();
+		
+		$db = new PDO(
+				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
+				$creds['DB_USER'],
+				$creds['DB_PASS']
+		);
+
+		return $db;
+	}
+
+	public function init($id)
+	{
+		$Select = $this->getSelectQuery() . " where id='" . mysql_real_escape_string($id) . "'";
+		$result = $this->db->query($Select)->fetchAll();
+				
+		if($result != array())
+		{
+			$this->hydrate($result, true);
+		}
+	}
+	
+	/* Only manipulates fields that have been modified in some way */
+	public function save()
+	{
+		if(!$this->isNew) { return $this->update(); }  //Perform an Update
+		else { return $this->insert(); }               //Perform an Insert
+	}
+	
+	public function getSelectQuery()
+	{ 
+		return "select " . implode(", ", $this->getColumns()) . " from " . $this->getDBTable();
+	}
+	
+	/* This is meant to be overloaded by child objects to attach any related objects following the hydrate. */
+	public function attach() { }
+	
+	public function hydrate($full_result, $hasDB = false)
+	{  
+		$reg = $this->registry;
+		
+		if(isset($full_result[0]))
+		{
+			if(is_array($full_result[0])) { $contents = $full_result[0]; }  
+			else { $contents = $full_result; }
+		}
+		else { $contents = $full_result; }
+		
+		foreach($contents as $key => $record)
+		{
+			if(isset($reg[$key]))
+			{
+				$this->$reg[$key] = $record;
+			}
+		}
+
+		$this->attach();
+		
+		if(!$hasDB) { $this->db = NULL; }
+		
+		$this->isNew = false;
+	}
+
+	public function delete()
+	{
+		$reg = $this->getRegistry();
+		$is_valid = false;
+		$query = "delete from " . $this->getDBTable() . " where id ='" . mysql_real_escape_string($this->Id) . "'";
+		return $this->db->exec($query);
+	}
+	
+	protected function update()
+	{
+		$reg = $this->getRegistry();
+		$is_valid = false;
+		$query = "update " . $this->getDBTable() . " set ";
+		
+		$i = 1;
+		foreach($this->getColumns() as $col)
+		{
+			if(array_key_exists($col, $this->regDirty))
+			{
+				if($i < sizeof($this->regDirty))
+				{
+					$query .= $col . "='" . mysql_real_escape_string($this->$reg[$col]) . "', ";
+					$is_valid = true;
+				}
+				else if(sizeof($this->regDirty) == 1 || $i == sizeof($this->regDirty))
+				{
+					$query .= $col . "='" . mysql_real_escape_string($this->$reg[$col]) . "'";
+					$is_valid = true;
+				}
+				$i++;
+			}
+		}
+		
+		$query .= " where id='" . $this->Id . "'";
+		return $this->db->exec($query);
+	}
+	
+	protected function insert()
+	{
+		$reg = $this->getRegistry();
+		$is_valid = false;
+		$query = "insert into " . $this->getDBTable() . " (";
+		$values = "values ('";
+		
+		$i = 1;
+		foreach($this->getColumns() as $col)
+		{
+			if(array_key_exists($col, $this->regDirty))
+			{
+				if(sizeof($this->regDirty) == 1)
+				{
+					$query .= $col . ") values ('" . mysql_real_escape_string($this->$reg[$col]) . "')";
+					$values = "";
+					$is_valid = true;
+				}
+				else if($i < sizeof($this->regDirty))
+				{
+					$query .= $col . ", ";
+					$values .= mysql_real_escape_string($this->$reg[$col]) . "', '";
+					$is_valid = true;
+				}
+				else
+				{
+					$query .= $col . ") ";
+					$values .= mysql_real_escape_string($this->$reg[$col]) . "') ";
+				}
+				$i++;
+			}
+		}
+		
+		$query .= $values;
+		$this->Id = $this->db->exec($query);
+		$this->isNew = false;
+		
+		return $this->Id;
+	}
+	
+	protected function getColumns()
+	{
+		$reg = $this->getRegistry();
+		$columns = array();
+		
+		$i = 0;
+		foreach($reg as $col)
+		{
+			$columns[$i] = key($reg);
+			next($reg);
+			$i++;
+		}
+		return $columns;
+	}
+	
+	protected function getRegistry() { return $this->registry; }
+	
+	protected function getDBTable() { return $this->dbTable; }
+	
+	public function getDB() { return $this->db; }
+	
+	public function setDB($value) { $this->db = $value; }
+	
+	public function isNew() { return $this->isNew; }
+	
+	/* Borrowed (then reformatted) from: http://blog.josephwilk.net/snippets/dynamic-gettersetters-for-php.html */
+	function __call($method, $arguments)
+	{  
+		//Is this a get or a set
+		$prefix = strtolower(substr($method, 0, 3));
+	
+		//What is the get/set class attribute
+		$property = substr($method, 3);
+		
+		//Did not match a get/set call
+		if(empty($prefix) || empty($property))
+		{
+			throw New Exception("Calling a non get/set method that does not exist: $method");
+		}
+	
+		//Check if the get/set paramter exists within this class as an attribute
+		$match=false;
+		foreach($this as $class_var=>$class_var_value)
+		{
+			if(strtolower($class_var) == strtolower($property))
+			{
+				$property=$class_var;
+				$match=true;
+			}
+		}
+	
+		//Get attribute
+		if ($match && $prefix == "get" && (isset($this->$property) || is_null($this->$property)))
+		{
+			return $this->$property;
+		}
+	
+		//Set
+		if ($match && $prefix == "set")
+		{
+			$this->$property = $arguments[0];
+			
+			//Set variable dirty so we know to add it to any queries
+			foreach($this->getRegistry() as $key => $element)
+			{
+				if($element == $property) { $this->regDirty[$key] = true; }
+			}
+		
+		}
+		elseif (!$match && $prefix == "set") { throw new Exception("Setting a variable that does not exist: var:$property value: $arguments[0]"); }
+		else { throw new Exception("Calling a get/set method that does not exist: $property"); }
+	}
+}
+
+abstract class DBObject extends DinklyDataModel { }
