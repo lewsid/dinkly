@@ -1,17 +1,10 @@
 <?php 
 
-/*
-
-	DBObject Class (2008-2011)
-	Christopher Lewis (lewsid@lewsid.com)
-	
-*/
-
 /****************************************************************************************************************
 
 	CHILD CLASS EXAMPLE:
 		
-		class User extends DBObject
+		class User extends DinklyDataModel
 		{
 			public $registry = array(
 				'id'              => 'ID',
@@ -50,7 +43,7 @@ abstract class DinklyDataModel
 
 	public static function fetchDB()
 	{
-		$creds = DBConfig::getDBCreds();
+		$creds = DinklyDataConfig::getDBCreds();
 		
 		$db = new PDO(
 				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
@@ -263,5 +256,3 @@ abstract class DinklyDataModel
 		else { throw new Exception("Calling a get/set method that does not exist: $property"); }
 	}
 }
-
-abstract class DBObject extends DinklyDataModel { }

@@ -44,5 +44,3 @@ abstract class DinklyDataCollection extends DinklyDataModel
 		}
 	}
 }
-
-abstract class DBObjectBundle extends DinklyDataCollection { }

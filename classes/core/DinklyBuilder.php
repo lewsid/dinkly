@@ -166,7 +166,7 @@ class DinklyBuilder extends Dinkly
 				fwrite($fp, PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class Base' . $model_name . 'Bundle extends DBObjectBundle' . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\t" . 'public static function getAll()' . PHP_EOL . "\t" . '{' . PHP_EOL);
-				fwrite($fp, "\t\t" . '$db = new DBHelper(DBConfig::getDBCreds());' . PHP_EOL);
+				fwrite($fp, "\t\t" . '$db = new DBHelper(DinklyDataConfig::getDBCreds());' . PHP_EOL);
 				fwrite($fp, "\t\t" . '$peer_object = new ' . $model_name . ';' . PHP_EOL);
 				fwrite($fp, "\t\t" . 'if($db->Select($peer_object->getSelectQuery()))' . PHP_EOL);
 				fwrite($fp, "\t\t" . '{' . PHP_EOL);
@@ -222,7 +222,7 @@ class DinklyBuilder extends Dinkly
 		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		if(!$model_yaml) { return false; }
 
-		if(DBConfig::setActiveConnection($schema))
+		if(DinklyDataConfig::setActiveConnection($schema))
 		{
 			if($verbose_output)
 			{
@@ -238,11 +238,11 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 
-		$creds = DBConfig::getDBCreds();
+		$creds = DinklyDataConfig::getDBCreds();
 		$db_name = mysql_real_escape_string($creds['DB_NAME']);
 		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
 
-		$db = new DBHelper(DBConfig::getDBCreds());
+		$db = new DBHelper(DinklyDataConfig::getDBCreds());
 		$db->Update("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
 
 		$db->selectDB($db_name);
@@ -390,7 +390,7 @@ class DinklyBuilder extends Dinkly
 			{
 				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
 				
-				$db = new DBHelper(DBConfig::getDBCreds());
+				$db = new DBHelper(DinklyDataConfig::getDBCreds());
 				$db->Update("truncate table " . $fixture['table_name']);
 				
 				if($verbose_output) { echo "success!\n"; }
