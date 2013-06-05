@@ -4,7 +4,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Dinkly
 {
-	private $module_header;
+	protected $module_header;
 
 	protected $context;
 
