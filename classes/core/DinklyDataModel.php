@@ -26,7 +26,7 @@
 
 ***************************************************************************************************************/
 
-abstract class DinklyDataModel
+abstract class DinklyDataModel extends DinklyDataConnector
 {
 	protected $db;
 	protected $dbTable;
@@ -41,19 +41,6 @@ abstract class DinklyDataModel
 		$this->isNew = true;
 		
 		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
-	}
-
-	public static function fetchDB()
-	{
-		$creds = DinklyDataConfig::getDBCreds();
-		
-		$db = new PDO(
-				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
-				$creds['DB_USER'],
-				$creds['DB_PASS']
-		);
-
-		return $db;
 	}
 
 	public function init($id)

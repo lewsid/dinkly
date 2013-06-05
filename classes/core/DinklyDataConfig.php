@@ -68,12 +68,5 @@ class DinklyDataConfig
 			return $_SESSION['dinkly']['db_creds'][$connection_name];
 		}
 	}
-	
-	public static function testDB()
-	{
-		$dbh = new DBHelper(self::getDBCreds());
-		
-		return $dbh->getStatus();
-	}
 }
 
