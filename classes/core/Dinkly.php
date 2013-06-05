@@ -170,7 +170,7 @@ class Dinkly
     {
       if($controller->$view_function($parameters))
       {
-        if(!in_array($module_name, Dinkly::getValidModules($app_name))) { return false; }
+        if(!in_array($module_name, Dinkly::getValidModules($app_name))) { throw new Exception('Module "' . $module_name . '" cannot be found. Please check your naming conventions - module folders use underscores while module class files use upper camel-case notation.'); return false; }
 
         //Migrate the scope of the declared variables to be local to the view
         $vars = get_object_vars($controller);
