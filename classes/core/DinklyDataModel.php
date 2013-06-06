@@ -34,9 +34,10 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	protected $regDirty = array();
 	protected $registry = array();
 	
-	public function __construct()
+	public function __construct($db = null)
 	{
-		$this->db = self::fetchDB();
+		if(!$this->db) $this->db = self::fetchDB();
+		else $this->db = $db;
 
 		$this->isNew = true;
 		
