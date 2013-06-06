@@ -1,9 +1,9 @@
 {
-    "hash": "3842d03c169d2c4d1be9ad48211857b5",
+    "hash": "b34e868f96480a985532c1eba7f1de41",
     "packages": [
         {
             "name": "symfony/yaml",
-            "version": "dev-master",
+            "version": "v2.3.0-BETA1",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
@@ -55,6 +55,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "symfony/yaml": 20
+        "symfony/yaml": 10
     }
 }

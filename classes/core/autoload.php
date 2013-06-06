@@ -1,7 +1,7 @@
 <?php 
 
 //Define autoloader 
-function __autoload($class_name)
+function dinkly_autoloader($class_name)
 {
 	//strip class name from namespaces
 	if(stristr($class_name,  '\\'))
@@ -10,7 +10,7 @@ function __autoload($class_name)
 		$class_name = $parts[sizeof($parts) - 1];
 	}
 
-	//handle models
+	//load models
 	$core_file  = $_SERVER['APPLICATION_ROOT'] . '/classes/core/' . $class_name . '.php';
 	$base_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/base/' . $class_name . '.php';
 	$custom_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/custom/' . $class_name . '.php';
@@ -51,12 +51,7 @@ function __autoload($class_name)
 		return true;
 	}
 
-	//legacy exceptions
-	switch($class_name)
-	{
-		case 'DBObject': require_once $_SERVER['APPLICATION_ROOT'] . '/classes/core/DinklyDataModel.php'; break;
-		case 'DBObjectBundle': require_once $_SERVER['APPLICATION_ROOT'] . '/classes/core/DinklyDataCollection.php'; break;
-	}
-
 	return false; 
 }
+
+spl_autoload_register('dinkly_autoloader');
