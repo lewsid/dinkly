@@ -1,5 +1,5 @@
-Dinkly v0.2.7
-=============
+Dinkly v1.0
+===========
 
 A humble little PHP Framework.
 
@@ -7,13 +7,13 @@ A humble little PHP Framework.
 Features
 --------
 
-- Easy and flexible MVC architecture
+- Easy to use and flexible MVC architecture
 - YAML configuration and customization
+- Full Composer support
 - Restful API
 - Bare-bones ORM
 - Data fixtures
-- Closure depenedency support
-- Authentication
+- Out-of-the-box user authentication
 - Ready-to-go admin interface featuring Datatables
 - Twitter Bootstrap
 
