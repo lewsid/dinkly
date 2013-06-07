@@ -167,7 +167,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		
 		$query .= $values;
-		$this->Id = $this->db->exec($query);
+		$this->db->exec($query);
+		$this->Id = $this->db->lastInsertId();
 		$this->isNew = false;
 		
 		return $this->Id;
