@@ -225,6 +225,12 @@ class DinklyBuilder extends Dinkly
 		return $db;
 	}
 
+	public static function sanitize($db, $variable)
+	{
+		$output = $db->quote($variable);
+		return str_replace("'", "", $variable);
+	}
+
 	public static function buildTable($schema, $model_name, $verbose_output = true, $override_database_name = null)
 	{
 		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
@@ -246,9 +252,10 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 
+		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
-		$db_name = mysql_real_escape_string($creds['DB_NAME']);
-		if($override_database_name) { $db_name = mysql_real_escape_string($override_database_name); }
+		$db_name = $creds['DB_NAME'];
+		if($override_database_name) { $db_name = $override_database_name; }
 
 		//Create database if it doesn't exist
 		$db = new PDO(
@@ -256,22 +263,30 @@ class DinklyBuilder extends Dinkly
 				$creds['DB_USER'],
 				$creds['DB_PASS']
 		);
-		$db->exec("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($db_name));
+
+		//Sanitize the db name
+		$db_name = self::sanitize($db, $db_name);
+
+		//Create database if we need to
+		$db->exec("CREATE DATABASE IF NOT EXISTS " . $db_name);
 
 		//Now connect to the new DB
 		$creds['DB_NAME'] = $db_name;
 		$db = self::fetchDB($creds);
-
-		$db->exec("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
 
 		if($verbose_output)
 		{
 			echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
 		}
 
-		$db->exec("DROP TABLE IF EXISTS " . mysql_real_escape_string($model_yaml['table_name']));
+		//Drop table if it exists
+		$st = $db->prepare("DROP TABLE IF EXISTS :table_name");
+		$st->execute(array(':table_name' => $model_yaml['table_name']));
 
-		$sql = "CREATE TABLE " . mysql_real_escape_string($model_yaml['table_name']) . " (";
+
+		//Now let's craft the query to build the table
+		$table_name = self::sanitize($db, $model_yaml['table_name']);
+		$sql = "CREATE TABLE " . $table_name . " (";
 
 		$has_id = false; $pos = 0;
 		foreach($model_yaml['registry'] as $key => $column)
@@ -297,9 +312,17 @@ class DinklyBuilder extends Dinkly
 					break;
 
 				default:
-					$sql .= "`" . $col_name . "` " . mysql_real_escape_string($column[$col_name]['type']);
-					if(isset($column[$col_name]['length'])) { $sql .= " (" . mysql_real_escape_string($column[$col_name]['length']) . ")"; }
+					$sanitized_col_name = self::sanitize($db, $col_name);
+					$sanitized_col_type = self::sanitize($db, $column[$col_name]['type']);
+					$sql .= $sanitized_col_name . ' ' . $sanitized_col_type;
+					
+					if(isset($column[$col_name]['length']))
+					{
+						$sql .= ' ('.$column[$col_name]['length'].')';
+					}
+					
 					if(!$column[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+
 					break;
 	  		}
 

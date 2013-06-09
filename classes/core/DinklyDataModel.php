@@ -46,7 +46,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 
 	public function init($id)
 	{
-		$Select = $this->getSelectQuery() . " where id='" . mysql_real_escape_string($id) . "'";
+		$Select = $this->getSelectQuery() . " where id=" . $this->db->quote($id);
 		$result = $this->db->query($Select)->fetchAll();
 				
 		if($result != array())
@@ -100,7 +100,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	{
 		$reg = $this->getRegistry();
 		$is_valid = false;
-		$query = "delete from " . $this->getDBTable() . " where id ='" . mysql_real_escape_string($this->Id) . "'";
+		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
 		return $this->db->exec($query);
 	}
 	
@@ -117,12 +117,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			{
 				if($i < sizeof($this->regDirty))
 				{
-					$query .= $col . "='" . mysql_real_escape_string($this->$reg[$col]) . "', ";
+					$query .= $col . "=" . $this->db->quote($this->$reg[$col]) . ", ";
 					$is_valid = true;
 				}
 				else if(sizeof($this->regDirty) == 1 || $i == sizeof($this->regDirty))
 				{
-					$query .= $col . "='" . mysql_real_escape_string($this->$reg[$col]) . "'";
+					$query .= $col . "=" . $this->db->quote($this->$reg[$col]);
 					$is_valid = true;
 				}
 				$i++;
@@ -138,7 +138,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "insert into " . $this->getDBTable() . " (";
-		$values = "values ('";
+		$values = "values (";
 		
 		$i = 1;
 		foreach($this->getColumns() as $col)
@@ -147,20 +147,20 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			{
 				if(sizeof($this->regDirty) == 1)
 				{
-					$query .= $col . ") values ('" . mysql_real_escape_string($this->$reg[$col]) . "')";
+					$query .= $col . ") values (" . $this->db->quote($this->$reg[$col]) . ")";
 					$values = "";
 					$is_valid = true;
 				}
 				else if($i < sizeof($this->regDirty))
 				{
 					$query .= $col . ", ";
-					$values .= mysql_real_escape_string($this->$reg[$col]) . "', '";
+					$values .= $this->db->quote($this->$reg[$col]) . ", ";
 					$is_valid = true;
 				}
 				else
 				{
 					$query .= $col . ") ";
-					$values .= mysql_real_escape_string($this->$reg[$col]) . "') ";
+					$values .= $this->db->quote($this->$reg[$col]) . ") ";
 				}
 				$i++;
 			}
@@ -168,6 +168,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		
 		$query .= $values;
 		$this->db->exec($query);
+
 		$this->Id = $this->db->lastInsertId();
 		$this->isNew = false;
 		
