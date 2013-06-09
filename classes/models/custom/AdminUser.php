@@ -40,7 +40,7 @@ class AdminUser extends BaseAdminUser
 	{
 		$dbo = new DBHelper(DBConfig::getDBCreds());
 
-		$dbo->Select("select * from admin_user where username='" . mysql_real_escape_string($username) . "'");
+		$dbo->Select("select * from admin_user where username=".$dbo->quote($username));
 
 		//We found a match for the username      
 		if($result = $dbo->getResult())
