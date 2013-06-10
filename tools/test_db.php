@@ -4,5 +4,5 @@
 
 require_once('config/bootstrap.php');
 
-if(DinklyDataConfig::testDB()) { echo "\nSuccessfully connected to database!\n"; }
+if(DinklyDataConnector::testDB()) { echo "\nSuccessfully connected to database!\n"; }
 else { echo "\nUnable to connect to database!\n"; }
