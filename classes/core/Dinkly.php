@@ -77,7 +77,17 @@ class Dinkly
 
 			//Figure out the module and view
 			if(sizeof($uri_parts) == 1) { $context['module'] = $uri_parts[0]; $context['view'] = 'default'; }
-			else if(sizeof($uri_parts) == 2) { $context['module'] = $uri_parts[0]; $context['view'] = $uri_parts[1]; }
+			else if(sizeof($uri_parts) == 2) {
+				$context['module'] = $uri_parts[0];
+				
+				//Get controllers methods and make view default if method doesn't exist
+				$defaultModule = self::convertToCamelCase(Dinkly::getConfigValue('default_module', $context['current_app_name']), true);
+				require_once($_SERVER["APPLICATION_ROOT"]."/apps/".$context['current_app_name']."/modules/$defaultModule/".$defaultModule."Controller.php");
+				$class_methods = get_class_methods($defaultModule."Controller");
+
+				if(in_array($uri_parts[1], $class_methods) !== false)
+					$context['view'] = $uri_parts[1];
+			}
 			else if(sizeof($uri_parts) > 2)
 			{
 				for($i = 0; $i < sizeof($uri_parts); $i++)
