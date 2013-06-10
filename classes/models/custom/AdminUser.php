@@ -38,13 +38,12 @@ class AdminUser extends BaseAdminUser
 	/* Locks account after 5 failed attempts */
 	public static function authenticate($username, $input_password)
 	{
-		$dbo = self::fetchDB();
+		$dbo = new DBHelper(DBConfig::getDBCreds());
 
-		$sql = "select * from admin_user where username=".$dbo->quote($username);
-		$result = $dbo->query($sql)->fetchAll();
+		$dbo->Select("select * from admin_user where username=".$dbo->quote($username));
 
 		//We found a match for the username      
-		if($result != array())
+		if($result = $dbo->getResult())
 		{
 			$user = new AdminUser();
 			$user->init($result[0]['id']);
