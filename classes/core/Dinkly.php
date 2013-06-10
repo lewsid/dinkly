@@ -154,35 +154,37 @@ class Dinkly
 		}
 
 		//Instantiate controller object
-		require_once $controller_file; 
+		require_once $controller_file;
 		$controller = new $camel_module_name();
 
 		//Migrate current dinkly variables over to our new controller
 		$vars = get_object_vars($this);
-			foreach($vars as $name => $value) 
-				$controller->$name = $value;
+		foreach ($vars as $name => $value)
+			$controller->$name = $value;
 
 		//Get this view's function
 		$view_controller_name = self::convertToCamelCase($view_name, true);
 		$view_function = "load" . $view_controller_name;
 
-		if(method_exists($controller,$view_function))
+		if (method_exists($controller, $view_function))
 		{
-			if($controller->$view_function($parameters))
+			if ($controller->$view_function($parameters))
 			{
-				if(!in_array($module_name, Dinkly::getValidModules($app_name))) { throw new Exception('Module "' . $module_name . '" cannot be found. Please check your naming conventions - module folders use underscores while module class files use upper camel-case notation.'); return false; }
+				if (!in_array($module_name, Dinkly::getValidModules($app_name)))
+				{
+					return false;
+				}
 
 				//Migrate the scope of the declared variables to be local to the view
 				$vars = get_object_vars($controller);
-				foreach($vars as $name => $value) 
+				foreach ($vars as $name => $value)
 					$$name = $value;
 
 				//Get module view
-				if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+				if (file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
 				{
-					if($draw_layout)
-					{
-						if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+					if ($draw_layout) {
+						if (file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
 						{
 							ob_start();
 							include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
@@ -193,7 +195,9 @@ class Dinkly
 						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
 					}
 					require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-					if($draw_layout) { require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php'); }
+					if ($draw_layout) {
+						require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php');
+					}
 				}
 			}
 		}
