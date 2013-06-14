@@ -392,8 +392,19 @@ class DinklyBuilder extends Dinkly
 	/* 
 		$truncate will truncate the table if set to true, or append records if false
 	*/
-	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true)
+	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true, $override_database_name = null)
 	{
+		//Use the proper DB credentials, or apply a passed-in override
+		$creds = DinklyDataConfig::getDBCreds();
+		if($override_database_name)
+		{ 
+			$creds['DB_NAME'] = $override_database_name;
+			DinklyDataConfig::setActiveConnection($creds);
+		}
+
+		//Create database if it doesn't exist
+		$db = self::fetchDB($creds);
+
     	$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
 		
 		if($verbose_output)
@@ -417,7 +428,6 @@ class DinklyBuilder extends Dinkly
 			{
 				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
 				
-				$db = self::fetchDB();
 				$db->exec("truncate table " . $fixture['table_name']);
 				
 				if($verbose_output) { echo "success!\n"; }
