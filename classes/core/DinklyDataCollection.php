@@ -24,7 +24,7 @@ abstract class DinklyDataCollection extends DinklyDataModel
 	protected static function getCollection($peer_object, $query)
 	{
 		$db = self::fetchDB();
-		$results = $db->query($query);
+		$results = $db->query($query)->fetchAll();
 
 		if($results != array() && $results != NULL)
 		{
@@ -33,7 +33,7 @@ abstract class DinklyDataCollection extends DinklyDataModel
 			foreach($results as $result)
 			{
 				$class_name = get_class($peer_object);
-				$tempObject = new $class_name($peer_object->getDB());
+				$tempObject = new $class_name($db);
 				$tempObject->hydrate($result, true);
 				
 				$arrObject[$i] = $tempObject;
