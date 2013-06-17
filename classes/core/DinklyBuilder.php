@@ -347,6 +347,20 @@ class DinklyBuilder extends Dinkly
 		return true;
 	}
 
+	public static function getAllModels($schema)
+	{
+		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
+
+		$model_names = array();
+		foreach($all_files as $file)
+		{
+			if($file != '.' && $file != '..' && stristr($file, '.yml'))
+			$model_names[] = str_replace('.yml', '', $file);
+		}
+
+		return $model_names;
+	}
+
 	public static function buildAllModels($schema = null, $insert_sql = false)
 	{
 		$schema_names = array();
@@ -370,12 +384,7 @@ class DinklyBuilder extends Dinkly
 		{
 			$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
 
-			$model_names = array();
-			foreach($all_files as $file)
-			{
-				if($file != '.' && $file != '..' && stristr($file, '.yml'))
-				$model_names[] = str_replace('.yml', '', $file);
-			}
+			$model_names = self::getAllModels($schema);
 
 			foreach($model_names as $model)
 			{

@@ -1,4 +1,4 @@
-Dinkly v1.07
+Dinkly v1.08
 ============
 
 A humble little PHP Framework.
