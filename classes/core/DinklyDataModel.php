@@ -36,7 +36,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	
 	public function __construct($db = null)
 	{
-		if(!$this->db) $this->db = self::fetchDB();
+		if(!$db) $this->db = self::fetchDB();
 		else $this->db = $db;
 
 		$this->isNew = true;
