@@ -113,8 +113,13 @@ class DinklyBase
 	//Dinkly's most badass function. Loads a desired module, and redirects if you ask it nicely.
 	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 	{
+		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 
+		//Set the current app to match whatever was passed
+		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
+
+		//If no view is passed, look for one called 'default'
 		if(!$view_name) $view_name = 'default';
 
 		//Determine if we are currently on this module/view or not
