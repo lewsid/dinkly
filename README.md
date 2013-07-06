@@ -74,3 +74,10 @@ License
 -------
 
 Dinkly is open-sourced software licensed under the MIT License.
+
+
+Contact
+-------
+
+  - lewsid@lewsid.com
+  - github.com/lewsid
