@@ -56,10 +56,10 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	}
 	
 	/* Only manipulates fields that have been modified in some way */
-	public function save()
+	public function save($force_insert = false)
 	{
-		if(!$this->isNew) { return $this->update(); }  //Perform an Update
-		else { return $this->insert(); }               //Perform an Insert
+		if(!$this->isNew && !$force_insert) { return $this->update(); }
+		else { return $this->insert(); }
 	}
 	
 	public function getSelectQuery()
@@ -193,6 +193,15 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	protected function getRegistry() { return $this->registry; }
 	
 	protected function getDBTable() { return $this->dbTable; }
+
+	//My current favorite function name, this forces the entire model to refresh
+	public function forceDirty()
+	{
+		foreach($this->getRegistry() as $key => $element)
+		{
+			$this->regDirty[$key] = true;
+		}
+	}
 	
 	public function getDB() { return $this->db; }
 	
