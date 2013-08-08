@@ -4,6 +4,191 @@ use Symfony\Component\Yaml\Yaml;
 
 class DinklyBuilder extends Dinkly
 {
+	public static function genTableAlterQuery($db, $table, $field_config)
+	{
+		$sql = "alter table " . self::sanitize($db, $table) . " add ";
+
+		if(is_array($field_config))
+		{
+			$col_name = key($field_config);
+			$sanitized_col_name = self::sanitize($db, $col_name);
+			$sanitized_col_type = self::sanitize($db, $field_config[$col_name]['type']);
+			$sql .= $sanitized_col_name . ' ' . $sanitized_col_type;
+
+			if(isset($field_config[$col_name]['length']))
+			{
+				$sql .= ' ('.$field_config[$col_name]['length'].')';
+			}
+
+			if(!$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+		}
+		else
+		{
+			switch($field_config)
+			{
+				case 'id':
+					$has_id = true;
+					$sql .= "`id` int(11) NOT NULL AUTO_INCREMENT";
+					break;
+
+				case 'created_at':
+					$sql .= "`created_at` datetime NOT NULL";
+					break;
+
+				case 'updated_at':
+					$sql .= "`updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP";
+					break;
+			}
+		}
+
+		return $sql;
+	}
+
+	public static function addMissingModelFieldsToDb($schema, $verbose_output = null)
+	{
+		if(!DinklyDataConfig::setActiveConnection($schema))
+		{
+			return false;
+		}
+
+		$db = DinklyDataConnector::fetchDB();
+
+		$model_names = DinklyBuilder::getAllModels($schema);
+
+		//Gather up yaml configs for each model
+		$model_yaml = $table_names = array();
+		foreach($model_names as $model)
+		{
+			$model_yaml[$model] = self::parseModelYaml($schema, $model, false);
+			$table_names[$model] = $model_yaml[$model]['table_name'];
+		}
+
+		//Create index for matching tables and columns within the yaml config
+		$yaml_fields = array();
+		foreach($model_yaml as $y)
+		{
+			$yaml_fields[$y['table_name']] = array();
+			foreach($y['registry'] as $field_name)
+			{
+				$name = null;
+				if(is_array($field_name)) { $name = key($field_name); }
+				else { $name = $field_name; }
+
+				$yaml_fields[$y['table_name']][] = $name;
+			}
+		}
+
+		//Create a very similar index, for matching tables and columns within the existing database
+		$db_table_fields = array();
+		foreach($table_names as $table_name)
+		{
+			$query = "show columns from " . $table_name;
+			$results = $db->query($query)->fetchAll();
+
+			$db_table_fields[$table_name] = array();
+			foreach($results as $k => $v)
+			{
+				$db_table_fields[$table_name][] = $v['Field'];
+			}
+		}
+
+		//Find any fields that are in the yaml, but are not in the database currently
+		$fields_to_add = array();
+		foreach($yaml_fields as $table_name => $yaml_field_list)
+		{
+			foreach($yaml_field_list as $field_name)
+			{
+				if(!in_array($field_name, $db_table_fields[$table_name]))
+				{
+					if(!isset($fields_to_add[$table_name])) { $fields_to_add[$table_name] = array(); }
+					$fields_to_add[$table_name][] = $field_name;
+				}
+			}
+		}
+
+		//For each field missing from the database, but present in the yaml, run an alter query
+		foreach($fields_to_add as $table => $field_list)
+		{
+			foreach($field_list as $field)
+			{
+				$registry = $model_yaml[Dinkly::convertToCamelCase($table, true)]['registry'];
+				foreach($registry as $field_config)
+				{
+					$sql = null;
+					if(is_array($field_config))
+					{
+						if(key($field_config) == $field)
+						{
+							$sql = self::genTableAlterQuery($db, $table, $field_config);
+						}
+					}
+					else
+					{
+						if($field == $field_config)
+						{
+							$sql = self::genTableAlterQuery($db, $table, $field_config);
+						}
+					}
+
+					if($sql)
+					{
+						if($verbose_output)
+						{
+							echo "Adding field " . $field . " to " . $table . "...\n";
+						}
+						$db->exec($sql);
+					}
+				}
+			}
+		}
+	}
+
+	public static function addMissingModelsToDb($schema, $verbose_output = null)
+	{
+		if(!DinklyDataConfig::setActiveConnection($schema))
+		{
+			return false;
+		}
+
+		$db = DinklyDataConnector::fetchDB();
+
+		$model_names = self::getAllModels($schema);
+
+		//Gather up yaml table names for each model
+		$yaml_table_names = array();
+		foreach($model_names as $model)
+		{
+			$model_yaml = self::parseModelYaml($schema, $model, false);
+			$yaml_table_names[] = $model_yaml['table_name'];
+		}
+
+		//Gather up the table names for those in the database currently
+		$query = "show tables;";
+		$results = $db->query($query)->fetchAll();
+		$db_table_names = array();
+		foreach($results as $row) { $db_table_names[] = $row[0]; }
+
+		//Find out which tables are missing from the db, but defined in the yaml
+		$missing_tables = array();
+		foreach($yaml_table_names as $yaml_table_name)
+		{
+			if(!in_array($yaml_table_name, $db_table_names))
+			{
+				$missing_tables[] = $yaml_table_name;
+			}
+		}
+
+		//Create our missing tables in the database
+		foreach($missing_tables as $table)
+		{
+			if($verbose_output)
+			{
+				echo "Creating table " . $table . "...\n";
+			}
+			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), $verbose_output);
+		}
+	}
+	
 	public static function buildModule($app_name, $module_name)
 	{
 		$app_dir = $_SERVER['APPLICATION_ROOT'] . "apps/" . $app_name;
@@ -236,19 +421,8 @@ class DinklyBuilder extends Dinkly
 		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		if(!$model_yaml) { return false; }
 
-		if(DinklyDataConfig::setActiveConnection($schema))
+		if(!DinklyDataConfig::setActiveConnection($schema))
 		{
-			if($verbose_output)
-			{
-				echo "Using database '" . $schema . "'...\n";
-			}
-		}
-		else
-		{
-			if($verbose_output)
-			{
-				echo "No matching connection information for '" . $model_yaml['connection_name'] . "' found in db.yml for a matching database.\n";
-			}
 			return false;
 		}
 
@@ -279,14 +453,9 @@ class DinklyBuilder extends Dinkly
 			echo "Creating/Updating MySQL for table " . $model_yaml['table_name'] . "...";
 		}
 
-		//Drop table if it exists
-		$st = $db->prepare("DROP TABLE IF EXISTS :table_name");
-		$st->execute(array(':table_name' => $model_yaml['table_name']));
-
-
 		//Now let's craft the query to build the table
 		$table_name = self::sanitize($db, $model_yaml['table_name']);
-		$sql = "CREATE TABLE " . $table_name . " (";
+		$sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (";
 
 		$has_id = false; $pos = 0;
 		foreach($model_yaml['registry'] as $key => $column)
@@ -389,12 +558,13 @@ class DinklyBuilder extends Dinkly
 			foreach($model_names as $model)
 			{
 				self::buildModel($schema, $model);
-
-				if($insert_sql)
-				{
-					self::buildTable($schema, $model);
-				}  
 			}
+
+			if($insert_sql)
+			{
+				self::addMissingModelsToDb($schema, true);
+				self::addMissingModelFieldsToDb($schema, true);
+			}  
 		}
 	}
 
