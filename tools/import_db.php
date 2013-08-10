@@ -108,10 +108,10 @@ function sqlToYml($sql, $model_name, $database_name)
 	if(!file_exists($dir)) shell_exec("mkdir $dir");
 
 	//If file exists move it to a backup
-	if(file_exists($dir . '/' . $yml_file)) shell_exec("mv " . $dir . '/' . $yml_file . ' ' . $dir. '/~' . $yml_file);
+	if(file_exists("$dir/$yml_file")) shell_exec("mv $dir/$yml_file $dir/~$yml_file");
 
 	//Write to the yml file	
-	$handle = fopen($dir . '/' . $yml_file, 'w') or die('Cannot open file:  '.$yml_file);
+	$handle = fopen("$dir/$yml_file", 'w') or die('Cannot open file:  '.$yml_file);
 	fwrite($handle, $output);
 
 	echo '\nYML file created...\n';
