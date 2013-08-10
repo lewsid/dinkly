@@ -32,7 +32,7 @@ function getDbStructure($schema, $model_name = null, $verbose_output = true, $ov
 	$db_name = $creds['DB_NAME'];
 	if($override_database_name) { $db_name = $override_database_name; }
 
-	//Create database if it doesn't exist
+	//Connect to database
 	$host = "localhost";
 	$db = new PDO("mysql:host=".$creds['DB_HOST'].";dbname=".$db_name."", $creds['DB_USER'], $creds['DB_PASS']);
 
