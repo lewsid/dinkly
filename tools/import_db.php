@@ -7,6 +7,8 @@
 	Example Usages: 
 		php tools/import_db.php -s=my_database
 		php tools/import_db.php -s=my_database -m=my_table
+
+	Note: You must first add your database to config/db.yml
 */
 
 require_once('config/bootstrap.php');
@@ -51,24 +53,21 @@ function getDbStructure($schema, $model_name = null, $verbose_output = true, $ov
 	{
 		$stmt = $db->prepare("SHOW TABLES");
 		$stmt->execute();
-		$table_names = $stmt->fetch();
+		$table_names = $stmt->fetchAll();
 
-		foreach($table_names as $key => $table_name)
+		foreach($table_names as $table_array)
 		{
-			if(is_numeric($key))
-			{
-				$stmt = $db->prepare("SHOW COLUMNS FROM " . $table_name . "");
-				$stmt->execute();	
-				$table_schema = $stmt->fetchAll();
-				echo '\nRead table ' . $table_name . ' columns...\n';
+			$table_name = $table_array[0];
+			$stmt = $db->prepare("SHOW COLUMNS FROM " . $table_name . "");
+			$stmt->execute();	
+			$table_schema = $stmt->fetchAll();
+			echo '\nRead table ' . $table_name . ' columns...\n';
 
-				sqlToYml($table_schema, $table_name, $db_name);
-			}
+			sqlToYml($table_schema, $table_name, $db_name);
 		}
 	}
-
-
 }
+
 
 function sqlToYml($sql, $model_name, $database_name)
 {
@@ -101,9 +100,18 @@ function sqlToYml($sql, $model_name, $database_name)
 		}
 	}
 
-	//Write to the yml file
+	//Set directory path to keep things cleaner
+	$dir = dirname(__FILE__) . '/../config/schemas/' . $database_name;
 	$yml_file = $model_name_camel . '.yml';
-	$handle = fopen(dirname(__FILE__) . '/../config/schemas/' . $database_name . '/' . $yml_file, 'w') or die('Cannot open file:  '.$yml_file);
+
+	//Create directory if it doesn't exist
+	if(!file_exists($dir)) shell_exec("mkdir $dir");
+
+	//If file exists move it to a backup
+	if(file_exists($dir . '/' . $yml_file)) shell_exec("mv " . $dir . '/' . $yml_file . ' ' . $dir. '/~' . $yml_file);
+
+	//Write to the yml file	
+	$handle = fopen($dir . '/' . $yml_file, 'w') or die('Cannot open file:  '.$yml_file);
 	fwrite($handle, $output);
 
 	echo '\nYML file created...\n';
