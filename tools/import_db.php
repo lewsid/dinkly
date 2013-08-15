@@ -19,13 +19,19 @@ $model_name = null;
 if(isset($options['m'])) $model_name = $options['m'];
 
 //call the main function
-getDbStructure($options['s'], $model_name);
-
+if($options['s']) getDbStructure($options['s'], $model_name);
+else echo "\nYou must specify a database\n";
 
 //this function theoretically would be moved into Dinkly core when completed
 function getDbStructure($schema, $model_name = null, $verbose_output = true, $override_database_name = null)
 {
-	DinklyDataConfig::setActiveConnection($schema);
+	//set active connection to schema and stop if there is no matching schema
+	if(!DinklyDataConfig::setActiveConnection($schema))
+	{
+		echo '\nNo such schema in config/db.yml\n';
+
+		return false;
+	} 
 
 	//Use the proper DB credentials, or apply a passed-in override
 	$creds = DinklyDataConfig::getDBCreds();
@@ -89,13 +95,20 @@ function sqlToYml($sql, $model_name, $database_name)
 			//Separate the type and length
 			$type = explode("(", $row['Type']);
 			
-			// Output the row/collection indicator
+			/* Output the row/collection indicator */
+			//add the name	
 			$output .= "  - " . $row['Field'] . ":";
+			//add the type
 			$output .= " { type: " . $type[0];
-			if($type[1]) $output .= ", length: " . str_replace(")", "", $type[1]);
+			//if the length contains a comma (for decimals) quote the length
+			if($type[1] AND strpos($type[1],',') != false) $output .= ", length: '" . str_replace(")", "", $type[1]) . "'";
+			//else if there is a length add it
+			elseif($type[1]) $output .= ", length: " . str_replace(")", "", $type[1]);
+			//set whether null is allowable
 			$output .= ", allow_null: ";
 			if($row['Null'] == 'Yes') $output .= "true";
 			else $output .= "false";
+			//add a line break
 			$output .=  " }\n";
 		}
 	}
