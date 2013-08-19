@@ -25,9 +25,21 @@ class DinklyBase
 	//Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
 	public function route($uri = null)
 	{
+		$parameters = array();
+
+		if(stristr($uri, '?'))
+		{
+			$orig = $uri;
+			$pos = strpos($uri, '?');
+			$uri = substr($uri, 0, $pos);
+			$query_string = substr($orig, $pos + 1);
+			parse_str($query_string, $parameters);
+		}
+
 		$module = $view = null;
 
 		$context = $this->getContext($uri);
+		$context['parameters'] = $parameters;
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
