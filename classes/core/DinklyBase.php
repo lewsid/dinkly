@@ -39,7 +39,7 @@ class DinklyBase
 		$module = $view = null;
 
 		$context = $this->getContext($uri);
-		$context['parameters'] = $parameters;
+		$context['parameters'] = array_merge($context['parameters'], $parameters);
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
