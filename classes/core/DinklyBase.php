@@ -19,7 +19,15 @@ class DinklyBase
 	//Init
 	public function __construct($enable_cache = true)
 	{
+		//If the dinkly session doesn't exist yet, create it
 		if(!isset($_SESSION['dinkly']) || !$enable_cache) $_SESSION['dinkly'] = array();
+
+		//If the dinkly setting for the app root doesn't exist, create it
+		if(!isset($_SESSION['dinkly']['app_root'])) { $_SESSION['dinkly']['app_root'] = $_SERVER['APPLICATION_ROOT']; }
+
+		//If the current application root does not match what we have in session, reset the dinkly session
+		//...this prevents issues when going from one Dinkly project to another in a local environment
+		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
 	}
 
 	//Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
