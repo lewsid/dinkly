@@ -127,9 +127,9 @@ class DinklyBase
 	{
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
-
+		
 		//Set the current app to match whatever was passed
-		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
+		$_SESSION['dinkly']['current_app_name'] = $app_name;
 
 		//If no view is passed, look for one called 'default'
 		if(!$view_name) $view_name = 'default';
