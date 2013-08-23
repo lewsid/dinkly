@@ -46,12 +46,18 @@ class DinklyBuilder extends Dinkly
 
 	public static function addMissingModelFieldsToDb($schema, $verbose_output = null)
 	{
-		if(!DinklyDataConfig::setActiveConnection($schema))
-		{
-			return false;
-		}
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
-		$db = DinklyDataConnector::fetchDB();
+		//If no DB exists, create one
+		try { $db = DinklyDataConnector::fetchDB(); }
+		catch(PDOException $e)
+		{
+			if($e->getCode() == 1049)
+			{
+				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$db = DinklyDataConnector::fetchDB();
+			}
+		}
 
 		$model_names = DinklyBuilder::getAllModels($schema);
 
@@ -143,14 +149,35 @@ class DinklyBuilder extends Dinkly
 		}
 	}
 
+	public static function createDb($db_name, $creds)
+	{
+		$db = new PDO(
+				"mysql:host=".$creds['DB_HOST'].";",
+				$creds['DB_USER'],
+				$creds['DB_PASS']
+		);
+
+		//Sanitize the db name
+		$db_name = self::sanitize($db, $db_name);
+
+		//Create database if we need to
+		$db->exec("CREATE DATABASE IF NOT EXISTS " . $db_name);
+	}
+
 	public static function addMissingModelsToDb($schema, $verbose_output = null)
 	{
-		if(!DinklyDataConfig::setActiveConnection($schema))
-		{
-			return false;
-		}
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
-		$db = DinklyDataConnector::fetchDB();
+		//If no DB exists, create one
+		try { $db = DinklyDataConnector::fetchDB(); }
+		catch(PDOException $e)
+		{
+			if($e->getCode() == 1049)
+			{
+				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$db = DinklyDataConnector::fetchDB();
+			}
+		}
 
 		$model_names = self::getAllModels($schema);
 
@@ -421,10 +448,7 @@ class DinklyBuilder extends Dinkly
 		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		if(!$model_yaml) { return false; }
 
-		if(!DinklyDataConfig::setActiveConnection($schema))
-		{
-			return false;
-		}
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
@@ -432,17 +456,7 @@ class DinklyBuilder extends Dinkly
 		if($override_database_name) { $db_name = $override_database_name; }
 
 		//Create database if it doesn't exist
-		$db = new PDO(
-				"mysql:host=".$creds['DB_HOST'].";",
-				$creds['DB_USER'],
-				$creds['DB_PASS']
-		);
-
-		//Sanitize the db name
-		$db_name = self::sanitize($db, $db_name);
-
-		//Create database if we need to
-		$db->exec("CREATE DATABASE IF NOT EXISTS " . $db_name);
+		self::createDb($db_name, $creds);
 
 		//Now connect to the new DB
 		$creds['DB_NAME'] = $db_name;
