@@ -1,8 +1,12 @@
-Dinkly v1.16
+dinkly v1.16
 ============
 
-A humble little PHP Framework.
+The MVC for MVP
 
+What makes dinkly special?
+--------------------------
+
+dinkly was built from the ground up to be simple, flexible, and easy to understand. You won't find any bloat here. What you will find is a spry little framework that gives you everything you need and nothing you don't.
 
 Features
 --------
@@ -11,15 +15,15 @@ Features
 - YAML configuration and customization
 - Full Composer support
 - Restful API
-- Bare-bones ORM
+- Bare-bones and flexible ORM
 - Data fixtures
 - Out-of-the-box user authentication
 - Ready-to-go admin interface featuring Datatables
 - Twitter Bootstrap
 
 
-Setup
------
+Basic Setup
+-----------
 
 1. Install dependencies with composer:
 
@@ -62,18 +66,10 @@ Generate a new Dinkly module for a given application.
 	php tools/gen_module.php -a=<app name> -m=<module name>
 
 
-Notes
------
-
-Dinky stores configuration information in session. If you find yourself connnected to the wrong database, or in an otherwise scrambled situation, clear the session. There's also a handy trick for just wiping the Dinkly session:
-
-	`http://localhost/?nocache=1`
-
-
 License
 -------
 
-Dinkly is open-sourced software licensed under the MIT License.
+dinkly is open-sourced software licensed under the MIT License.
 
 
 Contact
