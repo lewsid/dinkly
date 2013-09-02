@@ -3,7 +3,7 @@ Dinkly v1.16
 
 The MVC for MVP
 
-What makes dinkly special?
+What makes Dinkly special?
 --------------------------
 
 Dinkly was built from the ground up to be simple, flexible, and easy to understand. You won't find any bloat here. What you will find is a kickass little framework that gives you everything you need and nothing you don't.
