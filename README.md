@@ -1,4 +1,4 @@
-dinkly v1.16
+Dinkly v1.16
 ============
 
 The MVC for MVP
@@ -6,7 +6,7 @@ The MVC for MVP
 What makes dinkly special?
 --------------------------
 
-dinkly was built from the ground up to be simple, flexible, and easy to understand. You won't find any bloat here. What you will find is a kickass little framework that gives you everything you need and nothing you don't.
+Dinkly was built from the ground up to be simple, flexible, and easy to understand. You won't find any bloat here. What you will find is a kickass little framework that gives you everything you need and nothing you don't.
 
 Features
 --------
@@ -69,7 +69,7 @@ Generate a new Dinkly module for a given application.
 License
 -------
 
-dinkly is open-sourced software licensed under the MIT License.
+Dinkly is open-sourced software licensed under the MIT License.
 
 
 Contact
