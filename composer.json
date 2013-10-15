@@ -1,5 +1,5 @@
 {
     "require": {
-        "symfony/yaml": "2.3.0-BETA1"
+        "symfony/yaml": "2.4.*@dev"
     }
 }
