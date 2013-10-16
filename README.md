@@ -1,4 +1,4 @@
-Dinkly v1.16
+Dinkly v1.17
 ============
 
 The MVC for MVP
