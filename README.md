@@ -31,11 +31,11 @@ Basic Setup
 
 2. Update models, create basic admin table:
 
-    `php tools/gen_models.php -s=dinkly -i`
+    `php tools/gen_models.php -s=admin -i`
 
 3. Create a basic admin user (which can be changed in config/fixtures/dinkly/AdminUser.yml):
 
-    `php tools/load_fixtures.php -s=dinkly`
+    `php tools/load_fixtures.php -s=admin`
 
     *Unless changed, the default credentials that shipa with Dinkly are bfett/password*
 

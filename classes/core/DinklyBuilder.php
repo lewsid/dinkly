@@ -472,6 +472,7 @@ class DinklyBuilder extends Dinkly
 		$sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (";
 
 		$has_id = false; $pos = 0;
+
 		foreach($model_yaml['registry'] as $key => $column)
 		{
 			$pos++;
@@ -503,8 +504,12 @@ class DinklyBuilder extends Dinkly
 					{
 						$sql .= ' ('.$column[$col_name]['length'].')';
 					}
+					else if($sanitized_col_type == 'varchar' && !isset($column[$col_name]['length']))
+					{
+						throw new Exception("\n" . $table_name . ' - ' . $sanitized_col_name . ' - length required.');
+					}
 					
-					if(!$column[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }
 
 					break;
 	  		}
@@ -565,8 +570,6 @@ class DinklyBuilder extends Dinkly
 
 		foreach($schema_names as $schema)
 		{
-			$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
-
 			$model_names = self::getAllModels($schema);
 
 			foreach($model_names as $model)
