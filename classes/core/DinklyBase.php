@@ -173,7 +173,6 @@ class DinklyBase
 		//If the controller doesn't exist, point us to the default module
 		if(!file_exists($controller_file))
 		{
-			header("HTTP/1.0 404 Not Found");
 			$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
 			$module_name = self::getConfigValue('default_module', $app_name);
 			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
