@@ -161,21 +161,33 @@ class DinklyBase
 			header("Location: " . $path);
 		}
 
+		//Get module controller
+		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
+		$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+
 		//Save these on the object so they can be retrieved as needed in controllers or views
 		$this->view = $view_name;
 		$this->module = $module_name;
 		$this->parameters = $parameters;
 
-		//Get module controller
-		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
-		$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . ".php";
-
-		//If the controller doesn't exist, point us to the default module
+		//If the controller doesn't exist, load 404 error page if one is available, otherwise load default module
 		if(!file_exists($controller_file))
 		{
-			$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
-			$module_name = self::getConfigValue('default_module', $app_name);
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
+			$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/" . $app_name . "/modules/error/ErrorController.php";
+			
+			if(file_exists($error_controller))
+			{
+				$camel_module_name = "ErrorController";
+				$module_name = 'error';
+				$controller_file = $error_controller;
+				$view_name = '404';
+			}
+			else
+			{
+				$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
+				$module_name = self::getConfigValue('default_module', $app_name);
+				$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
+			}
 		}
 
 		//Instantiate controller object
@@ -191,11 +203,11 @@ class DinklyBase
 		$view_controller_name = self::convertToCamelCase($view_name, true);
 		$view_function = "load" . $view_controller_name;
 
-		if (method_exists($controller, $view_function))
+		if(method_exists($controller, $view_function))
 		{
-			if ($controller->$view_function($parameters))
+			if($controller->$view_function($parameters))
 			{
-				if (!in_array($module_name, Dinkly::getValidModules($app_name)))
+				if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 				{
 					return false;
 				}
