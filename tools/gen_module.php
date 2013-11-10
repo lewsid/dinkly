@@ -11,4 +11,9 @@ else if(!isset($options['m']))
 {
 	echo "\nPlease use the -m flag to indicate the desired module name to use.\nExample: php gen_module.php -a=admin -m=test_module\n\n";
 }
-else { DinklyBuilder::buildModule($options['a'], $options['m']); }
+else
+{
+	DinklyBuilder::buildModule($options['a'], $options['m']);
+
+	echo "\nModule created! You'll want to clear the session to access it in your browser using /?nocache=1\n\n";
+}
