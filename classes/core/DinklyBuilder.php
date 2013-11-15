@@ -215,7 +215,7 @@ class DinklyBuilder extends Dinkly
 			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), $verbose_output);
 		}
 	}
-	
+
 	public static function buildModule($app_name, $module_name)
 	{
 		$app_dir = $_SERVER['APPLICATION_ROOT'] . "apps/" . $app_name;
@@ -230,7 +230,7 @@ class DinklyBuilder extends Dinkly
 			if(mkdir($module_folder))
 			{
 				mkdir($module_folder . "/views");
-				
+
 				$fp = fopen($module_folder . "/views/default.php", 'w+');
 				fclose($fp);
 
@@ -246,7 +246,7 @@ class DinklyBuilder extends Dinkly
 				echo "\nError: Unable to create module directory.\n\n";
 			}
 		}
-		else 
+		else
 		{
 			echo "\nError: That module already exists.\n\n";
 			return false;
@@ -282,8 +282,8 @@ class DinklyBuilder extends Dinkly
 
 	public static function parseModelYaml($schema, $model_name, $verbose_output = true)
 	{
-		$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/" 
-		  . $schema . "/" . $model_name . ".yml";  
+		$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/"
+		  . $schema . "/" . $model_name . ".yml";
 
 		if($verbose_output)
 		{
@@ -299,7 +299,7 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 
-		$yaml = Yaml::parse($file_path); 
+		$yaml = Yaml::parse($file_path);
 
 		$table_name = $yaml['table_name'];
 
@@ -331,7 +331,6 @@ class DinklyBuilder extends Dinkly
 		if(isset($raw_model['registry']))
 		{
 			$base_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . ".php";
-			$base_collection_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . "Collection.php";
 
 	  		echo "Attempting to create/write base '" . $model_name . "' models...\n";
 
@@ -371,26 +370,6 @@ class DinklyBuilder extends Dinkly
 			}
 
 			//create base collection class
-			if($fp = fopen($base_collection_file, 'w+'))
-			{
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, '# This is an auto-generated file. Please do not alter it. Instead, make changes to the model file that extends it.');
-				fwrite($fp, PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class Base' . $model_name . 'Collection extends DinklyDataCollection' . PHP_EOL . '{' . PHP_EOL);
-				fwrite($fp, "\t" . 'public static function getAll()' . PHP_EOL . "\t" . '{' . PHP_EOL);
-				fwrite($fp, "\t\t" . '$peer_object = new ' . $model_name . '();' . PHP_EOL);
-				fwrite($fp, "\t\t" . 'return self::getCollection($peer_object, $peer_object->getSelectQuery());' . PHP_EOL);
-				fwrite($fp, "\t" . '}' . PHP_EOL . '}');
-
-				fclose($fp);
-
-				echo "Successfully created base collection class!\n";
-			}
-			else
-			{
-				echo "failed! Aborting\n";
-				return false;
-			}
 
 			//second, create the extensible model files, if one doesn't already exist (we never overwrite this one)
 			$custom_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . ".php";
@@ -399,7 +378,7 @@ class DinklyBuilder extends Dinkly
 			if(!file_exists($custom_file))
 			{
 				echo "Creating custom models...";
-		    
+
 				$fp = fopen($custom_file, 'w+');
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class ' . $model_name . ' extends Base' . $model_name . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
@@ -414,7 +393,7 @@ class DinklyBuilder extends Dinkly
 			{
 				$fp = fopen($custom_collection_file, 'w+');
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class ' . $model_name . 'Collection extends Base' . $model_name . 'Collection' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
+				fwrite($fp, 'class ' . $model_name . 'Collection extends DinklyDataCollection' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);
 			}
@@ -427,7 +406,7 @@ class DinklyBuilder extends Dinkly
 	public static function fetchDB($creds = null)
 	{
 		if(!$creds) $creds = DinklyDataConfig::getDBCreds();
-		
+
 		$db = new PDO(
 				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
 				$creds['DB_USER'],
@@ -499,7 +478,7 @@ class DinklyBuilder extends Dinkly
 					$sanitized_col_name = self::sanitize($db, $col_name);
 					$sanitized_col_type = self::sanitize($db, $column[$col_name]['type']);
 					$sql .= $sanitized_col_name . ' ' . $sanitized_col_type;
-					
+
 					if(isset($column[$col_name]['length']))
 					{
 						$sql .= ' ('.$column[$col_name]['length'].')';
@@ -508,7 +487,7 @@ class DinklyBuilder extends Dinkly
 					{
 						throw new Exception("\n" . $table_name . ' - ' . $sanitized_col_name . ' - length required.');
 					}
-					
+
 					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }
 
 					break;
@@ -529,9 +508,9 @@ class DinklyBuilder extends Dinkly
 
 		//Create the table
 		$db->exec($sql);
-		
+
 		if($verbose_output) echo "...success!\n";
-		
+
 		return true;
 	}
 
@@ -581,11 +560,11 @@ class DinklyBuilder extends Dinkly
 			{
 				self::addMissingModelsToDb($schema, true);
 				self::addMissingModelFieldsToDb($schema, true);
-			}  
+			}
 		}
 	}
 
-	/* 
+	/*
 		$truncate will truncate the table if set to true, or append records if false
 	*/
 	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true, $override_database_name = null)
@@ -593,7 +572,7 @@ class DinklyBuilder extends Dinkly
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
 		if($override_database_name)
-		{ 
+		{
 			$creds['DB_NAME'] = $override_database_name;
 			DinklyDataConfig::setActiveConnection($creds);
 		}
@@ -602,7 +581,7 @@ class DinklyBuilder extends Dinkly
 		$db = self::fetchDB($creds);
 
     	$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
-		
+
 		if($verbose_output)
 		{
 			echo "Attempting to parse '" . $model_name . "' fixture yaml...";
@@ -623,9 +602,9 @@ class DinklyBuilder extends Dinkly
 			if($truncate)
 			{
 				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
-				
+
 				$db->exec("truncate table " . $fixture['table_name']);
-				
+
 				if($verbose_output) { echo "success!\n"; }
 			}
 
@@ -635,7 +614,7 @@ class DinklyBuilder extends Dinkly
 			{
 				echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
 			}
-			
+
 			foreach($fixture['records'] as $pos => $record)
 			{
 				if($verbose_output) { echo "..."; }
@@ -662,7 +641,7 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set);
-    
+
 		$model_names = array();
 		foreach($all_files as $file)
 		{
