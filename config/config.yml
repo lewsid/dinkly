@@ -2,6 +2,7 @@ admin:
     default_app: true
     app_name: Dinkly Admin
     app_description: Just a humble little PHP MVC Framework.
+    copyright: Christopher Lewis
     base_href: /
     default_module: home 
 api:
