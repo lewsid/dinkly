@@ -184,9 +184,23 @@ class DinklyBase
 			}
 			else
 			{
-				$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
-				$module_name = self::getConfigValue('default_module', $app_name);
-				$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
+				//Check for base dinkly 404
+				$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/error/ErrorController.php";
+				
+				if(file_exists($error_controller))
+				{
+					$app_name = 'error';
+					$camel_module_name = "ErrorController";
+					$module_name = 'error';
+					$controller_file = $error_controller;
+					$view_name = '404';
+				}
+				else
+				{
+					$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
+					$module_name = self::getConfigValue('default_module', $app_name);
+					$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
+				}
 			}
 		}
 
