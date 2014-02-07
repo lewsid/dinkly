@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 /****************************************************************************************************************
 
 	CHILD CLASS EXAMPLE:
-		
+
 		class User extends DinklyDataModel
 		{
 			public $registry = array(
@@ -14,15 +14,15 @@
 				'first_name'      => 'FirstName',
 				'last_name'       => 'LastName',
 			);
-			
+
 			public $dbTable = 'users';
 		}
-		
+
 	CHILD CLASS USAGE EXAMPLE:
-		
+
 		$user = new User();
 		$user->init(1);
-		echo $user->getCreated() 
+		echo $user->getCreated()
 
 ***************************************************************************************************************/
 
@@ -33,14 +33,14 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	protected $isNew;
 	protected $regDirty = array();
 	protected $registry = array();
-	
+
 	public function __construct($db = null)
 	{
 		if(!$db) $this->db = self::fetchDB();
 		else $this->db = $db;
 
 		$this->isNew = true;
-		
+
 		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
 	}
 
@@ -48,39 +48,39 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	{
 		$Select = $this->getSelectQuery() . " where id=" . $this->db->quote($id);
 		$result = $this->db->query($Select)->fetchAll();
-				
+
 		if($result != array())
 		{
 			$this->hydrate($result, true);
 		}
 	}
-	
+
 	/* Only manipulates fields that have been modified in some way */
 	public function save($force_insert = false)
 	{
 		if(!$this->isNew && !$force_insert) { return $this->update(); }
 		else { return $this->insert(); }
 	}
-	
+
 	public function getSelectQuery()
-	{ 
+	{
 		return "select " . implode(", ", $this->getColumns()) . " from " . $this->getDBTable();
 	}
-	
+
 	/* This is meant to be overloaded by child objects to attach any related objects following the hydrate. */
 	public function attach() { }
-	
+
 	public function hydrate($full_result, $hasDB = false)
-	{  
+	{
 		$reg = $this->registry;
-		
+
 		if(isset($full_result[0]))
 		{
-			if(is_array($full_result[0])) { $contents = $full_result[0]; }  
+			if(is_array($full_result[0])) { $contents = $full_result[0]; }
 			else { $contents = $full_result; }
 		}
 		else { $contents = $full_result; }
-		
+
 		foreach($contents as $key => $record)
 		{
 			if(isset($reg[$key]))
@@ -90,9 +90,9 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 
 		$this->attach();
-		
+
 		if(!$hasDB) { $this->db = NULL; }
-		
+
 		$this->isNew = false;
 	}
 
@@ -103,13 +103,13 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
 		return $this->db->exec($query);
 	}
-	
+
 	protected function update()
 	{
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "update " . $this->getDBTable() . " set ";
-		
+
 		$i = 1;
 		foreach($this->getColumns() as $col)
 		{
@@ -128,18 +128,18 @@ abstract class DinklyDataModel extends DinklyDataConnector
 				$i++;
 			}
 		}
-		
+
 		$query .= " where id='" . $this->Id . "'";
 		return $this->db->exec($query);
 	}
-	
+
 	protected function insert()
 	{
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "insert into " . $this->getDBTable() . " (";
 		$values = "values (";
-		
+
 		$i = 1;
 		foreach($this->getColumns() as $col)
 		{
@@ -165,21 +165,21 @@ abstract class DinklyDataModel extends DinklyDataConnector
 				$i++;
 			}
 		}
-		
+
 		$query .= $values;
 		$this->db->exec($query);
 
 		$this->Id = $this->db->lastInsertId();
 		$this->isNew = false;
-		
+
 		return $this->Id;
 	}
-	
+
 	protected function getColumns()
 	{
 		$reg = $this->getRegistry();
 		$columns = array();
-		
+
 		$i = 0;
 		foreach($reg as $col)
 		{
@@ -189,9 +189,9 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		return $columns;
 	}
-	
+
 	protected function getRegistry() { return $this->registry; }
-	
+
 	protected function getDBTable() { return $this->dbTable; }
 
 	//My current favorite function name, this forces the entire model to refresh
@@ -202,28 +202,28 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$this->regDirty[$key] = true;
 		}
 	}
-	
+
 	public function getDB() { return $this->db; }
-	
+
 	public function setDB($value) { $this->db = $value; }
-	
+
 	public function isNew() { return $this->isNew; }
-	
+
 	/* Borrowed (then reformatted) from: http://blog.josephwilk.net/snippets/dynamic-gettersetters-for-php.html */
 	function __call($method, $arguments)
-	{  
+	{
 		//Is this a get or a set
 		$prefix = strtolower(substr($method, 0, 3));
-	
+
 		//What is the get/set class attribute
 		$property = substr($method, 3);
-		
+
 		//Did not match a get/set call
 		if(empty($prefix) || empty($property))
 		{
 			throw New Exception("Calling a non get/set method that does not exist: $method");
 		}
-	
+
 		//Check if the get/set paramter exists within this class as an attribute
 		$match=false;
 		foreach($this as $class_var=>$class_var_value)
@@ -234,26 +234,46 @@ abstract class DinklyDataModel extends DinklyDataConnector
 				$match=true;
 			}
 		}
-	
+
 		//Get attribute
 		if ($match && $prefix == "get" && (isset($this->$property) || is_null($this->$property)))
 		{
 			return $this->$property;
 		}
-	
+
 		//Set
 		if ($match && $prefix == "set")
 		{
 			$this->$property = $arguments[0];
-			
+
 			//Set variable dirty so we know to add it to any queries
 			foreach($this->getRegistry() as $key => $element)
 			{
 				if($element == $property) { $this->regDirty[$key] = true; }
 			}
-		
+
 		}
 		elseif (!$match && $prefix == "set") { throw new Exception("Setting a variable that does not exist: var:$property value: $arguments[0]"); }
 		else { throw new Exception("Calling a get/set method that does not exist: $property"); }
+	}
+
+	public function toArray($scrub_values = array())
+	{
+		$array = array();
+		if(!is_array($scrub_values)){
+			if($scrub_values){
+				$scrub_values = array($scrub_values);
+			}else{
+				$scrub_values = array();
+			}
+		}
+		foreach($this->getRegistry() as $key => $element)
+		{
+			if(!in_array($key, $scrub_values))
+			{
+				$array[$key] = $this->$element;
+			}
+		}
+		return $array;
 	}
 }
