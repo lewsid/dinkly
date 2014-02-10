@@ -256,4 +256,27 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		elseif (!$match && $prefix == "set") { throw new Exception("Setting a variable that does not exist: var:$property value: $arguments[0]"); }
 		else { throw new Exception("Calling a get/set method that does not exist: $property"); }
 	}
+
+	/* Allows you to init the object on fields other than id. Example: $user->find(array('username' => $username)); */
+	public function find($fields = array())
+	{
+		if($fields != array())
+		{
+			$Where = '';
+			foreach($fields as $field => $value)
+			{
+				$Where .= ' AND '.$field.' = '.$this->db->quote($value); 
+			}
+			$Where = ' where ' . trim($Where, ' AND'); 
+			$Select = $this->getSelectQuery() . $Where;
+			$result = $this->db->query($Select)->fetchAll();
+					
+			if($result != array())
+			{
+				$this->hydrate($result, true);
+			}
+			else return false;
+		}
+		else return false;
+	}
 }
