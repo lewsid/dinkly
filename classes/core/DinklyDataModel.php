@@ -54,6 +54,50 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$this->hydrate($result, true);
 		}
 	}
+
+	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */
+	public function initWith($properties = array())
+	{
+		if($properties != array())
+		{
+			$cols = array();
+			foreach($properties as $property => $value)
+			{
+				$col_name = Dinkly::convertFromCamelCase($property);
+				if(array_key_exists($col_name, $this->registry)) $cols[$col_name] = $value;
+			}
+
+			$where = '';
+			foreach($cols as $col => $value)
+			{
+				$where .= ' AND ' . $col . ' = ' . $this->db->quote($value); 
+			}
+			$where = ' where ' . trim($where, ' AND');
+
+			$query = $this->getSelectQuery() . $where;
+			$result = $this->db->query($query)->fetchAll();
+					
+			if($result != array())
+			{
+				$this->hydrate($result, true);
+			}
+			else return false;
+		}
+		else return false;
+	}
+
+	/* Return object properties as array */
+	public function toArray($scrub_values = array())
+ 	{
+ 		foreach($this->getRegistry() as $key => $element)
+ 		{
+ 			if(!in_array($key, $scrub_values))
+ 			{
+ 				$array[$key] = $this->$element;
+ 			}
+ 		}
+ 		return $array;
+ 	}
 	
 	/* Only manipulates fields that have been modified in some way */
 	public function save($force_insert = false)
@@ -224,25 +268,25 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			throw New Exception("Calling a non get/set method that does not exist: $method");
 		}
 	
-		//Check if the get/set paramter exists within this class as an attribute
-		$match=false;
-		foreach($this as $class_var=>$class_var_value)
+		//Check if the get/set parameter exists within this class as an attribute
+		$match = false;
+		foreach($this as $class_var => $class_var_value)
 		{
 			if(strtolower($class_var) == strtolower($property))
 			{
-				$property=$class_var;
-				$match=true;
+				$property = $class_var;
+				$match = true;
 			}
 		}
 	
 		//Get attribute
-		if ($match && $prefix == "get" && (isset($this->$property) || is_null($this->$property)))
+		if($match && $prefix == "get" && (isset($this->$property) || is_null($this->$property)))
 		{
 			return $this->$property;
 		}
 	
 		//Set
-		if ($match && $prefix == "set")
+		if($match && $prefix == "set")
 		{
 			$this->$property = $arguments[0];
 			
@@ -255,28 +299,5 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		elseif (!$match && $prefix == "set") { throw new Exception("Setting a variable that does not exist: var:$property value: $arguments[0]"); }
 		else { throw new Exception("Calling a get/set method that does not exist: $property"); }
-	}
-
-	/* Allows you to init the object on fields other than id. Example: $user->find(array('username' => $username)); */
-	public function find($fields = array())
-	{
-		if($fields != array())
-		{
-			$Where = '';
-			foreach($fields as $field => $value)
-			{
-				$Where .= ' AND '.$field.' = '.$this->db->quote($value); 
-			}
-			$Where = ' where ' . trim($Where, ' AND'); 
-			$Select = $this->getSelectQuery() . $Where;
-			$result = $this->db->query($Select)->fetchAll();
-					
-			if($result != array())
-			{
-				$this->hydrate($result, true);
-			}
-			else return false;
-		}
-		else return false;
 	}
 }
