@@ -74,18 +74,25 @@ class DinklyBase
 			//Figure out the current app, assume the default if we don't get one in the URL
 			foreach($config as $app => $values)
 			{
-				$base_href = str_replace('/', '', $values['base_href']);
-				
-				if(strlen($base_href) == 0) { $base_href = '/'; }
-				
-				if($uri_parts[1] == $base_href)
+				if($app != 'global')
 				{
-					$context['current_app_name'] = $app;
+					if(!isset($values['base_href']))
+					{
+						throw new Exception('base_href key/value pair missing from config.yml');
+					}
+					$base_href = str_replace('/', '', $values['base_href']);
+					
+					if(strlen($base_href) == 0) { $base_href = '/'; }
+					
+					if($uri_parts[1] == $base_href)
+					{
+						$context['current_app_name'] = $app;
 
-					//kick the app off the uri and reindex
-					array_shift($uri_parts); 
+						//kick the app off the uri and reindex
+						array_shift($uri_parts); 
 
-					break;
+						break;
+					}
 				}
 			}
 
@@ -210,8 +217,7 @@ class DinklyBase
 
 		//Migrate current dinkly variables over to our new controller
 		$vars = get_object_vars($this);
-		foreach ($vars as $name => $value)
-			$controller->$name = $value;
+		foreach ($vars as $name => $value) { $controller->$name = $value; }
 
 		//Get this view's function
 		$view_controller_name = self::convertToCamelCase($view_name, true);
@@ -232,10 +238,11 @@ class DinklyBase
 					$$name = $value;
 
 				//Get module view
-				if (file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+				if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
 				{
-					if ($draw_layout) {
-						if (file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+					if($draw_layout)
+					{
+						if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
 						{
 							ob_start();
 							include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
@@ -243,10 +250,20 @@ class DinklyBase
 							ob_end_clean();
 							$this->setModuleHeader($header);
 						}
+						
+						//Set the powered-by header if the version number is in the config
+						if($version = self::getConfigValue('dinkly_version', 'global'))
+						{
+							header('X-Powered-By: Dinkly/' . $version);
+						}
+
 						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
 					}
+
 					require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-					if ($draw_layout) {
+					
+					if($draw_layout)
+					{
 						require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php');
 					}
 				}
@@ -318,11 +335,19 @@ class DinklyBase
 	//Need a specific configuration value? This is for you.
 	public static function getConfigValue($key, $app_name = null)
 	{
-		if(!$app_name)
-			$app_name = self::getDefaultApp(true);
+		if(!$app_name) { $app_name = self::getDefaultApp(true); }
 
 		$config = self::getConfig();
-		return $config[$app_name][$key];
+
+		if(isset($config[$app_name]))
+		{
+			if(isset($config[$app_name][$key]))
+			{
+				return $config[$app_name][$key];
+			}
+		}
+
+		return false;
 	}
 
 	//A little helper function to convert camel case class names to their underscore equivalents.
@@ -378,14 +403,14 @@ class DinklyBase
 		{
 			if(isset($values['default_app']))
 			{
-					if($values['default_app'] == 'true')
+				if($values['default_app'] == 'true')
+				{
+					if($return_name)
 					{
-						if($return_name)
-						{
-							return $app;
-						}
-						return $config[$app];
+						return $app;
 					}
+					return $config[$app];
+				}
 			}
 		}
 	}

@@ -1,8 +1,10 @@
+global:
+    dinkly_version: 1.22
 admin:
     default_app: true
     app_name: Dinkly Admin
-    app_description: Just a humble little PHP MVC Framework.
-    copyright: Christopher Lewis
+    app_description: Just a humble little PHP MVC Framework
+    copyright: Dinkly
     base_href: /
     default_module: home 
 api:

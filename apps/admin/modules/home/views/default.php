@@ -10,6 +10,7 @@
     </h1>
     <p>
       <?php echo Dinkly::getConfigValue('app_description'); ?>
+      (v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?>)
     </p>
   </div>
 </div>
