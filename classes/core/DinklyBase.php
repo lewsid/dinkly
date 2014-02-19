@@ -254,7 +254,7 @@ class DinklyBase
 						//Set the powered-by header if the version number is in the config
 						if($version = self::getConfigValue('dinkly_version', 'global'))
 						{
-							header('X-Powered-By: Dinkly/' . $version);
+							header('X-Powered-By: DINKLY/' . $version);
 						}
 
 						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
