@@ -87,14 +87,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	}
 
 	/* Return object properties as array */
-	public function toArray($scrub_values = array())
+	public function toArray()
  	{
+ 		$array = array();
  		foreach($this->getRegistry() as $key => $element)
  		{
- 			if(!in_array($key, $scrub_values))
- 			{
- 				$array[$key] = $this->$element;
- 			}
+ 			$array[$key] = $this->$element;
  		}
  		return $array;
  	}
