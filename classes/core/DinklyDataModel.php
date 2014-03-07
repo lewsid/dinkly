@@ -46,6 +46,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 
 	public function init($id)
 	{
+		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
+
 		$Select = $this->getSelectQuery() . " where id=" . $this->db->quote($id);
 		$result = $this->db->query($Select)->fetchAll();
 				
@@ -58,6 +60,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */
 	public function initWith($properties = array())
 	{
+		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
+
 		if($properties != array())
 		{
 			$cols = array();
@@ -136,10 +140,14 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if(!$hasDB) { $this->db = NULL; }
 		
 		$this->isNew = false;
+
+		return true;
 	}
 
 	public function delete()
 	{
+		if(!$this->db) { throw New Exception("Unable to perform delete without a database object"); }
+
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
@@ -148,6 +156,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	
 	protected function update()
 	{
+		if(!$this->db) { throw New Exception("Unable to perform update without a database object"); }
+
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "update " . $this->getDBTable() . " set ";
@@ -172,11 +182,15 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		
 		$query .= " where id='" . $this->Id . "'";
-		return $this->db->exec($query);
+
+		if($is_valid) { return $this->db->exec($query); }
+		else { return true; }
 	}
 	
 	protected function insert()
 	{
+		if(!$this->db) { throw New Exception("Unable to perform insert without a database object"); }
+
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "insert into " . $this->getDBTable() . " (";
@@ -293,6 +307,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			{
 				if($element == $property) { $this->regDirty[$key] = true; }
 			}
+			return true;
 		
 		}
 		elseif (!$match && $prefix == "set") { throw new Exception("Setting a variable that does not exist: var:$property value: $arguments[0]"); }
