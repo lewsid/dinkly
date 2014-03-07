@@ -1,6 +1,6 @@
 <?php
 
-class ToArray extends PHPUnit_Framework_TestCase
+class toArray extends PHPUnit_Framework_TestCase
 {
 	protected $user;
 
