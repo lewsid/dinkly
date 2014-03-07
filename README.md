@@ -76,7 +76,7 @@ Generate a new Dinkly module for a given application:
 
 Execute unit tests (example):
 
-    `php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel/toArray.php`
+    `php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel.php`
 
 
 License
