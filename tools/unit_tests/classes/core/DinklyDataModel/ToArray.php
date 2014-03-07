@@ -1,7 +1,5 @@
 <?php
 
-require_once('../../../../../config/bootstrap.php');
-
 class ToArray extends PHPUnit_Framework_TestCase
 {
 	protected $user;
