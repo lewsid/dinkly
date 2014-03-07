@@ -1,6 +1,6 @@
 <?php
 
-class toArray extends PHPUnit_Framework_TestCase
+class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 {
 	protected $user;
 
