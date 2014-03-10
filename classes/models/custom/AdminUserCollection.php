@@ -1,6 +1,6 @@
 <?php
 
-class AdminUserCollection extends BaseAdminUserCollection
+class AdminUserCollection extends DinklyDataCollection
 {
 
 }
