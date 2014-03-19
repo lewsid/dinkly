@@ -68,5 +68,126 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	{
 		unset($this->user);
 	}
+	// public function testInit($id=1)
+	// {
+	// 	//Test when there is an id
+	// 	$this->assertTrue($this->user->init($id));
+	// }
+	public function testInitWith()
+	{
+
+	}
+	public function testGetSelectQuery()
+	{
+	//
+				$testRegistry= array(
+													'id' ,
+													'created_at' ,
+													'updated_at' ,
+													'username' ,
+													'password' ,
+													'first_name' ,
+													'last_name' ,
+													'title' ,
+													'last_login_at' ,
+													'login_count' 
+												);
+		$testSelect="select " . implode(", ", $testRegistry) . " from " . "admin_user";
+													
+		$this->assertEquals($testSelect, $this->user->getSelectQuery());
+	}
+		public function testDelete()
+	{
+
+	}
+		public function testUpdate()
+	{
+
+	}
+	// public function testInsert()
+	// {
+	// 	//test insertion of user that already exists
+	// 	// $this->assertEquals(1,$this->user->insert());
+	// }
+
+	//works fine -Scott
+	// public function testGetColumns()
+	// {
+	// 	$testRegistry= array(
+	// 												'id' ,
+	// 												'created_at' ,
+	// 												'updated_at' ,
+	// 												'username' ,
+	// 												'password' ,
+	// 												'first_name' ,
+	// 												'last_name' ,
+	// 												'title' ,
+	// 												'last_login_at' ,
+	// 												'login_count' 
+	// 											);
+	// 	$this->assertEmpty(array_diff_assoc($testRegistry,$this->user->getColumns()));
+
+
+	// }
+
+	public function testGetRegistry()
+	{
+	$testRegistry= array(
+		'id' => 'Id',
+		'created_at' => 'CreatedAt',
+		'updated_at' => 'UpdatedAt',
+		'username' => 'Username',
+		'password' => 'Password',
+		'first_name' => 'FirstName',
+		'last_name' => 'LastName',
+		'title' => 'Title',
+		'last_login_at' => 'LastLoginAt',
+		'login_count' => 'LoginCount',
+	);
+		
+													
+		$this->assertEquals($testRegistry, $this->user->getRegistry());
+	}
+
+
+
+	//works fine - protected function -scott
+	// public function testGetDBTable()
+	// {
+	// 	$dbTable = 'admin_user';
+	// 	$this->assertEquals($dbTable,$this->user->getDBTable());
+	// }
+	public function testForceDirty()
+	{
+
+	}
+	public function testGetDB()
+	{
+		$dsn = 'mysql:dbname=admin;host=localhost;port=3306';
+		$username = 'root';
+		$password = 'root';
+		$db = new PDO($dsn, $username, $password);
+		$this->assertEquals($db, $this->user->getDB());
+	}
+	public function testSetDB()
+	{
+		//old PDO object
+		$dsn = 'mysql:dbname=admin;host=localhost;port=3306';
+		$username = 'root';
+		$password = 'root';
+		$db_old = new PDO($dsn, $username, $password);
+		//new PDO object
+		$dsn = 'mysql:dbname=quiz;host=localhost;port=3306';
+		$username = 'root';
+		$password = 'root';
+		$db_new = new PDO($dsn, $username, $password);
+
+		$this->user->setDB($db_new);
+
+
+		$this->assertEquals($db_new, $this->user->getDB());
+
+
+	}
 }
 ?>

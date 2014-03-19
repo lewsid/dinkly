@@ -261,7 +261,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	
 	public function getDB() { return $this->db; }
 	
-	public function setDB($value) { $this->db = $value; }
+	public function setDB($value) { $this->db = $value;}
 	
 	public function isNew() { return $this->isNew; }
 	
