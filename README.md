@@ -56,27 +56,27 @@ Command Line Tools
 
 Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). Use the '-s' option to use the appropriate schema. To insert/update model sql, use the '-i' option:
 
-    `php tools/gen_models.php -s=<schema name> [-i]`
+    php tools/gen_models.php -s=<schema name> [-i]
 
 Generate a single Dinkly datamodel file. Use the '-s' option to use the appropriate schema. To insert model sql, use the '-i' option:
 
-    `php tools/gen_model.php -s=<schema name> -m=<model name> [-i]`
+    php tools/gen_model.php -s=<schema name> -m=<model name> [-i]
 
 Load fixtures (preloads tables with data stored in yml files under config/fixtures):
 
-    `php tools/load_fixtures.php -s=<schema name>`
+    php tools/load_fixtures.php -s=<schema name>
 
 Generate a new Dinkly application:
 
-    `php tools/gen_app.php -a=<app name>`
+    php tools/gen_app.php -a=<app name>
 
 Generate a new Dinkly module for a given application:
 
-    `php tools/gen_module.php -a=<app name> -m=<module name>`
+    php tools/gen_module.php -a=<app name> -m=<module name>
 
 Execute unit tests (example):
 
-    `php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel.php`
+    php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel.php
 
 
 License
