@@ -1,6 +1,6 @@
 <?php
 
-class HomeController extends Dinkly 
+class HomeController extends AdminController 
 {
 	public function loadDefault()
 	{
