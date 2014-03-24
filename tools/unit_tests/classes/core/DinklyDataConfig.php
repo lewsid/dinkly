@@ -31,3 +31,4 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 
 }
 ?>
+<!-- php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataConfig.php -->
