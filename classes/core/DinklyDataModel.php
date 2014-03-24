@@ -82,7 +82,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$where = '';
 			foreach($cols as $col => $value)
 			{
-				$where .= ' AND ' . $col . ' = ' . $this->db->quote($value); 
+				$where .= ' AND `' . $col . '` = ' . $this->db->quote($value); 
 			}
 			$where = ' where ' . trim($where, ' AND');
 
@@ -247,7 +247,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$i = 0;
 		foreach($reg as $col)
 		{
-			$columns[$i] = key($reg);
+			$columns[$i] = '`' . key($reg) . '`';
 			next($reg);
 			$i++;
 		}
