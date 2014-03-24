@@ -212,7 +212,7 @@ class DinklyBuilder extends Dinkly
 			{
 				echo "Creating table " . $table . "...\n";
 			}
-			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), $verbose_output);
+			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, $verbose_output);
 		}
 	}
 
@@ -319,6 +319,8 @@ class DinklyBuilder extends Dinkly
 			}
 			return $yaml;
 		}
+
+		return false;
 	}
 
 	public static function buildModel($schema, $model_name)
@@ -422,9 +424,19 @@ class DinklyBuilder extends Dinkly
 		return str_replace("'", "", $variable);
 	}
 
-	public static function buildTable($schema, $model_name, $verbose_output = true, $override_database_name = null)
+	/*
+		$schema: name of the database schema to refer to
+		$model_name: name of the model to build
+		$model_yaml (optional): if passed, will override the automatic yaml parsing on the model based on the model name
+		$verbose_output (optional): how chatty would you like the build to be?
+		$override_database_name (optional): if passed, this will override the name of the database as it appears in config/db.yml
+	*/
+	public static function buildTable($schema, $model_name, $model_yaml = null, $verbose_output = true, $override_database_name = null)
 	{
-		$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
+		if(!$model_yaml)
+		{
+			$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
+		}
 		if(!$model_yaml) { return false; }
 
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
@@ -633,11 +645,14 @@ class DinklyBuilder extends Dinkly
 		}
 	}
 
-	public static function loadAll($set)
+	public static function loadAllFixtures($set, $verbose = true)
 	{
 		if(!is_dir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set))
 		{
-			echo "\nNo matching set of fixtures found for '" . $set . "'\n\n";
+			if($verbose)
+			{
+				echo "\nNo matching set of fixtures found for '" . $set . "'\n\n";
+			}
 			return false;
 		}
 		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set);
@@ -651,7 +666,7 @@ class DinklyBuilder extends Dinkly
 
 		foreach($model_names as $model)
 		{
-			self::loadFixture($set, $model);
+			self::loadFixture($set, $model, $verbose);
 		}
 
 		return true;
