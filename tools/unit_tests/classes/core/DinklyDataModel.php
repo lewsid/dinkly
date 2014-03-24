@@ -8,20 +8,23 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	{
 		date_default_timezone_set("Europe/Paris");
 
-		$this->user = new AdminUser();
+		DinklyBuilder::buildAllModels('unit_test', true);
+		DinklyBuilder::loadAllFixtures('unit_test');
+
+		$this->user = new TestUser();
 		$this->user->init(1);
-		$this->valid_array = array(
-								'id' 			=> $this->user->getId(),
-  								'created_at' 	=> $this->user->getCreatedAt(),
-  								'updated_at'	=> $this->user->getUpdatedAt(),
-  								'username' 		=> $this->user->getUserName(),
-  								'password' 		=> $this->user->getPassword(),
-  								'first_name' 	=> $this->user->getFirstName(),
-  								'last_name' 	=> $this->user->getLastName(),
-  								'title' 		=> $this->user->getTitle(),
-  								'last_login_at' => $this->user->getLastLoginAt(),
-  								'login_count' 	=> $this->user->getLoginCount()
-  							);
+		$this->valid_array = 	array(
+									'id' 			=> $this->user->getId(),
+	  								'created_at' 	=> $this->user->getCreatedAt(),
+	  								'updated_at'	=> $this->user->getUpdatedAt(),
+	  								'username' 		=> $this->user->getUserName(),
+	  								'password' 		=> $this->user->getPassword(),
+	  								'first_name' 	=> $this->user->getFirstName(),
+	  								'last_name' 	=> $this->user->getLastName(),
+	  								'title' 		=> $this->user->getTitle(),
+	  								'last_login_at' => $this->user->getLastLoginAt(),
+	  								'login_count' 	=> $this->user->getLoginCount()
+  								);
 	}
 	
 	public function testToArray()
