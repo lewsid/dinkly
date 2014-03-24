@@ -68,14 +68,19 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	{
 		unset($this->user);
 	}
-	// public function testInit($id=1)
-	// {
-	// 	//Test when there is an id
-	// 	$this->assertTrue($this->user->init($id));
-	// }
+	public function testInit()
+	{
+		//create two users and make sure they both have the same output
+		$this->new_user1= new AdminUser();
+		$this->new_user2= new AdminUser();
+		$this->assertEquals($this->new_user1, $this->new_user2);
+	}
 	public function testInitWith()
 	{
-
+			//test init for user that already exists
+			$this->new_user= new AdminUser();
+			$this->new_user->initWith($this->valid_array);
+			$this->assertEquals($this->new_user, $this->user);
 	}
 	public function testGetSelectQuery()
 	{
@@ -98,6 +103,13 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	}
 		public function testDelete()
 	{
+			//test delete when user doesn't exists
+			$this->new_user= new AdminUser();
+			$this->assertEquals(0,$this->new_user->delete());
+
+			//test delete when object does exist
+			
+
 
 	}
 		public function testUpdate()
@@ -151,8 +163,8 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 
 
 
-	//works fine - protected function -scott
-	// public function testGetDBTable()
+
+	// protected function testGetDBTable()
 	// {
 	// 	$dbTable = 'admin_user';
 	// 	$this->assertEquals($dbTable,$this->user->getDBTable());

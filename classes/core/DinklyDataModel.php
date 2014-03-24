@@ -55,6 +55,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		{
 			$this->hydrate($result, true);
 		}
+		
 	}
 
 	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */
