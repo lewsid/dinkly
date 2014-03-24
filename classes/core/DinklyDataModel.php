@@ -44,6 +44,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
 	}
 
+	//Returns true when matching record is located
 	public function init($id)
 	{
 		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
@@ -54,8 +55,14 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if($result != array())
 		{
 			$this->hydrate($result, true);
+			return true;
 		}
+<<<<<<< HEAD
 		
+=======
+
+		return false;
+>>>>>>> 3df03e885d6d28dfa11b8e41fdfc9219be22bfd2
 	}
 
 	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */

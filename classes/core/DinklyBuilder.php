@@ -157,6 +157,8 @@ class DinklyBuilder extends Dinkly
 				$creds['DB_PASS']
 		);
 
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 		//Sanitize the db name
 		$db_name = self::sanitize($db, $db_name);
 
@@ -415,6 +417,8 @@ class DinklyBuilder extends Dinkly
 				$creds['DB_PASS']
 		);
 
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 		return $db;
 	}
 
@@ -422,6 +426,28 @@ class DinklyBuilder extends Dinkly
 	{
 		$output = $db->quote($variable);
 		return str_replace("'", "", $variable);
+	}
+
+	public static function dropTable($schema, $model_name, $override_database_name = null)
+	{
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
+
+		//Use the proper DB credentials, or apply a passed-in override
+		$creds = DinklyDataConfig::getDBCreds();
+		$db_name = $creds['DB_NAME'];
+
+		//Connect to the target db
+		$creds['DB_NAME'] = $db_name;
+		$db = self::fetchDB($creds);
+
+		//Craft the sql
+		$table_name = self::sanitize($db, Dinkly::convertFromCamelCase($model_name));
+		$sql = "DROP TABLE IF EXISTS " . $table_name;
+
+		//Drop the table
+		$db->exec($sql);
+
+		return true;
 	}
 
 	/*
@@ -449,7 +475,7 @@ class DinklyBuilder extends Dinkly
 		//Create database if it doesn't exist
 		self::createDb($db_name, $creds);
 
-		//Now connect to the new DB
+		//Connect to the target DB
 		$creds['DB_NAME'] = $db_name;
 		$db = self::fetchDB($creds);
 
@@ -489,7 +515,7 @@ class DinklyBuilder extends Dinkly
 				default:
 					$sanitized_col_name = self::sanitize($db, $col_name);
 					$sanitized_col_type = self::sanitize($db, $column[$col_name]['type']);
-					$sql .= $sanitized_col_name . ' ' . $sanitized_col_type;
+					$sql .= '`' . $sanitized_col_name . '` ' . $sanitized_col_type;
 
 					if(isset($column[$col_name]['length']))
 					{
@@ -666,7 +692,7 @@ class DinklyBuilder extends Dinkly
 
 		foreach($model_names as $model)
 		{
-			self::loadFixture($set, $model, $verbose);
+			self::loadFixture($set, $model, true, $verbose);
 		}
 
 		return true;
