@@ -97,20 +97,26 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 													'last_login_at' ,
 													'login_count' 
 												);
-		$testSelect="select " . implode(", ", $testRegistry) . " from " . "admin_user";
+		$testSelect="select";
+		$columns ="";
+		foreach($testRegistry as $pos => $col)
+		{
+				if ($pos !=9)
+				$columns.= " `".$col."`,";
+				else
+				$columns.= " `".$col."`";
+
+		}
+		 $testSelect.= $columns. " from " . "admin_user";
 													
 		$this->assertEquals($testSelect, $this->user->getSelectQuery());
 	}
 		public function testDelete()
 	{
 			//test delete when user doesn't exists
-			$this->new_user= new AdminUser();
-			$this->assertEquals(0,$this->new_user->delete());
-
-			//test delete when object does exist
-			
-
-
+			$this->test_user= new AdminUser();
+			$this->test_user->init(2);
+			$this->assertEquals(0,$this->test_user->delete());
 	}
 		public function testUpdate()
 	{
@@ -122,25 +128,22 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	// 	// $this->assertEquals(1,$this->user->insert());
 	// }
 
-	//works fine -Scott
-	// public function testGetColumns()
-	// {
-	// 	$testRegistry= array(
-	// 												'id' ,
-	// 												'created_at' ,
-	// 												'updated_at' ,
-	// 												'username' ,
-	// 												'password' ,
-	// 												'first_name' ,
-	// 												'last_name' ,
-	// 												'title' ,
-	// 												'last_login_at' ,
-	// 												'login_count' 
-	// 											);
-	// 	$this->assertEmpty(array_diff_assoc($testRegistry,$this->user->getColumns()));
+	//change back to private
+	public function testGetColumns()
+	{
+		$testRegistry= array();
+		$testReg = $this->valid_array;
+		foreach($testReg as $key)
+		{
+			$testRegistry[]= '`' . key($testReg) . '`';
+			next($testReg);
+
+		}
+
+		 $this->assertEmpty(array_diff_assoc($testRegistry,$this->user->getColumns()));
 
 
-	// }
+	}
 
 	public function testGetRegistry()
 	{
