@@ -234,8 +234,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		
 		return $this->Id;
 	}
-	
-	public function getColumns()
+
+	protected function getColumns()
 	{
 		$reg = $this->getRegistry();
 		$columns = array();
