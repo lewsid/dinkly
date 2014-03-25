@@ -21,9 +21,6 @@ class DinklyDataConnectorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(DinklyDataConnector::testDB());
 
 
-
-
-
 	}
 	
 

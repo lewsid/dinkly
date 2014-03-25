@@ -13,8 +13,10 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 
 	public function testGetDBCreds()
 	{
+
+
 		//make sure the yaml is parsing correctly
-		$db_creds = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/db.yml");
+		$db_creds = array('admin'=>array('DB_HOST'=>'localhost','DB_USER'=>'root','DB_PASS'=>'root','DB_NAME'=>'admin'));
 		$creds = DinklyDataConfig::getDBCreds(); 
 		$this->assertEquals($db_creds['admin'],$creds);
 		
