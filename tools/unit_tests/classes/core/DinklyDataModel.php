@@ -118,16 +118,16 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 			$this->test_user->init(2);
 			$this->assertEquals(0,$this->test_user->delete());
 	}
-		public function testUpdate()
-	{
+	// protected function testUpdate()
+	// {
 
-	}
-	public function testInsert()
-	{
+	// }
+	// protected function testInsert()
+	// {
 
-	}
+	// }
 
-	//change back to protected
+	// //change back to protected
 	// protected function testGetColumns()
 	// {
 	// 	$testRegistry= array();
