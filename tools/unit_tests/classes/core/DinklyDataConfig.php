@@ -10,6 +10,17 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 
 
 	}
+		public function testSetActiveConnection(){
+
+			//test when input is not an array and has no connection
+			$test_input = "hello";
+			$this->assertFalse(DinklyDataConfig::setActiveConnection($test_input));
+			//now make connection with valid creds
+			$db_creds=array('DB_HOST'=>'localhost','DB_USER'=>'root','DB_PASS'=>'root','DB_NAME'=>'admin');
+			$this->assertTrue(DinklyDataConfig::setActiveConnection($db_creds));
+			//make sure connection was actually made
+			$this->assertTrue(DinklyDataConfig::hasConnection('admin'));
+	}
 
 	public function testGetDBCreds()
 	{
@@ -23,30 +34,21 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 	}
 	public function testHasConnection(){
 
-				//test on connection that does not exist
+				//test on connection name that does not exist
 				$this->assertFalse(DinklyDataConfig::hasConnection('admin_table'));
 
 				//test create connection and then see if exists
-				DinklyDataConfig::loadDBCreds();
+				$db_creds=array('DB_HOST'=>'localhost','DB_USER'=>'root','DB_PASS'=>'root','DB_NAME'=>'admin');
+				DinklyDataConfig::setActiveConnection($db_creds);
 				$this->assertTrue(DinklyDataConfig::hasConnection('admin'));
 
 
 	}
-		public function testSetActiveConnection(){
 
-		  $db_creds = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/db.yml");  
-			$_SESSION['dinkly']['db_creds'] = $db_creds; 
-			$set_db=DinklyDataConfig::setActiveConnection('admin');
-			$this->assertTrue($set_db);
-			//make sure connection was actually made
-			$this->assertTrue(DinklyDataConfig::hasConnection('admin'));
-
-	}
 		public function testLoadDBCreds(){
 
-			$db_creds= DinklyDataConfig::getDBCreds(); 
-			$first_connection = key($db_creds);
-		
+			$db_creds=array('DB_HOST'=>'localhost','DB_USER'=>'root','DB_PASS'=>'root','DB_NAME'=>'admin');
+			$this->assertTrue(DinklyDataConfig::setActiveConnection($db_creds));
 
 
 
