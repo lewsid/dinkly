@@ -3,6 +3,7 @@
         "symfony/yaml": "2.4.x-dev"
     },
     "require-dev": {
-    	"phpunit/phpunit": "4.0.*@dev"
+    	"phpunit/phpunit": "4.0.*@dev",
+    	"phpdocumentor/phpdocumentor": "2.4.*@dev"
     }
 }

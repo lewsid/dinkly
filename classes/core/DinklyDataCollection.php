@@ -1,28 +1,21 @@
 <?php
-
-/****************************************************************************************************************
-
-	CHILD CLASS EXAMPLE:
-
-		class UserCollection extends DinklyDataCollection
-		{
-			public static function getAll()
-			{
-				$peer_object = new User();
-				if(self::fetchDB()->query($peer_object->getSelectQuery(), true)) { return self::handleResults($peer_object); }
-			}
-		}
-
-	CHILD CLASS USAGE EXAMPLE:
-
-		$users = UserCollection::getAll();
-		$users = UserCollection::getWith(array('last_name' => 'Fett'));
-
-***************************************************************************************************************/
+/**
+ * DinklyDataCollection
+ *
+ * Children of this class should contain only static functions that return arrays
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 
 abstract class DinklyDataCollection extends DinklyDataModel
 {
-
+	/**
+	 * Retrieve all objects
+	 * 
+	 * @return Array of objects or null if not found
+	 */
 	public static function getAll()
 	{
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
@@ -33,6 +26,13 @@ abstract class DinklyDataCollection extends DinklyDataModel
 		}
 	}
 
+	/**
+	 * Retrieve all objects matching array of passed property/value pairs
+	 *
+	 * @param array $properties Array of class property names and values to filter on
+	 * 
+	 * @return Array of matching objects or false if not found
+	 */
 	public static function getWith($properties = array())
 	{
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
@@ -58,7 +58,7 @@ abstract class DinklyDataCollection extends DinklyDataModel
 		}
 		else return false;		
 	}
-
+	
 	protected static function getCollection($peer_object, $query)
 	{
 		$db = self::fetchDB();
