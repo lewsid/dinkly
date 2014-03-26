@@ -26,6 +26,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 					    "app_name"=> "Dinkly API"
 					  )
 					);
+				$this->valid_modules= array("home","login","user");
 		
 
 	}
@@ -44,6 +45,20 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	public function testGetParameters(){
 
 	}
+	public function testGetDefaultApp(){
+		//test setting config values and getting default
+		$_SESSION['dinkly']['config']=$this->valid_config;
+		$this->assertEquals(DinklyBase::getDefaultApp(true),"admin");
+		$this->assertEquals(DinklyBase::getDefaultApp(),$this->valid_config['admin']);
+	}
+	public function testGetValidModules(){
+		//test output before setting modules manually
+		$this->assertEquals(DinklyBase::getValidModules("admin"),$this->valid_modules);
+		//manually set sessions and check modules
+		$_SESSION['dinkly']['valid_modules_admin']=null;
+		$_SESSION['dinkly']['valid_modules_admin']=array("test");
+		$this->assertEquals(DinklyBase::getValidModules("admin"),array("test"));
+	}
 	public function testGetCurrentAppName(){
 
 		$_SESSION['dinkly']['current_app_name']="test_app";
@@ -60,6 +75,17 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		$dirty_key="bad";
 		$this->assertFalse(DinklyBase::getConfigValue($dirty_key));
 
+	}
+	public function testConvertFromCamelCase(){
+		$test_camel_case ="TestApp";
+		$this->assertEquals(DinklyBase::convertFromCamelCase($test_camel_case),"test_app");
+	}
+		public function testConvertToCamelCase(){
+		$test_camel_case ="test_app";
+		//test with first letter capitalized
+		$this->assertEquals(DinklyBase::convertToCamelCase($test_camel_case,true),"TestApp");
+		//test to regular camel case
+		$this->assertEquals(DinklyBase::convertToCamelCase($test_camel_case,false),"testApp");
 	}
 	public function testGetConfig(){
 		//test before config is set
