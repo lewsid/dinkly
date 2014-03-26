@@ -1,6 +1,6 @@
 <?php
 
-class UserController extends Dinkly
+class UserController extends AdminController
 {
 	public function __construct()
 	{

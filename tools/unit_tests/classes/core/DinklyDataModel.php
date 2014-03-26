@@ -127,7 +127,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 
 	// }
 
-	//change back to protected
+	// //change back to protected
 	// protected function testGetColumns()
 	// {
 	// 	$testRegistry= array();

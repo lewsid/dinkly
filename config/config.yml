@@ -1,5 +1,5 @@
 global:
-    dinkly_version: 1.22
+    dinkly_version: 1.25
 admin:
     default_app: true
     app_name: Dinkly Admin
