@@ -27,7 +27,11 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 					  )
 					);
 				$this->valid_modules= array("home","login","user");
+				$this->valid_context=array('current_app_name'=>'admin','module'=>'home','view'=>'default','parameters'=>array('id'));
 		
+
+	}
+	public function testRoute(){
 
 	}
 	public function testLoadError(){
@@ -43,7 +47,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 
 	}
 	public function testGetParameters(){
-
+		
 	}
 	public function testGetDefaultApp(){
 		//test setting config values and getting default
