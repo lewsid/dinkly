@@ -1,6 +1,6 @@
 <?php
 
-class LoginController extends Dinkly 
+class LoginController extends AdminController 
 {
 	public function loadDefault()
 	{

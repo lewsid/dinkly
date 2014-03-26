@@ -238,7 +238,7 @@ class DinklyBuilder extends Dinkly
 
 				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
 				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends Dinkly ' . PHP_EOL . '{' . PHP_EOL);
+				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
@@ -274,6 +274,13 @@ class DinklyBuilder extends Dinkly
 			fclose($fp);
 
 			$fp = fopen($app_dir . "/layout/footer.php", 'w+');
+			fclose($fp);
+
+			$fp = fopen($app_dir . "/" . Dinkly::convertToCamelCase($app_name, true) . "Controller.php", 'w+');
+			fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+			fwrite($fp, 'class ' . Dinkly::convertToCamelCase($app_name, true) . 'Controller extends Dinkly' . PHP_EOL . '{' . PHP_EOL);
+			fwrite($fp, "\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
+			fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 			fclose($fp);
 		}
 		else
