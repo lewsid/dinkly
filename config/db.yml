@@ -2,5 +2,9 @@ admin:
     DB_HOST: localhost
     DB_USER: root
     DB_PASS: root
-    DB_NAME: admin
-
+    DB_NAME: dinkly_admin
+unit_test:
+    DB_HOST: localhost
+    DB_USER: root
+    DB_PASS: root
+    DB_NAME: dinkly_unit_test
