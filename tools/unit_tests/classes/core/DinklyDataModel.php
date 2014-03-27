@@ -20,7 +20,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 		$this->username = 'root';
 		$this->password = 'root';
 
-		//Prepulate table with test users
+		//Prepulate database and load with test users
 		DinklyDataConfig::setActiveConnection('unit_test');
 		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);
 		DinklyBuilder::loadAllFixtures('unit_test', false);

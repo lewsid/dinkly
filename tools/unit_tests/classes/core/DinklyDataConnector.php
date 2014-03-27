@@ -10,9 +10,14 @@ class DinklyDataConnectorTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->dsn = 'mysql:dbname=admin;host=localhost;port=3306';
+		$this->dsn = 'mysql:dbname=dinkly_unit_test;host=localhost;port=3306';
 		$this->username = 'root';
 		$this->password = 'root';
+
+		//Prepulate database and load with test users
+		DinklyDataConfig::setActiveConnection('unit_test');
+		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);
+		DinklyBuilder::loadAllFixtures('unit_test', false);
 	}
 
 	public function testFetchDB()
@@ -21,7 +26,7 @@ class DinklyDataConnectorTest extends PHPUnit_Framework_TestCase
 		$db = DinklyDataConnector::fetchDB();
 		
 		$new_db = new PDO($this->dsn, $this->username, $this->password);
-		$this->assertEquals($new_db, $est);
+		$this->assertEquals($new_db, $db);
 	}
 
 	public function testTestDB()
