@@ -69,7 +69,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	public function testSave()
 	{
 		//Test when there has been no change
-		$this->assertTrue($this->user->save());
+		$this->assertFalse($this->user->save());
 
 		//Test when there has been some change
 		$this->user->setLastLoginAt(date('Y-m-d G:i:s'));
@@ -159,7 +159,30 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 
 	public function testForceDirty()
 	{
-		//Need some test code to confirm that when forceDirty is executed, the entire model refreshes
+		//First, confirm the normal behavior
+		$original_title = $this->user->getTitle();
+		$this->user->Title = 'MonkeyTest';
+		$this->user->save();
+
+		//Reset our user object and reinitialize
+		$this->user = null;
+		$this->user = new TestUser();
+		$this->user->init(1);
+
+		//Confirm that we get the original title even after setting the property directly
+		$this->assertEquals($original_title, $this->user->getTitle());
+
+		//Now test behavior by changing a property, bypassing the setters, and running forceDirty
+		$this->user->Title = 'MonkeyTest';
+		$this->user->forceDirty();
+		$this->user->save();
+
+		//Now reset our user object and reinitialize to confirm the new value was set
+		$this->user = null;
+		$this->user = new TestUser();
+		$this->user->init(1);
+
+		$this->assertEquals('MonkeyTest', $this->user->getTitle());
 	}
 
 	public function testGetDB()
@@ -172,9 +195,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	{
 		//Fetch PDO object
 		$db = new PDO($this->dsn, $this->username, $this->password);
-
 		$this->user->setDB($db);
-
 		$this->assertEquals($db, $this->user->getDB());
 	}
 

@@ -155,7 +155,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
-		
+
 		return $this->db->exec($query);
 	}
 	
@@ -189,7 +189,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$query .= " where id='" . $this->Id . "'";
 
 		if($is_valid) { return $this->db->exec($query); }
-		else { return true; }
+		else { return false; }
 	}
 	
 	protected function insert()
