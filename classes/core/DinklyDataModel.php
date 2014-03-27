@@ -57,8 +57,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$this->hydrate($result, true);
 			return true;
 		}
-
 		return false;
+
 	}
 
 	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */
@@ -234,7 +234,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		
 		return $this->Id;
 	}
-	
+
 	protected function getColumns()
 	{
 		$reg = $this->getRegistry();
@@ -265,7 +265,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	
 	public function getDB() { return $this->db; }
 	
-	public function setDB($value) { $this->db = $value; }
+	public function setDB($value) { $this->db = $value;}
 	
 	public function isNew() { return $this->isNew; }
 	
