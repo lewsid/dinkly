@@ -10,6 +10,8 @@ class DinklyDataConnectorTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
+		date_default_timezone_set("Europe/Paris");
+		
 		$this->dsn = 'mysql:dbname=dinkly_unit_test;host=localhost;port=3306';
 		$this->username = 'root';
 		$this->password = 'root';

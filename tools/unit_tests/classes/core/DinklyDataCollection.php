@@ -4,6 +4,8 @@ class DinklyDataCollectionTest extends PHPUnit_Framework_TestCase
 {
 	protected function setUp()
 	{
+		date_default_timezone_set("Europe/Paris");
+		
 		//Prepulate database and load with test users
 		DinklyDataConfig::setActiveConnection('unit_test');
 		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);

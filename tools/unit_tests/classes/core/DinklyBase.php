@@ -7,24 +7,24 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		date_default_timezone_set("Europe/Paris");
 		
 		$this->valid_config = 
-		array(
-			"admin" => array(
-				"base_href" => "/",
-				"default_app" => true,
-				"app_name" => "Dinkly Admin",
-				"copyright" => "Dinkly",
-				"default_module" => "home",
-				"app_description" => "Just a humble little PHP MVC Framework"
-			),
-			"global" => array(
-				"dinkly_version" => 1.25
-			), 
-			"api" => array(
-				"base_href" => "/api", 
-				"default_module" => "api",
-				"app_name" => "Dinkly API"
-			)
-		);
+			array(
+				"admin" => array(
+					"base_href" => "/",
+					"default_app" => true,
+					"app_name" => "Dinkly Admin",
+					"copyright" => "Dinkly",
+					"default_module" => "home",
+					"app_description" => "Just a humble little PHP MVC Framework"
+				),
+				"global" => array(
+					"dinkly_version" => 1.25
+				), 
+				"api" => array(
+					"base_href" => "/api", 
+					"default_module" => "api",
+					"app_name" => "Dinkly API"
+				)
+			);
 
 		$this->valid_modules = array("home","login","user");
 		

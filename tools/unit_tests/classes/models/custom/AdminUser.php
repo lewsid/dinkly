@@ -8,8 +8,10 @@ class AdminUserTest extends PHPUnit_Framework_TestCase
 	{
 		date_default_timezone_set("Europe/Paris");
 
-		//Prepulate table with test users
-		DinklyBuilder::loadAllFixtures('unit_test', false);
+		//Prepulate database and load with test users
+		DinklyDataConfig::setActiveConnection('admin');
+		DinklyBuilder::buildTable('admin', 'AdminUser', null, false);
+		DinklyBuilder::loadAllFixtures('admin', false);
 
 		$this->user = new AdminUser();
 		$this->user->init(1);
@@ -19,6 +21,8 @@ class AdminUserTest extends PHPUnit_Framework_TestCase
 
 	public function testAuthenticate()
 	{
+		$_SESSION['dinkly']['admin'] = null;
+
 		//Make sure they are not logged in already
 		$this->assertFalse($this->user->isLoggedIn());
 
@@ -32,8 +36,8 @@ class AdminUserTest extends PHPUnit_Framework_TestCase
 
 		//Test now with the right creds
 		$username = "bfett";
-		$password = "shut711up";
-		$this->user->authenticate($username,$password);
+		$password = "password";
+		$this->user->authenticate($username, $password);
 		
 		//Test logged-in and session set
 		$this->assertTrue($this->user->isLoggedIn());
@@ -93,15 +97,19 @@ class AdminUserTest extends PHPUnit_Framework_TestCase
 	{
 		//Test old password
 		$db_password = $this->user->getPassword();
-		$input_password = "shut711up";
+		$input_password = "password";
 		$hashed_password = $db_password;
 		$this->assertEquals(crypt($input_password, $hashed_password), $hashed_password);
 		
 		//Change password and test new authentication
-		$new_password = "password";
+		$new_password = "password2";
 		$this->user->setPassword($new_password);
 		$new_db_password = $this->user->getPassword();
 		$this->assertEquals(crypt($new_password, $new_db_password), $new_db_password);
+
+		//Put it back
+		$this->user->setPassword('password');
+		$this->user->save();
 	}
 }
 ?>

@@ -470,6 +470,7 @@ class DinklyBuilder extends Dinkly
 		{
 			$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		}
+
 		if(!$model_yaml) { return false; }
 
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
