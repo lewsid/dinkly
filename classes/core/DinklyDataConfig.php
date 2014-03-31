@@ -1,10 +1,23 @@
 <?php 
-
+/**
+ * DinklyDataConfig
+ *
+ * 
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 use Symfony\Component\Yaml\Yaml;
 
 class DinklyDataConfig
 {
-	//Default to first connection in db.yml
+	/**
+	 * Fetch DB credentials from config/db.yml file, Set DB sessions vars, Set first DB connection
+	 * Uses first connection in db.yml
+	 * 
+	 * @return bool true on successful DB connection or false on failure
+	 */
 	public static function loadDBCreds()
 	{
 		if(!isset($_SESSION['dinkly']['db_creds']))
@@ -15,7 +28,12 @@ class DinklyDataConfig
 			self::setActiveConnection($first_connection);
 		}
 	}
-
+	/**
+	 * Checks for active DB connection and sets one if none found
+	 * @param string $connection_name String name of DB connection
+	 * 
+	 * @return bool true if DB connection exists or successfully connected 
+	 */
 	public static function hasConnection($connection_name)
 	{
 		if(!isset($_SESSION['dinkly']['db_creds']))
@@ -24,7 +42,14 @@ class DinklyDataConfig
 		}
 		return array_key_exists($connection_name, $_SESSION['dinkly']['db_creds']);
 	}
-
+	/**
+	 * Sets active DB connection and sets session variables accordingly
+	 * Can overide active connection if new DB credentials passed in
+	 * @param mixed $connection Array containing DB credentials for override
+	 * $connection String to verify already actively connected to DB
+	 * 
+	 * @return bool true if DB connection overrided or already existed, false if not connected
+	 */
 	public static function setActiveConnection($connection)
 	{ 
 		//If connection is array, we can override the loaded configurations
@@ -49,7 +74,14 @@ class DinklyDataConfig
 		
 		return false;
 	}
-
+	/**
+	 * Fetches credentials of active DB connection
+	 * 
+	 * @param mixed  $connection_name bool defaulted false |
+	 * $connection_name string to get credentials of specific connection
+	 *
+	 * @return array containing credentials of either active DB or chosen DB
+	 */
 	public static function getDBCreds($connection_name = false)
 	{
 		if(!isset($_SESSION['dinkly']['db_creds']))
