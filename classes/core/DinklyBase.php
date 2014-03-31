@@ -1,4 +1,13 @@
 <?php
+/**
+ * DinklyBase
+ *
+ * Children of this class should contain only static functions that return arrays
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -16,7 +25,13 @@ class DinklyBase
 
 	//***************************************************************************** NONSTATIC FUNCTIONS
 
-	//Init
+	/**
+	 * Initialize dinkly session, Get app root and reset session root if not matching
+	 *
+	 * @param bool $enable_cache default true or enter false to flush session cache
+	 * 
+	 * 
+	 */
 	public function __construct($enable_cache = true)
 	{
 		//If the dinkly session doesn't exist yet, create it
@@ -29,8 +44,12 @@ class DinklyBase
 		//...this prevents issues when going from one Dinkly project to another in a local environment
 		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
 	}
-
-	//Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
+	/**
+	 * Interpret friendly URLS and load app and module based on Context 
+	 * as well as interpreting parameters where applicable
+	 * @param string $uri default null to be parsed to get correct context
+	 * @return Array of matching objects or false if not found
+	 */
 	public function route($uri = null)
 	{
 		$parameters = array();
@@ -55,7 +74,12 @@ class DinklyBase
 
 		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, true, $context['parameters']);
 	}
-
+	/**
+	 * Fetch the current context of the application based on URL
+	 * 
+	 * @param string $uri default null to be parsed to get correct context
+	 * @return Array $context containing current app, module and view
+	 */
 	public function getContext($uri = null)
 	{
 		if(!$this->context)
@@ -138,7 +162,15 @@ class DinklyBase
 
 		return $this->context;
 	}
-
+	/**
+	 * Load error Page when given a app that doesn't exist in context or 
+	 * load default module if no error file
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * @param string $camel_module_name module we are looking for in camel case
+	 * 
+	 * 
+	 */
 	public function loadError($app_name, $camel_module_name)
 	{
 		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/" . $app_name . "/modules/error/ErrorController.php";
