@@ -203,7 +203,15 @@ class DinklyBase
 			}
 		}
 	}
-
+	/**
+	 * Load application base in order to istantiate the app controller
+	 * 
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * 
+	 * 
+	 * @return bool true if app loaded currectly else false and sent to default app
+	 */
 	public function loadApp($app_name)
 	{
 		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
@@ -221,7 +229,19 @@ class DinklyBase
 
 		return true;
 	}
-
+	/**
+	 * Load desired module and redirect if necessary
+	 * 
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * @param string $module_name string of desired module to load
+	 * @param string $view string if passed goes to specified view otherwise default
+	 * @param bool $redirect default false, make true to redirect to different view
+	 * @param bool $draw_layout default true to get module view
+	 * @param array $parameters Array of parameters that can be used to populate views
+	 *
+	 * @return bool true if app loaded currectly else false and sent to default app
+	 */
 	//Dinkly's most badass function. Loads a desired module, and redirects if you ask it nicely.
 	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 	{
@@ -331,14 +351,27 @@ class DinklyBase
 
 		return true;
 	}
-
-	//Set the module header.
+	/**
+	 * Set module header manually
+	 *
+	 * @param header $header String containing contents of header.php file
+	 * 
+	 */
 	public function setModuleHeader($header) { $this->module_header = $header; }
 
-	//Returns the contents of the module header.
+	/**
+	 * Get contents of module header
+	 *
+	 * 
+	 * @return header contents of header.php file of a given module
+	 */
 	public function getModuleHeader() { return $this->module_header; }
-
-	//Return the current context's view
+	/**
+	 * Get current contexts view
+	 *
+	 * 
+	 * @return view of current context
+	 */
 	public function getCurrentView()
 	{
 		if(!$this->view)
@@ -348,8 +381,12 @@ class DinklyBase
 		}
 		return $this->view;
 	}
-
-	//Return the current context's module
+	/**
+	 * Get current contexts module
+	 *
+	 * 
+	 * @return module of current context
+	 */
 	public function getCurrentModule()
 	{
 		if(!$this->module)
@@ -359,8 +396,12 @@ class DinklyBase
 		}
 		return $this->module;
 	}
-
-	//Return parameters
+	/**
+	 * Get current contexts parameters
+	 *
+	 * 
+	 * @return parameters of current context
+	 */
 	public function getParameters()
 	{
 		if(!$this->parameters)
