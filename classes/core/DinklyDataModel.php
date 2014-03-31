@@ -1,4 +1,13 @@
 <?php 
+/**
+ * DinklyDataModel
+ *
+ * 
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 
 /****************************************************************************************************************
 
@@ -33,7 +42,13 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	protected $isNew;
 	protected $regDirty = array();
 	protected $registry = array();
-	
+	/**
+	 * Connect with database and form empty data model
+	 *
+	 * @param PDO $db PDO object for custom DB connection, default DB when left empty
+	 * 
+	 * @return Makes DB connection and Constructs null model from registry
+	 */
 	public function __construct($db = null)
 	{
 		if(!$db) $this->db = self::fetchDB();
@@ -44,7 +59,13 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		foreach($this->getRegistry() as $element) { $this->$element = NULL; }
 	}
 
-	//Returns true when matching record is located
+	/**
+	 * Initialize peer object of specific class
+	 *
+	 * @param int $id Integer value used in DB query to retrieve object
+	 * 
+	 * @return hydrates object and returns true if exist in DB or returns false if not found
+	 */
 	public function init($id)
 	{
 		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
@@ -60,8 +81,13 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		return false;
 
 	}
-
-	/* Init object with properties other than id. Example: $user->initWith(array('Username' => $username)); */
+	/**
+	 * Initialize object with values other than id
+	 *
+	 * @param array $properties Array of class property names and values to filter on 
+	 * 
+	 * @return hydrates object and returns true if exist in DB or returns false if not found
+	 */
 	public function initWith($properties = array())
 	{
 		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
@@ -93,8 +119,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		else return false;
 	}
-
-	/* Return object properties as array */
+	/**
+	 * Retrieve all existing properties of an object
+	 *
+	 * 
+	 * @return Array of all value keys of an object using registry
+	 */
 	public function toArray()
  	{
  		$array = array();
@@ -104,22 +134,43 @@ abstract class DinklyDataModel extends DinklyDataConnector
  		}
  		return $array;
  	}
-	
-	/* Only manipulates fields that have been modified in some way */
+	/**
+	 * Update or create record of an object
+	 *
+	 * @param bool $force_insert Boolean defaulted to false 
+	 *
+	 * @return changes modified fields of an object or inserts new record if param set true
+	 */
 	public function save($force_insert = false)
 	{
 		if(!$this->isNew && !$force_insert) { return $this->update(); }
 		else { return $this->insert(); }
 	}
-	
+	/**
+	 * Retrieve sql select query with all DB properties returned
+	 *
+	 * 
+	 *
+	 * @return String to be used as query on database for object
+	 */
 	public function getSelectQuery()
 	{ 
 		return "select " . implode(", ", $this->getColumns()) . " from " . $this->getDBTable();
 	}
-	
-	/* This is meant to be overloaded by child objects to attach any related objects following the hydrate. */
+	/**
+	 * meant to be overloaded by child objects to attach any related objects following the hydrate
+	 *
+	 *
+	 */
 	public function attach() { }
-	
+	/**
+	 * Fills all properties of an object with specific values
+	 *
+	 * @param array $full_result Array values and properties from DB
+	 * @param bool $hasDB Boolean defaulted to false to verify DB connection
+	 *
+	 * @return bool of true after instantiating objects record results
+	 */
 	public function hydrate($full_result, $hasDB = false)
 	{  
 		$reg = $this->registry;
@@ -147,7 +198,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 
 		return true;
 	}
-
+	/**
+	 * Delete a database object
+	 *
+	 * @return bool true on success or false on failure
+	 * @throws Exception if unable to perform delete of object
+	 */
 	public function delete()
 	{
 		if(!$this->db) { throw New Exception("Unable to perform delete without a database object"); }
@@ -157,7 +213,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
 		return $this->db->exec($query);
 	}
-	
+	/**
+	 * Update an existing database object
+	 *
+	 * @return bool true on success of query or no changes to be made or false on failed DB execution
+	 * @throws Exception if unable to perform update of object
+	 */
 	protected function update()
 	{
 		if(!$this->db) { throw New Exception("Unable to perform update without a database object"); }
@@ -190,7 +251,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if($is_valid) { return $this->db->exec($query); }
 		else { return true; }
 	}
-	
+	/**
+	 * Insert a database object
+	 *
+	 * @return bool true on success or false on failure
+	 * @throws Exception if unable to perform insertion of object
+	 */
 	protected function insert()
 	{
 		if(!$this->db) { throw New Exception("Unable to perform insert without a database object"); }
@@ -234,7 +300,12 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		
 		return $this->Id;
 	}
-
+	/**
+	 * Retrieve all properties an object can possess
+	 *
+	 * @return Array of all properties an object can have values for
+	 * 
+	 */
 	protected function getColumns()
 	{
 		$reg = $this->getRegistry();
@@ -249,12 +320,24 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		return $columns;
 	}
-	
+	/**
+	 * Retrieve the registry of a given objects data model
+	 *
+	 * @return Array with keys of properties and values of properties in camel case
+	 * 
+	 */
 	protected function getRegistry() { return $this->registry; }
-	
+	/**
+	 * Retrieve the data table name of a given model
+	 *
+	 * @return String that is the name of the database table containing an object
+	 * 
+	 */
 	protected function getDBTable() { return $this->dbTable; }
-
-	//My current favorite function name, this forces the entire model to refresh
+	/**
+	 * Forces entire data model to refresh to completely wipe a record
+	 *
+	 */
 	public function forceDirty()
 	{
 		foreach($this->getRegistry() as $key => $element)
@@ -262,13 +345,32 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$this->regDirty[$key] = true;
 		}
 	}
-	
+	/**
+	 * Retrieve the database connection 
+	 *
+	 * @return PDO object based on DB credentials
+	 * 
+	 */
 	public function getDB() { return $this->db; }
-	
+	/**
+	 * Set the database connection 
+	 * @param PDO $value PDO containing new DB credentials
+	 */
 	public function setDB($value) { $this->db = $value;}
-	
+	/**
+	 * Check if an object is newly created or already existed
+	 *
+	 * @return bool true if new object or false if existing 
+	 */
 	public function isNew() { return $this->isNew; }
-	
+	/**
+	 * Construct Dynamic getters and setters for objects
+	 * @param string $method String containing function call
+	 * @param array $arguments Array of values to be set
+	 *
+	 * @return bool true if both property and method exist
+	 * @throws Exception when calling get/set on property/ method that does not exist
+	 */
 	/* Borrowed (then reformatted) from: http://blog.josephwilk.net/snippets/dynamic-gettersetters-for-php.html */
 	function __call($method, $arguments)
 	{  
