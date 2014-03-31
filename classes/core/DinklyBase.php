@@ -413,14 +413,22 @@ class DinklyBase
 	}
 
 	//***************************************************************************** STATIC FUNCTIONS
-
-	//Return current application name
+	/**
+	 * Get current application's name from dinkly session
+	 *
+	 * 
+	 * @return string name of application
+	 */
 	public static function getCurrentAppName()
 	{
 		return $_SESSION['dinkly']['current_app_name'];
 	}
-
-	//If the configuration file hasn't been loaded, do so. Returns the configuration array.
+	/**
+	 * Load config if not already done and get Config value
+	 *
+	 * 
+	 * @return Array containting current configuration
+	 */
 	public static function getConfig()
 	{
 		$config = null;
@@ -433,8 +441,13 @@ class DinklyBase
 		
 		return $config;
 	}
-
-	//Need a specific configuration value? This is for you.
+	/**
+	 * Get a specific property value of the configuration
+	 * @param string $key string to index into config array
+	 * @param string $app_name specify app to get config value from
+	 *
+	 * @return mixed value of config spec
+	 */
 	public static function getConfigValue($key, $app_name = null)
 	{
 		if(!$app_name) { $app_name = self::getDefaultApp(true); }
@@ -451,8 +464,12 @@ class DinklyBase
 
 		return false;
 	}
-
-	//A little helper function to convert camel case class names to their underscore equivalents.
+	/**
+	 * Convert a string from camel case for class name conversion
+	 * @param string $str String in camel case to be converted
+	 * 
+	 * @return string in lower case spaced with underscores
+	 */
 	public static function convertFromCamelCase($str)
 	{
 		$str[0] = strtolower($str[0]);
@@ -460,8 +477,13 @@ class DinklyBase
 		
 		return preg_replace_callback('/([A-Z])/', $func, $str);
 	}
-	
-	//Convert underscored string into camel case. Used for class loading.
+	/**
+	 * Convert underscored string to camel case for class loading
+	 * @param string $str String underscored to be converted
+	 * @param bool $capitalise_first choose whether first letter should be in caps 
+	 *
+	 * @return string in normal camel case or all upper camel case
+	 */
 	public static function convertToCamelCase($str, $capitalise_first_char = false)
 	{
 		if($capitalise_first_char) $str[0] = strtoupper($str[0]);
@@ -470,8 +492,12 @@ class DinklyBase
 		
 		return preg_replace_callback('/_([a-z])/', $func, $str);
 	}
-
-	//Returns an array of valid modules, that is, they actually exist.
+	/**
+	 * Get existing modules
+	 * @param string $app_name String name of app from which you want modules
+	 *
+	 * @return Array of valid modules
+	 */
 	public static function getValidModules($app_name)
 	{
 		$valid_modules = null;
@@ -495,8 +521,13 @@ class DinklyBase
 
 		return $valid_modules;
 	}
-
-	//Return the default application configuration array.
+	/**
+	 * Get default application from config array
+	 *
+	 * @param bool $return_name make true to return app name not config array
+	 *
+	 * @return Array of application config of default app
+	 */
 	public static function getDefaultApp($return_name = false)
 	{
 		$config = self::getConfig();
