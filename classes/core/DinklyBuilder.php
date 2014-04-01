@@ -716,10 +716,17 @@ class DinklyBuilder extends Dinkly
 			}
 		}
 	}
-
-	/*
-		$truncate will truncate the table if set to true, or append records if false
-	*/
+	/**
+	 *  Load a specific fixture to populate DB table
+	 *
+	 * @param string $set: folder name of fixtures you would like to load
+	 * @param string $model_name: name model fixture to be parsed
+	 * @param bool $truncate (optional): truncate the table if set to true, or append records if false
+	 * @param bool $verbose_output (optional): how chatty would you like the build to be?
+	 * @param string $override_database_name (optional): if passed, this will override the name of the database as it appears in config/db.yml
+	 *
+	 * @return bool true if loaded successfully, false if load fails
+	 */
 	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true, $override_database_name = null)
 	{
 		//Use the proper DB credentials, or apply a passed-in override
@@ -785,7 +792,14 @@ class DinklyBuilder extends Dinkly
 			return true;
 		}
 	}
-
+	/**
+	 *  Load all fixture to populate DB table
+	 *
+	 * @param string $set: folder name of fixtures you would like to load
+	 * @param bool $verbose_output (optional): how chatty would you like the build to be?
+	 *
+	 * @return bool true if loaded successfully, false if load fails
+	 */
 	public static function loadAllFixtures($set, $verbose = true)
 	{
 		if(!is_dir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set))
