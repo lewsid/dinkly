@@ -1,5 +1,13 @@
 <?php 
-
+/**
+ * autoload
+ *
+ * 
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 //Define autoloader 
 function dinkly_autoloader($class_name)
 {

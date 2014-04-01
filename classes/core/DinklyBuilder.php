@@ -13,7 +13,15 @@ use Symfony\Component\Yaml\Yaml;
 
 class DinklyBuilder extends Dinkly
 {
-
+	/**
+	 * Alter an existing database table based on new schema for data model
+	 *
+	 * @param string $db String name of database to be altered
+	 * @param string $table String name of table to be altered
+	 * @param mixed String | Array $field_config containing new configuration
+	 * 
+	 * @return string containing sql statement to be queried to alter table
+	 */
 	public static function genTableAlterQuery($db, $table, $field_config)
 	{
 		$sql = "alter table " . self::sanitize($db, $table) . " add ";
@@ -53,7 +61,14 @@ class DinklyBuilder extends Dinkly
 
 		return $sql;
 	}
-
+	/**
+	 * Add missing fields to existing database table
+	 *
+	 * @param string $schema String name of schema to use to get fields
+	 * @param string $verbose_output string used to log added fields
+	 * 
+	 * @return bool true if fields added successfully, false otherwise
+	 */
 	public static function addMissingModelFieldsToDb($schema, $verbose_output = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
@@ -158,7 +173,14 @@ class DinklyBuilder extends Dinkly
 			}
 		}
 	}
-
+	/**
+	 * Create a database if it does not already exist
+	 *
+	 * @param string $db_name String name of database 
+	 * @param array $creds Array containg DB credentials
+	 * 
+	 * 
+	 */
 	public static function createDb($db_name, $creds)
 	{
 		$db = new PDO(
@@ -175,7 +197,14 @@ class DinklyBuilder extends Dinkly
 		//Create database if we need to
 		$db->exec("CREATE DATABASE IF NOT EXISTS " . $db_name);
 	}
-
+	/**
+	 * Create missing tables in database based on yaml configurations
+	 *
+	 * @param string $schema String name of schema to be added
+	 * @param string $verbose_output string used to log added models
+	 * 
+	 * 
+	 */
 	public static function addMissingModelsToDb($schema, $verbose_output = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
@@ -227,7 +256,14 @@ class DinklyBuilder extends Dinkly
 			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, $verbose_output);
 		}
 	}
-
+	/**
+	 * Build module from command line 
+	 *
+	 * @param string $app_name String name of app you wish to create
+	 * @param string $module_name string name of module you wish to create
+	 * 
+	 * @return bool true if module is built successfully, false otherwise
+	 */
 	public static function buildModule($app_name, $module_name)
 	{
 		$app_dir = $_SERVER['APPLICATION_ROOT'] . "apps/" . $app_name;
@@ -264,7 +300,14 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 	}
-
+	/**
+	 * Build application function to be used from command line
+	 *
+	 * @param string $app_name String name of app you wish to create
+	 * 
+	 * 
+	 * @return bool true if module is built successfully, false otherwise
+	 */
 	public static function buildApp($app_name)
 	{
 		$app_dir = $_SERVER['APPLICATION_ROOT'] . "apps/" . $app_name;
@@ -298,7 +341,15 @@ class DinklyBuilder extends Dinkly
 			echo "\nError: Unable to create app directories.\n\n";
 		}
 	}
-
+	/**
+	 * Parse yaml schema of specified model
+	 *
+	 * @param string $schema String name of schema containing model
+	 * @param string $model_name String name of model yaml file to be parsed
+	 * @param bool $verbose_output defaulted true to show log, make false for no console log
+	 *
+	 * @return mixed array | bool array containing parse yaml or false on failure
+	 */
 	public static function parseModelYaml($schema, $model_name, $verbose_output = true)
 	{
 		$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/"
@@ -341,7 +392,15 @@ class DinklyBuilder extends Dinkly
 
 		return false;
 	}
-
+	/**
+	 * Build Base model dynamically based on schema file
+	 *
+	 * @param string $schema String name of schema containing model
+	 * @param string $model_name String name of model yaml file to be parsed
+	 * 
+	 *
+	 * @return bool true if both base and custom classes created, false on failure
+	 */
 	public static function buildModel($schema, $model_name)
 	{
 		$raw_model = self::parseModelYaml($schema, $model_name);
@@ -423,7 +482,15 @@ class DinklyBuilder extends Dinkly
 			return true;
 		}
 	}
-
+	/**
+	 * Make new database connection using default or specified DB credentials
+	 *
+	 * @param array $creds Array defaulted null use to specify custom DB credentials
+	 * 
+	 * 
+	 *
+	 * @return PDO created using specified or default DB credentials
+	 */
 	public static function fetchDB($creds = null)
 	{
 		if(!$creds) $creds = DinklyDataConfig::getDBCreds();
@@ -438,13 +505,28 @@ class DinklyBuilder extends Dinkly
 
 		return $db;
 	}
-
+	/**
+	 *  Cleans up quotation marks of variables to be used in DB query
+	 *
+	 * @param PDO $db PDO object which will be queried 
+	 * @param mixed $variable mixed data type to be prepared for query 
+	 * 
+	 *
+	 * @return string containing value of $variable prepared for query
+	 */
 	public static function sanitize($db, $variable)
 	{
 		$output = $db->quote($variable);
 		return str_replace("'", "", $variable);
 	}
-
+	/**
+	 *  Drop table from database completely if it exists
+	 *
+	 * @param string $schema String name of schema containing model
+	 * @param string $model_name String name of model yaml file 
+	 *
+	 * @return bool false if table does not exist, true if table dropped
+	 */
 	public static function dropTable($schema, $model_name, $override_database_name = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
@@ -466,14 +548,17 @@ class DinklyBuilder extends Dinkly
 
 		return true;
 	}
-
-	/*
-		$schema: name of the database schema to refer to
-		$model_name: name of the model to build
-		$model_yaml (optional): if passed, will override the automatic yaml parsing on the model based on the model name
-		$verbose_output (optional): how chatty would you like the build to be?
-		$override_database_name (optional): if passed, this will override the name of the database as it appears in config/db.yml
-	*/
+	/**
+	 *  Build database table based on given parameters
+	 *
+	 * @param string $schema: name of the database schema to refer to
+	 * @param string $model_name: name of the model to build
+	 * @param string $model_yaml (optional): if passed, will override the automatic yaml parsing on the model based on the model name
+	 * @param bool $verbose_output (optional): how chatty would you like the build to be?
+	 * @param string $override_database_name (optional): if passed, this will override the name of the database as it appears in config/db.yml
+	 *
+	 * @return bool false if table does not exist, true if table dropped
+	 */
 	public static function buildTable($schema, $model_name, $model_yaml = null, $verbose_output = true, $override_database_name = null)
 	{
 		if(!$model_yaml)
@@ -568,7 +653,13 @@ class DinklyBuilder extends Dinkly
 
 		return true;
 	}
-
+	/**
+	 *  Fetch all models under a specific schema folder
+	 *
+	 * @param string $schema: name of the database schema to refer to
+	 *
+	 * @return array of all models names without file extension
+	 */
 	public static function getAllModels($schema)
 	{
 		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
@@ -582,7 +673,14 @@ class DinklyBuilder extends Dinkly
 
 		return $model_names;
 	}
-
+	/**
+	 *  Build all models under all of the schemas insert missing fields if wanted
+	 *
+	 * @param string $schema (optional): name of the database schema to refer to, else all will be built
+	 * @param boo $insert_sql (optional): make true to insert missing fields from models
+	 *
+	 * 
+	 */
 	public static function buildAllModels($schema = null, $insert_sql = false)
 	{
 		$schema_names = array();
