@@ -71,7 +71,7 @@ class AdminUser extends BaseAdminUser
 	}
 	/**
 	 * Verify with database that admin user credentials are correct and log in if so
-	 * Locks account after 5 failed attempts
+	 * 
 	 *
 	 * @param string $username: input username of user attempting to log in
 	 * @param string $input_password: input password of user attempting to log in
