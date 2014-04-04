@@ -31,9 +31,11 @@ abstract class DinklyDataCollection extends DinklyDataModel
 	 *
 	 * @param array $properties Array of class property names and values to filter on
 	 * 
+	 * @param array $clauses Array of mysql clause and values (sort by, limit, etc.)
+	 *
 	 * @return Array of matching objects or false if not found
 	 */
-	public static function getWith($properties = array())
+	public static function getWith($properties = array(), $clauses = array())
 	{
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
 		if(class_exists($peer_class) && $properties != array()) 
@@ -53,6 +55,11 @@ abstract class DinklyDataCollection extends DinklyDataModel
 				$where .= ' AND `' . $col . '` = ' . $db->quote($value); 
 			}
 			$where = ' where ' . trim($where, ' AND');
+
+			foreach($clauses as $clause => $value)
+			{
+				$where = $where . ' ' . str_replace('_', ' ', $clause) .' ' . $value .'';
+			}
 
 			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where);
 		}
