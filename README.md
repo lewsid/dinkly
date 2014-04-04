@@ -1,4 +1,4 @@
-Dinkly v1.25
+Dinkly v1.26
 ============
 
 The biggest little PHP framework
@@ -76,7 +76,7 @@ Generate a new Dinkly module for a given application:
 
 Execute unit tests (example):
 
-    php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel.php
+    php tools/run_unit_tests.php
 
 
 License

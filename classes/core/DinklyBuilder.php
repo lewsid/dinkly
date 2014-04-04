@@ -531,7 +531,7 @@ class DinklyBuilder extends Dinkly
 					}
 					else if($sanitized_col_type == 'varchar' && !isset($column[$col_name]['length']))
 					{
-						throw new Exception("\n" . $table_name . ' - ' . $sanitized_col_name . ' - length required.');
+						throw new Exception($table_name . ' - ' . $sanitized_col_name . ' - length required.');
 					}
 
 					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }

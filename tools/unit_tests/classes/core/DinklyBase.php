@@ -17,7 +17,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 					"app_description" => "Just a humble little PHP MVC Framework"
 				),
 				"global" => array(
-					"dinkly_version" => 1.25
+					"dinkly_version" => 1.26
 				), 
 				"api" => array(
 					"base_href" => "/api", 
