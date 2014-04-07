@@ -176,7 +176,8 @@ class DinklyBuilder extends Dinkly
 		{
 			if($e->getCode() == 1049)
 			{
-				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$creds = DinklyDataConfig::getDBCreds();
+				self::createDb($creds['DB_NAME'], $creds);
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
