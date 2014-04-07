@@ -211,6 +211,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$reg = $this->getRegistry();
 		$is_valid = false;
 		$query = "delete from " . $this->getDBTable() . " where id = " . $this->db->quote($this->Id);
+
 		return $this->db->exec($query);
 	}
 	/**
@@ -249,7 +250,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$query .= " where id='" . $this->Id . "'";
 
 		if($is_valid) { return $this->db->exec($query); }
-		else { return true; }
+		else { return false; }
 	}
 	/**
 	 * Insert a database object
@@ -262,6 +263,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if(!$this->db) { throw New Exception("Unable to perform insert without a database object"); }
 
 		$reg = $this->getRegistry();
+
 		$is_valid = false;
 		$query = "insert into " . $this->getDBTable() . " (";
 		$values = "values (";
@@ -314,7 +316,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		$i = 0;
 		foreach($reg as $col)
 		{
-			$columns[$i] = '`' . key($reg) . '`';
+			$columns[$i] = key($reg);
 			next($reg);
 			$i++;
 		}

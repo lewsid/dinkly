@@ -215,7 +215,8 @@ class DinklyBuilder extends Dinkly
 		{
 			if($e->getCode() == 1049)
 			{
-				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$creds = DinklyDataConfig::getDBCreds();
+				self::createDb($creds['DB_NAME'], $creds);
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -565,6 +566,7 @@ class DinklyBuilder extends Dinkly
 		{
 			$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
 		}
+
 		if(!$model_yaml) { return false; }
 
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
@@ -625,7 +627,7 @@ class DinklyBuilder extends Dinkly
 					}
 					else if($sanitized_col_type == 'varchar' && !isset($column[$col_name]['length']))
 					{
-						throw new Exception("\n" . $table_name . ' - ' . $sanitized_col_name . ' - length required.');
+						throw new Exception($table_name . ' - ' . $sanitized_col_name . ' - length required.');
 					}
 
 					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }
