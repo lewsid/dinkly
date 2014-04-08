@@ -13,9 +13,9 @@ class DinklyDataConnector
 		$creds = DinklyDataConfig::getDBCreds();
 		
 		$db = new PDO(
-				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
-				$creds['DB_USER'],
-				$creds['DB_PASS']
+				"mysql:host=".$creds['host'].";dbname=".$creds['name'],
+				$creds['user'],
+				$creds['pass']
 		);
 
 		$db->setAttribute(PDO::ATTR_ERRMODE, $pdo_err_mode);

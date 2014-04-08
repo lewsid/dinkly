@@ -4,12 +4,13 @@ use Symfony\Component\Yaml\Yaml;
 
 class DinklyDataConfig
 {
-	//Default to first connection in db.yml
+	//Default to first connection found
 	public static function loadDBCreds()
 	{
 		if(!isset($_SESSION['dinkly']['db_creds']))
 		{
-			$db_creds = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/db.yml");  
+			$config = Dinkly::getConfig();
+			$db_creds = $config['databases'];
 			$_SESSION['dinkly']['db_creds'] = $db_creds;
 			$first_connection = key($db_creds);
 			self::setActiveConnection($first_connection);

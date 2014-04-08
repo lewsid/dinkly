@@ -6,7 +6,7 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 	{
 		date_default_timezone_set("Europe/Paris");
 
-		$this->db_creds = array('DB_HOST'=>'localhost', 'DB_USER'=>'root', 'DB_PASS'=>'root', 'DB_NAME'=>'dinkly_unit_test');
+		$this->db_creds = array('host' => 'localhost', 'user' => 'root', 'pass' => 'root', 'name' => 'dinkly_unit_test');
 
 		//Prepulate database and load with test users
 		DinklyDataConfig::setActiveConnection('unit_test');
@@ -24,7 +24,7 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(DinklyDataConfig::setActiveConnection($this->db_creds));
 
 		//Make sure connection was actually made
-		$this->assertTrue(DinklyDataConfig::hasConnection('dinkly_unit_test'));
+		$this->assertTrue(DinklyDataConfig::hasConnection('unit_test'));
 	}
 
 	public function testGetDBCreds()
@@ -42,7 +42,7 @@ class DinklyDataConfigTest extends PHPUnit_Framework_TestCase
 
 		//Test create connection and then see if exists
 		DinklyDataConfig::setActiveConnection($this->db_creds);
-		$this->assertTrue(DinklyDataConfig::hasConnection('dinkly_unit_test'));
+		$this->assertTrue(DinklyDataConfig::hasConnection('unit_test'));
 	}
 
 	public function testLoadDBCreds()

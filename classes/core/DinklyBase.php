@@ -17,10 +17,21 @@ class DinklyBase
 	//***************************************************************************** NONSTATIC FUNCTIONS
 
 	//Init
-	public function __construct($enable_cache = true)
+	public function __construct($environment = 'dev', $empty_session = false)
 	{
 		//If the dinkly session doesn't exist yet, create it
-		if(!isset($_SESSION['dinkly']) || !$enable_cache) $_SESSION['dinkly'] = array();
+		if(!isset($_SESSION['dinkly']) || $empty_session) { $_SESSION['dinkly'] = array(); }
+
+		//Set mode (prod or dev) (dev to display errors, disable config cache)
+		if(isset($_SESSION['dinkly']['environment']))
+		{
+			//If the passed environment doesn't match the one in session, refresh the session
+			if($_SESSION['dinkly']['environment'] != $environment) { $_SESSION['dinkly'] = array(); }
+		}
+		$_SESSION['dinkly']['environment'] = $environment;
+
+		//Enable display of errors if we're in dev
+		if($_SESSION['dinkly']['environment'] == 'dev') { ini_set('display_errors', 1); }
 
 		//If the dinkly setting for the app root doesn't exist, create it
 		if(!isset($_SESSION['dinkly']['app_root'])) { $_SESSION['dinkly']['app_root'] = $_SERVER['APPLICATION_ROOT']; }
@@ -74,7 +85,7 @@ class DinklyBase
 			if($uri_parts == array()) { $uri_parts = array(1 => '/'); }
 
 			//Figure out the current app, assume the default if we don't get one in the URL
-			foreach($config as $app => $values)
+			foreach($config['apps'] as $app => $values)
 			{
 				if($app != 'global')
 				{
@@ -347,17 +358,67 @@ class DinklyBase
 		return $_SESSION['dinkly']['current_app_name'];
 	}
 
+	//Validate that all the minimum configuration settings exist
+	public static function validateConfig($config)
+	{
+		if(sizeof($config['apps']) < 1)
+		{
+			throw new Exception('Missing apps setting in config.yml');
+			return false;
+		}
+
+		$has_default_app = false;
+		foreach($config['apps'] as $app_name => $app_config)
+		{
+			if(isset($app_config['default_app'])) { $has_default_app = true; }
+
+			if(!isset($app_config['default_module']))
+			{
+				throw new Exception('Missing default_module setting for module \'' . $app_name . '\' in config.yml');
+			}
+
+			if(!isset($app_config['base_href']))
+			{
+				throw new Exception('Missing base_href setting for module \'' . $app_name . '\' in config.yml');
+			}
+		}
+
+		if(!$has_default_app)
+		{
+			throw new Exception('Missing default_app setting in config.yml');
+		}
+
+		return true;
+	}
+
 	//If the configuration file hasn't been loaded, do so. Returns the configuration array.
 	public static function getConfig()
 	{
+		$env = 'dev';
+		if(isset($_SESSION['dinkly']['environment'])) { $env = $_SESSION['dinkly']['environment']; }
+
 		$config = null;
-		if(!isset($_SESSION['dinkly']['config']))
+		if(!isset($_SESSION['dinkly']['config']) || $env == 'dev')
 		{
-			$config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
-			$_SESSION['dinkly']['config'] = $config;
+			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
+			$config = $raw_config['global'];
+
+			if(isset($raw_config[$env]))
+			{
+				foreach($raw_config[$env]['apps'] as $app_name => $app_config)
+				{
+					foreach($app_config as $config_name => $config_value)
+					{
+						$config['apps'][$app_name][$config_name] = $config_value;
+					}
+				}
+			}
+
+			if(self::validateConfig($config)) { $_SESSION['dinkly']['config'] = $config; }
+			
 		}
 		else { $config = $_SESSION['dinkly']['config']; }
-		
+
 		return $config;
 	}
 
@@ -368,11 +429,12 @@ class DinklyBase
 
 		$config = self::getConfig();
 
-		if(isset($config[$app_name]))
+		if(isset($config['settings'][$key])) { return $config['settings'][$key]; } 
+		else if(isset($config['apps'][$app_name]))
 		{
-			if(isset($config[$app_name][$key]))
+			if(isset($config['apps'][$app_name][$key]))
 			{
-				return $config[$app_name][$key];
+				return $config['apps'][$app_name][$key];
 			}
 		}
 
@@ -428,7 +490,7 @@ class DinklyBase
 	{
 		$config = self::getConfig();
 
-		foreach($config as $app => $values)
+		foreach($config['apps'] as $app => $values)
 		{
 			if(isset($values['default_app']))
 			{
@@ -438,7 +500,7 @@ class DinklyBase
 					{
 						return $app;
 					}
-					return $config[$app];
+					return $config['apps'][$app];
 				}
 			}
 		}
