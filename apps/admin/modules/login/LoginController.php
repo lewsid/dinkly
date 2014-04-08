@@ -1,7 +1,21 @@
 <?php
-
+/**
+ * LoginController
+ *
+ * 
+ *
+ * @package    Dinkly
+ * @subpackage AppsAdminLoginLoginController
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 class LoginController extends AdminController 
 {
+	/**
+	 * Loads default admin login and runs authentication
+	 * 
+	 * @return bool: always returns false on successful construction of default admin module
+	 * 
+	 */
 	public function loadDefault()
 	{
 		if(isset($_POST['username']) && isset($_POST['password']))
@@ -17,7 +31,11 @@ class LoginController extends AdminController
 
 		return false;
 	}
-
+	/**
+	 * Logs out admin user and loads default module
+	 * 
+	 * @return bool: always returns false on successful log out
+	 */
 	public function loadLogout()
 	{
 		AdminUser::logout();
