@@ -8,21 +8,23 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		
 		$this->valid_config = 
 			array(
-				"admin" => array(
-					"base_href" => "/",
-					"default_app" => true,
-					"app_name" => "Dinkly Admin",
-					"copyright" => "Dinkly",
-					"default_module" => "home",
-					"app_description" => "Just a humble little PHP MVC Framework"
-				),
-				"global" => array(
+				"settings" => array(
 					"dinkly_version" => Dinkly::getConfigValue('dinkly_version', 'global')
-				), 
-				"api" => array(
-					"base_href" => "/api", 
-					"default_module" => "api",
-					"app_name" => "Dinkly API"
+				),
+				"apps" => array(
+					"admin" => array(
+						"default_app" => true,
+						"default_module" => "home",
+						"base_href" => "/",
+						"app_name" => "Dinkly Admin Dev",
+						"app_description" => "Just a humble little PHP MVC Framework",
+						"copyright" => "Dinkly"
+					),
+					"api" => array(
+						"base_href" => "/api", 
+						"default_module" => "api",
+						"app_name" => "Dinkly API"
+					)
 				)
 			);
 
@@ -67,7 +69,8 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		//Test setting config values and getting default
 		$_SESSION['dinkly']['config'] = $this->valid_config;
 		$this->assertEquals(DinklyBase::getDefaultApp(true), "admin");
-		$this->assertEquals(DinklyBase::getDefaultApp(), $this->valid_config['admin']);
+		$config = DinklyBase::getDefaultApp();
+		$this->assertEquals($this->valid_config['apps']['admin'], $config);
 	}
 
 	public function testGetValidModules()
@@ -120,13 +123,8 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 
 	public function testGetConfig()
 	{
-		//Test before config is set
-		$this->assertEquals(DinklyBase::getConfig(),$this->valid_config);
-
-		//Test config value is set
-		$_SESSION['dinkly']['config'] = "test_set_config";
-		$this->assertEquals(DinklyBase::getConfig(), "test_set_config");
-
+		$config = DinklyBase::getConfig();
+		$this->assertEquals($config['apps'], $this->valid_config['apps']);
 	}
 
 	public function testGetModuleHeader()

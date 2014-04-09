@@ -181,21 +181,21 @@ class DinklyBuilder extends Dinkly
 	 * 
 	 * 
 	 */
-	public static function createDb($db_name, $creds)
+	public static function createDb($name, $creds)
 	{
 		$db = new PDO(
-				"mysql:host=".$creds['DB_HOST'].";",
-				$creds['DB_USER'],
-				$creds['DB_PASS']
+				"mysql:host=".$creds['host'].";",
+				$creds['user'],
+				$creds['pass']
 		);
 
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		//Sanitize the db name
-		$db_name = self::sanitize($db, $db_name);
+		$name = self::sanitize($db, $name);
 
 		//Create database if we need to
-		$db->exec("CREATE DATABASE IF NOT EXISTS " . $db_name);
+		$db->exec("CREATE DATABASE IF NOT EXISTS " . $name);
 	}
 	/**
 	 * Create missing tables in database based on yaml configurations
@@ -216,7 +216,7 @@ class DinklyBuilder extends Dinkly
 			if($e->getCode() == 1049)
 			{
 				$creds = DinklyDataConfig::getDBCreds();
-				self::createDb($creds['DB_NAME'], $creds);
+				self::createDb($creds['name'], $creds);
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -497,9 +497,9 @@ class DinklyBuilder extends Dinkly
 		if(!$creds) $creds = DinklyDataConfig::getDBCreds();
 
 		$db = new PDO(
-				"mysql:host=".$creds['DB_HOST'].";dbname=".$creds['DB_NAME'],
-				$creds['DB_USER'],
-				$creds['DB_PASS']
+				"mysql:host=".$creds['host'].";dbname=".$creds['name'],
+				$creds['user'],
+				$creds['pass']
 		);
 
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -534,10 +534,10 @@ class DinklyBuilder extends Dinkly
 
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
-		$db_name = $creds['DB_NAME'];
+		$name = $creds['name'];
 
 		//Connect to the target db
-		$creds['DB_NAME'] = $db_name;
+		$creds['name'] = $name;
 		$db = self::fetchDB($creds);
 
 		//Craft the sql
@@ -573,14 +573,14 @@ class DinklyBuilder extends Dinkly
 
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
-		$db_name = $creds['DB_NAME'];
-		if($override_database_name) { $db_name = $override_database_name; }
+		$name = $creds['name'];
+		if($override_database_name) { $name = $override_database_name; }
 
 		//Create database if it doesn't exist
-		self::createDb($db_name, $creds);
+		self::createDb($name, $creds);
 
 		//Connect to the target DB
-		$creds['DB_NAME'] = $db_name;
+		$creds['name'] = $name;
 		$db = self::fetchDB($creds);
 
 		if($verbose_output)
@@ -735,7 +735,7 @@ class DinklyBuilder extends Dinkly
 		$creds = DinklyDataConfig::getDBCreds();
 		if($override_database_name)
 		{
-			$creds['DB_NAME'] = $override_database_name;
+			$creds['name'] = $override_database_name;
 			DinklyDataConfig::setActiveConnection($creds);
 		}
 
