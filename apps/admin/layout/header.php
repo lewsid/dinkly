@@ -14,7 +14,7 @@
     <link href="/css/bootstrap3.css" rel="stylesheet">
     <link href="/css/bootstrap3.min.css" rel="stylesheet">
     <style>
-      body { padding-top: 80px; /* 80px to make the container go all the way
+      body { padding-top: 60px; /* 60px to make the container go all the way
       to the bottom of the topbar */ }
     </style>
  <!--    <link href="/css/bootstrap-responsive.css" rel="stylesheet"> -->
@@ -72,7 +72,7 @@
             </li>
             <?php endif; ?>
             </ul>
-          <div class="navbar navbar-right" >
+          <div class="nav navbar-nav navbar-right" >
             <?php if(AdminUser::isLoggedIn()): ?>
             <li>
               <a href="/login/logout/">
@@ -99,6 +99,7 @@
         </div><!--/.navbar-collapse -->
       </div>
     </div>
+  </div>
 <!--     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
