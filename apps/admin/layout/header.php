@@ -14,7 +14,7 @@
     <link href="/css/bootstrap3.css" rel="stylesheet">
     <link href="/css/bootstrap3.min.css" rel="stylesheet">
     <style>
-      body { padding-top: 60px; /* 60px to make the container go all the way
+      body { padding-top: 80px; /* 80px to make the container go all the way
       to the bottom of the topbar */ }
     </style>
  <!--    <link href="/css/bootstrap-responsive.css" rel="stylesheet"> -->
@@ -64,8 +64,6 @@
                     Home
                   </a>
               </li>
-            </ul>
-          <form class="navbar-form navbar-right" role="form">
             <?php if(AdminUser::isLoggedIn()): ?>
             <li>
               <a href="/user/user_list/">
@@ -73,6 +71,8 @@
               </a>
             </li>
             <?php endif; ?>
+            </ul>
+          <div class="navbar navbar-right" >
             <?php if(AdminUser::isLoggedIn()): ?>
             <li>
               <a href="/login/logout/">
@@ -94,7 +94,7 @@
                 Sign in
               </button>
             </div>
-          </form>
+          </div>
           <?php endif; ?>
         </div><!--/.navbar-collapse -->
       </div>
