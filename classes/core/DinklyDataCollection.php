@@ -113,7 +113,14 @@ abstract class DinklyDataCollection extends DinklyDataModel
 			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where);
 		}
 	}
-	
+		/**
+	 * Retrieve all objects of specified object given a specific query
+	 *
+	 * @param object $peer_object Object from which to get class of collection objects 
+	 * @param string $query String to filter database query on  
+	 *
+	 * @return Array of matching objects filtered on query
+	 */
 	protected static function getCollection($peer_object, $query)
 	{
 		$db = self::fetchDB();

@@ -1,16 +1,34 @@
 <?php
-
-/* A ready-to-go Restful API, useful for interaction with JS MVC frameworks */
-
+/**
+ * ApiController
+ *
+ * A ready-to-go Restful API, useful for interaction with JS MVC frameworks
+ *
+ * @package    Dinkly
+ * @subpackage AppsApiController
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 class ApiController extends Dinkly 
 {
+	/**
+	 * Handle any errors that occur internally with Server Side Data
+	 *
+	 * @param string $message: message you wish to display upon server side error
+	 *
+	 * 
+	 */
 	public function handleError($message)
 	{
 	    header('HTTP/1.1 500 Internal Server Error');
 	    header('Content-Type: application/json');
 	    die($message);
 	}
-
+	/**
+	 * Handle JSON encoded data received from server
+	 *
+	 * @param JSON string $json: json encoded information from server
+	 * 
+	 */
 	public function handleResponse($json)
 	{
 		header('Cache-Control: no-cache, must-revalidate');
@@ -18,7 +36,11 @@ class ApiController extends Dinkly
 		header('Content-type: application/json');
 		echo $json;
 	}
-
+	/**
+	 * Loads default data from server and handles accordingly based on type
+	 *
+	 * @return mixed data | bool: returns data when possible and false on failure
+	 */
 	public function loadDefault()
 	{	
 		$request = json_decode(file_get_contents('php://input'));

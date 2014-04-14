@@ -1,4 +1,13 @@
 <?php
+/**
+ * DinklyBase
+ *
+ * 
+ *
+ * @package    Dinkly
+ * @subpackage CoreClasses
+ * @author     Christopher Lewis <lewsid@lewsid.com>
+ */
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -16,8 +25,17 @@ class DinklyBase
 
 	//***************************************************************************** NONSTATIC FUNCTIONS
 
+
+	/**
+	 * Initialize dinkly session, Get app root and reset session root if not matching
+	 *
+	 * @param bool $enable_cache default true or enter false to flush session cache
+	 * 
+	 * 
+	 */
 	//Init
 	public function __construct($environment = 'dev', $empty_session = false)
+
 	{
 		//If the dinkly session doesn't exist yet, create it
 		if(!isset($_SESSION['dinkly']) || $empty_session) { $_SESSION['dinkly'] = array(); }
@@ -40,8 +58,12 @@ class DinklyBase
 		//...this prevents issues when going from one Dinkly project to another in a local environment
 		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
 	}
-
-	//Make sense of the friendly URLS and put us we we're supposed to be, with the parameters we expect.
+	/**
+	 * Interpret friendly URLS and load app and module based on Context 
+	 * as well as interpreting parameters where applicable
+	 * @param string $uri default null to be parsed to get correct context
+	 * @return Array of matching objects or false if not found
+	 */
 	public function route($uri = null)
 	{
 		$parameters = array();
@@ -66,7 +88,12 @@ class DinklyBase
 
 		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, true, $context['parameters']);
 	}
-
+	/**
+	 * Fetch the current context of the application based on URL
+	 * 
+	 * @param string $uri default null to be parsed to get correct context
+	 * @return Array $context containing current app, module and view
+	 */
 	public function getContext($uri = null)
 	{
 		if(!$this->context)
@@ -149,7 +176,15 @@ class DinklyBase
 
 		return $this->context;
 	}
-
+	/**
+	 * Load error Page when given a app that doesn't exist in context or 
+	 * load default module if no error file
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * @param string $camel_module_name module we are looking for in camel case
+	 * 
+	 * 
+	 */
 	public function loadError($app_name, $camel_module_name)
 	{
 		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/" . $app_name . "/modules/error/ErrorController.php";
@@ -182,7 +217,15 @@ class DinklyBase
 			}
 		}
 	}
-
+	/**
+	 * Load application base in order to istantiate the app controller
+	 * 
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * 
+	 * 
+	 * @return bool true if app loaded currectly else false and sent to default app
+	 */
 	public function loadApp($app_name)
 	{
 		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
@@ -200,7 +243,19 @@ class DinklyBase
 
 		return true;
 	}
-
+	/**
+	 * Load desired module and redirect if necessary
+	 * 
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * @param string $module_name string of desired module to load
+	 * @param string $view string if passed goes to specified view otherwise default
+	 * @param bool $redirect default false, make true to redirect to different view
+	 * @param bool $draw_layout default true to get module view
+	 * @param array $parameters Array of parameters that can be used to populate views
+	 *
+	 * @return bool true if app loaded currectly else false and sent to default app
+	 */
 	//Dinkly's most badass function. Loads a desired module, and redirects if you ask it nicely.
 	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 	{
@@ -310,14 +365,27 @@ class DinklyBase
 
 		return true;
 	}
-
-	//Set the module header.
+	/**
+	 * Set module header manually
+	 *
+	 * @param header $header String containing contents of header.php file
+	 * 
+	 */
 	public function setModuleHeader($header) { $this->module_header = $header; }
 
-	//Returns the contents of the module header.
+	/**
+	 * Get contents of module header
+	 *
+	 * 
+	 * @return header contents of header.php file of a given module
+	 */
 	public function getModuleHeader() { return $this->module_header; }
-
-	//Return the current context's view
+	/**
+	 * Get current contexts view
+	 *
+	 * 
+	 * @return view of current context
+	 */
 	public function getCurrentView()
 	{
 		if(!$this->view)
@@ -327,8 +395,12 @@ class DinklyBase
 		}
 		return $this->view;
 	}
-
-	//Return the current context's module
+	/**
+	 * Get current contexts module
+	 *
+	 * 
+	 * @return module of current context
+	 */
 	public function getCurrentModule()
 	{
 		if(!$this->module)
@@ -338,8 +410,12 @@ class DinklyBase
 		}
 		return $this->module;
 	}
-
-	//Return parameters
+	/**
+	 * Get current contexts parameters
+	 *
+	 * 
+	 * @return parameters of current context
+	 */
 	public function getParameters()
 	{
 		if(!$this->parameters)
@@ -351,14 +427,26 @@ class DinklyBase
 	}
 
 	//***************************************************************************** STATIC FUNCTIONS
-
-	//Return current application name
+	/**
+	 * Get current application's name from dinkly session
+	 *
+	 * 
+	 * @return string name of application
+	 */
 	public static function getCurrentAppName()
 	{
 		return $_SESSION['dinkly']['current_app_name'];
 	}
-
-	//Validate that all the minimum configuration settings exist
+	/**
+	 * Validate that all the minimum configuration settings exist
+	 * @param Array $config: array containing configuration settings to be validated
+	 * 
+	 * @throws Missing default module if no default module is set in app config
+	 * @throws Missing base href if no base href field is found in app config
+	 * @throws Missing default app if no default app field is found in app config
+	 *
+	 * @return bool: true if the configuration is valid, false otherwise
+	 */
 	public static function validateConfig($config)
 	{
 		if(sizeof($config['apps']) < 1)
@@ -390,8 +478,12 @@ class DinklyBase
 
 		return true;
 	}
-
-	//If the configuration file hasn't been loaded, do so. Returns the configuration array.
+	/**
+	 * If the configuration file hasn't been loaded, do so. Returns the configuration array.
+	 *
+	 * 
+	 * @return Array containting current configuration
+	 */
 	public static function getConfig()
 	{
 		$env = 'dev';
@@ -421,8 +513,13 @@ class DinklyBase
 
 		return $config;
 	}
-
-	//Need a specific configuration value? This is for you.
+	/**
+	 * Get a specific property value of the configuration
+	 * @param string $key string to index into config array
+	 * @param string $app_name specify app to get config value from
+	 *
+	 * @return mixed value of config spec
+	 */
 	public static function getConfigValue($key, $app_name = null)
 	{
 		if(!$app_name) { $app_name = self::getDefaultApp(true); }
@@ -440,8 +537,12 @@ class DinklyBase
 
 		return false;
 	}
-
-	//A little helper function to convert camel case class names to their underscore equivalents.
+	/**
+	 * Convert a string from camel case for class name conversion
+	 * @param string $str String in camel case to be converted
+	 * 
+	 * @return string in lower case spaced with underscores
+	 */
 	public static function convertFromCamelCase($str)
 	{
 		$str[0] = strtolower($str[0]);
@@ -449,8 +550,13 @@ class DinklyBase
 		
 		return preg_replace_callback('/([A-Z])/', $func, $str);
 	}
-	
-	//Convert underscored string into camel case. Used for class loading.
+	/**
+	 * Convert underscored string to camel case for class loading
+	 * @param string $str String underscored to be converted
+	 * @param bool $capitalise_first choose whether first letter should be in caps 
+	 *
+	 * @return string in normal camel case or all upper camel case
+	 */
 	public static function convertToCamelCase($str, $capitalise_first_char = false)
 	{
 		if($capitalise_first_char) $str[0] = strtoupper($str[0]);
@@ -459,8 +565,12 @@ class DinklyBase
 		
 		return preg_replace_callback('/_([a-z])/', $func, $str);
 	}
-
-	//Returns an array of valid modules, that is, they actually exist.
+	/**
+	 * Get existing modules
+	 * @param string $app_name String name of app from which you want modules
+	 *
+	 * @return Array of valid modules
+	 */
 	public static function getValidModules($app_name)
 	{
 		$valid_modules = null;
@@ -484,8 +594,13 @@ class DinklyBase
 
 		return $valid_modules;
 	}
-
-	//Return the default application configuration array.
+	/**
+	 * Get default application from config array
+	 *
+	 * @param bool $return_name make true to return app name not config array
+	 *
+	 * @return Array of application config of default app
+	 */
 	public static function getDefaultApp($return_name = false)
 	{
 		$config = self::getConfig();
