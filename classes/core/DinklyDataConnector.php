@@ -35,6 +35,7 @@ class DinklyDataConnector
 
 		return $db;
 	}
+	
 	/**
 	 * Test function to make check for successful DB connection
 	 *

@@ -3,7 +3,7 @@ records:
     -   
         created_at:     
         updated_at:
-        username:   bfett
+        username:   admin
         password:   password
         first_name: Boba
         last_name:  Fett

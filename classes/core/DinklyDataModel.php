@@ -42,6 +42,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	protected $isNew;
 	protected $regDirty = array();
 	protected $registry = array();
+
 	/**
 	 * Connect with database and form empty data model
 	 *
@@ -81,6 +82,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		return false;
 
 	}
+
 	/**
 	 * Initialize object with values other than id
 	 *
@@ -119,6 +121,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		else return false;
 	}
+
 	/**
 	 * Retrieve all existing properties of an object
 	 *
@@ -134,6 +137,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
  		}
  		return $array;
  	}
+
 	/**
 	 * Update or create record of an object
 	 *
@@ -146,6 +150,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if(!$this->isNew && !$force_insert) { return $this->update(); }
 		else { return $this->insert(); }
 	}
+
 	/**
 	 * Retrieve sql select query with all DB properties returned
 	 *
@@ -157,12 +162,14 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	{ 
 		return "select " . implode(", ", $this->getColumns()) . " from " . $this->getDBTable();
 	}
+
 	/**
 	 * meant to be overloaded by child objects to attach any related objects following the hydrate
 	 *
 	 *
 	 */
 	public function attach() { }
+
 	/**
 	 * Fills all properties of an object with specific values
 	 *
@@ -198,6 +205,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 
 		return true;
 	}
+
 	/**
 	 * Delete a database object
 	 *
@@ -214,6 +222,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 
 		return $this->db->exec($query);
 	}
+
 	/**
 	 * Update an existing database object
 	 *
@@ -252,6 +261,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		if($is_valid) { return $this->db->exec($query); }
 		else { return false; }
 	}
+
 	/**
 	 * Insert a database object
 	 *
@@ -302,6 +312,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		
 		return $this->Id;
 	}
+
 	/**
 	 * Retrieve all properties an object can possess
 	 *
@@ -322,6 +333,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 		}
 		return $columns;
 	}
+
 	/**
 	 * Retrieve the registry of a given objects data model
 	 *
@@ -329,6 +341,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	 * 
 	 */
 	protected function getRegistry() { return $this->registry; }
+
 	/**
 	 * Retrieve the data table name of a given model
 	 *
@@ -336,6 +349,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	 * 
 	 */
 	protected function getDBTable() { return $this->dbTable; }
+
 	/**
 	 * Forces entire data model to refresh to completely wipe a record
 	 *
@@ -347,6 +361,7 @@ abstract class DinklyDataModel extends DinklyDataConnector
 			$this->regDirty[$key] = true;
 		}
 	}
+
 	/**
 	 * Retrieve the database connection 
 	 *
@@ -354,17 +369,20 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	 * 
 	 */
 	public function getDB() { return $this->db; }
+
 	/**
 	 * Set the database connection 
 	 * @param PDO $value PDO containing new DB credentials
 	 */
 	public function setDB($value) { $this->db = $value;}
+
 	/**
 	 * Check if an object is newly created or already existed
 	 *
 	 * @return bool true if new object or false if existing 
 	 */
 	public function isNew() { return $this->isNew; }
+	
 	/**
 	 * Construct Dynamic getters and setters for objects
 	 * @param string $method String containing function call

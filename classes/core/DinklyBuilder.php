@@ -61,6 +61,7 @@ class DinklyBuilder extends Dinkly
 
 		return $sql;
 	}
+
 	/**
 	 * Add missing fields to existing database table
 	 *
@@ -173,6 +174,7 @@ class DinklyBuilder extends Dinkly
 			}
 		}
 	}
+
 	/**
 	 * Create a database if it does not already exist
 	 *
@@ -197,6 +199,7 @@ class DinklyBuilder extends Dinkly
 		//Create database if we need to
 		$db->exec("CREATE DATABASE IF NOT EXISTS " . $name);
 	}
+
 	/**
 	 * Create missing tables in database based on yaml configurations
 	 *
@@ -257,6 +260,7 @@ class DinklyBuilder extends Dinkly
 			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, $verbose_output);
 		}
 	}
+
 	/**
 	 * Build module from command line 
 	 *
@@ -301,6 +305,7 @@ class DinklyBuilder extends Dinkly
 			return false;
 		}
 	}
+
 	/**
 	 * Build application function to be used from command line
 	 *
@@ -342,6 +347,7 @@ class DinklyBuilder extends Dinkly
 			echo "\nError: Unable to create app directories.\n\n";
 		}
 	}
+
 	/**
 	 * Parse yaml schema of specified model
 	 *
@@ -393,6 +399,7 @@ class DinklyBuilder extends Dinkly
 
 		return false;
 	}
+
 	/**
 	 * Build Base model dynamically based on schema file
 	 *
@@ -483,6 +490,7 @@ class DinklyBuilder extends Dinkly
 			return true;
 		}
 	}
+
 	/**
 	 * Make new database connection using default or specified DB credentials
 	 *
@@ -506,6 +514,7 @@ class DinklyBuilder extends Dinkly
 
 		return $db;
 	}
+
 	/**
 	 *  Cleans up quotation marks of variables to be used in DB query
 	 *
@@ -520,6 +529,7 @@ class DinklyBuilder extends Dinkly
 		$output = $db->quote($variable);
 		return str_replace("'", "", $variable);
 	}
+
 	/**
 	 *  Drop table from database completely if it exists
 	 *
@@ -549,6 +559,7 @@ class DinklyBuilder extends Dinkly
 
 		return true;
 	}
+
 	/**
 	 *  Build database table based on given parameters
 	 *
@@ -655,6 +666,7 @@ class DinklyBuilder extends Dinkly
 
 		return true;
 	}
+
 	/**
 	 *  Fetch all models under a specific schema folder
 	 *
@@ -675,6 +687,7 @@ class DinklyBuilder extends Dinkly
 
 		return $model_names;
 	}
+
 	/**
 	 *  Build all models under all of the schemas insert missing fields if wanted
 	 *
@@ -718,6 +731,7 @@ class DinklyBuilder extends Dinkly
 			}
 		}
 	}
+
 	/**
 	 *  Load a specific fixture to populate DB table
 	 *
@@ -794,6 +808,7 @@ class DinklyBuilder extends Dinkly
 			return true;
 		}
 	}
+	
 	/**
 	 *  Load all fixture to populate DB table
 	 *

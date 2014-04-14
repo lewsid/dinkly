@@ -31,6 +31,7 @@ class DinklyDataConfig
 			self::setActiveConnection($first_connection);
 		}
 	}
+
 	/**
 	 * Checks for active DB connection and sets one if none found
 	 * @param string $connection_name String name of DB connection
@@ -45,6 +46,7 @@ class DinklyDataConfig
 		}
 		return array_key_exists($connection_name, $_SESSION['dinkly']['db_creds']);
 	}
+
 	/**
 	 * Sets active DB connection and sets session variables accordingly
 	 * Can overide active connection if new DB credentials passed in
@@ -77,6 +79,7 @@ class DinklyDataConfig
 		
 		return false;
 	}
+	
 	/**
 	 * Fetches credentials of active DB connection
 	 * 

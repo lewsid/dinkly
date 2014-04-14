@@ -22,6 +22,7 @@ class AdminUser extends BaseAdminUser
 		$this->Password = crypt($password);
 		$this->regDirty['password'] = true;
 	}
+
 	/**
 	 * Check Dinkly session to see if admin user is logged in
 	 *
@@ -33,6 +34,7 @@ class AdminUser extends BaseAdminUser
 		if(isset($_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in'])) { return $_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_in']; }
 		return false;
 	}
+
 	/**
 	 * Retrieve all objects matching array of passed property/value pairs
 	 *
@@ -46,6 +48,7 @@ class AdminUser extends BaseAdminUser
 		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'] = $username;
 		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_id'] = $username;
 	}
+
 	/**
 	 * Check Dinkly session to get username of admin that is logged in
 	 *
@@ -57,6 +60,7 @@ class AdminUser extends BaseAdminUser
 		if(isset($_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'])) { return $_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username']; }
 		return false;
 	}
+
 	/**
 	 * Clear Dinkly session variables to log out admin user
 	 *
@@ -69,6 +73,7 @@ class AdminUser extends BaseAdminUser
 		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_username'] = null;
 		$_SESSION['dinkly'][Dinkly::getCurrentAppName()]['logged_id'] = null;
 	}
+	
 	/**
 	 * Verify with database that admin user credentials are correct and log in if so
 	 * 

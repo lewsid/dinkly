@@ -15,7 +15,7 @@ Features
 - YAML configuration and customization
 - Full Composer support
 - Restful API
-- Bare-bones and flexible ORM
+- Minimal and flexible ORM
 - Data fixtures
 - Out-of-the-box user authentication
 - Ready-to-go Twitter Bootstrap admin interface
@@ -48,7 +48,7 @@ Setup Basic Admin and Authentication
 
     `php tools/load_fixtures.php -s=admin`
 
-    Unless changed, the default admin user created will use 'bfett' for the username and 'password' for the password. It's pretty lame... we encourage you to change it. This can be easily accomplished by updating the fixture file: `config/fixtures/dinkly/AdminUser.yml`  
+    Unless changed, the default admin user created will use 'admin' for the username and 'password' for the password.
 
 
 Command Line Tools
@@ -74,7 +74,7 @@ Generate a new Dinkly module for a given application:
 
     php tools/gen_module.php -a=<app name> -m=<module name>
 
-Execute unit tests (example):
+Run unit tests:
 
     php tools/run_unit_tests.php
 
