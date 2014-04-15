@@ -1,7 +1,7 @@
-<link rel="stylesheet" href="/css/datatables-bootstrap3.css">
+<link rel="stylesheet" href="/css/datatables-bootstrap.css">
 <script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/js/dataTables.bootstrap3.js"></script>
-<script type="text/javascript" src="/js/dataTables.editor.bootstrap3.js"></script>
+<script type="text/javascript" src="/js/dataTables.bootstrap.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {
 	/* Table initialisation */
@@ -24,6 +24,7 @@ $(function(){
         search_input.attr('placeholder', 'Search')
         search_input.addClass('form-control input-small')
         search_input.css('width', '250px')
+
         
         
        // search_input.css('position', 'absolute')
@@ -33,6 +34,7 @@ $(function(){
         var clear_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] a');
         clear_input.html('<i class="icon-remove-circle icon-large"></i>')
         clear_input.css('margin-left', '5px')
+
  
         // LENGTH - Inline-Form control
         var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
