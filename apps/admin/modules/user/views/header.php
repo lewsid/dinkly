@@ -5,6 +5,14 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	/* Table initialisation */
-	$('#user-list').dataTable();
+	$('#user-list').dataTable({
+    "sDom": "<'row'<'col-6'f><'col-6'l>r>t<'row'<'col-6'i><'col-6'p>>",
+    "sPaginationType": "bootstrap",
+    "oLanguage": {
+    "sLengthMenu": "Show _MENU_ Rows",
+  
+
+    }});
+
 });
 </script>
