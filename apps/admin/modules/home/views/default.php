@@ -1,4 +1,4 @@
-<div class="hero-unit">
+<div class="jumbotron">
   <div>
   	<?php if(AdminUser::isLoggedIn()): ?>
   	<h4>

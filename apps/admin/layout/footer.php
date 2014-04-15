@@ -1,5 +1,5 @@
 
-      <div>
+      <div class="footer">
       	<hr>
     	© <?php echo Dinkly::getConfigValue('copyright'); ?> <?php echo date('Y'); ?>
       
