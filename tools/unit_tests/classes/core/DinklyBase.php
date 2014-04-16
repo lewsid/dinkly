@@ -68,18 +68,31 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	public function testCurrentView()
+	public function testGetCurrentView()
 	{
-
+			$this->base= new DinklyBase();
+			$_SERVER['REQUEST_URI']="/home/default/id/1";
+			//make sure current view is set correctly based on URI
+			$this->assertEquals($this->base->getCurrentView(),'default');
 	}
 
-	public function testCurrentModule()
+	public function testGetCurrentModule()
 	{
-
+			$this->base= new DinklyBase();
+			$_SERVER['REQUEST_URI']="/home/default/id/1";
+			//make sure current module is set correctly based on URI
+			$this->assertEquals($this->base->getCurrentModule(),'home');
 	}
 
 	public function testGetParameters()
 	{
+	  $this->base= new DinklyBase();
+		$example_uri = "/home/default/id/200";
+		$this->context =$this->base->getContext($example_uri);
+		$parameters=$this->base->getParameters();
+		//test stored parameters agains sample context that is set
+		$this->assertEquals($parameters['id'],200);
+		
 		
 	}
 
