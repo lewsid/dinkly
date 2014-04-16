@@ -29,18 +29,37 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 			);
 
 		$this->valid_modules = array("home","login","user");
-		
+		$context=null;
 		$this->valid_context = 
-			array('current_app_name' => 'admin', 'module' => 'home', 'view' => 'default', 'parameters'=>array('id'));
+			array('current_app_name' => 'admin', 'module' => 'home', 'view' => 'default', 'parameters'=>array('id'=>1));
 	}
 
 	public function testRoute()
 	{
-
+		// $this->base= new DinklyBase();
+		// $this->base->route("/home/default/id/1");
+		// //$example_uri = "/home/default/id/1";
+		// //$this->context =$this->base->getContext($example_uri);
+		// error_log("hello");
 	}
 
 	public function testLoadError()
 	{
+		$this->base= new DinklyBase();
+		//make sure nothing is being returned
+		$this->assertEmpty($this->base->loadError("admin","home"));
+	}
+	public function testGetContext()
+	{
+		$this->base= new DinklyBase();
+		$example_uri = "/home/default/id/1";
+		$this->context =$this->base->getContext($example_uri);
+		$test_context= $this->valid_context;
+		//test to make sure context is formatted correctly against example context
+		$this->assertEquals($test_context['current_app_name'],$this->context['current_app_name']);
+		$this->assertEquals($test_context['module'],$this->context['module']);
+		$this->assertEquals($test_context['view'],$this->context['view']);
+		$this->assertEquals($test_context['parameters']['id'],$this->context['parameters']['id']);
 
 	}
 
