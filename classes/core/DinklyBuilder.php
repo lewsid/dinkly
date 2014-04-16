@@ -289,22 +289,21 @@ class DinklyBuilder extends Dinkly
 
 				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
 				fwrite($fp, '<?php' . PHP_EOL );
-				fwrite($fp, '/**
- * '.Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL.
-			
-' * 
- *
- * @package    Dinkly
- * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).Dinkly::convertToCamelCase($module_name, true).'Controller
- * @author     Christopher Lewis <lewsid@lewsid.com>
- */' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '/**'.PHP_EOL .
+				' * '.Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL.
+				' *'.PHP_EOL .
+				' *'.PHP_EOL .
+				' * @package    Dinkly'.PHP_EOL .
+				' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL .
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
+				' */' . PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
-				fwrite($fp,'	/**
-	 * Default Constructor
-	 * 
-	 * @return bool: always returns true on successful construction of view
-	 * 
-	 */'.PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
+				fwrite($fp,'/**'.PHP_EOL .
+				' * Load default view'.PHP_EOL .
+				' *'.PHP_EOL . 
+				' * @return bool: always returns true on successful construction of view'.PHP_EOL .
+				' *'.PHP_EOL .
+				' */'.PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
 			}
@@ -351,22 +350,22 @@ class DinklyBuilder extends Dinkly
 
 			$fp = fopen($app_dir . "/" . Dinkly::convertToCamelCase($app_name, true) . "Controller.php", 'w+');
 			fwrite($fp, '<?php'.PHP_EOL.
-			'/**
- * '.Dinkly::convertToCamelCase($app_name, true).'Controller'.PHP_EOL.
-			
-' * 
- *
- * @package    Dinkly
- * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).'Controller
- * @author     Christopher Lewis <lewsid@lewsid.com>
- */' . PHP_EOL . PHP_EOL);
+			'/**'.PHP_EOL .
+			' * '.Dinkly::convertToCamelCase($app_name, true).'Controller'.PHP_EOL.
+
+			' * '.PHP_EOL .
+			' *'.PHP_EOL .
+			' * @package    Dinkly'.PHP_EOL .
+			' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).'Controller'.PHP_EOL .
+			' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
+			' */' . PHP_EOL . PHP_EOL);
 			fwrite($fp, 'class ' . Dinkly::convertToCamelCase($app_name, true) . 'Controller extends Dinkly' . PHP_EOL . '{' . PHP_EOL);
-			fwrite($fp, '	/**
-	 * Default Constructor
-	 * 
-	 * @return bool: always returns true on successful construction of view
-	 * 
-	 */'.PHP_EOL ."\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
+			fwrite($fp, '/**'.PHP_EOL .
+			' * Default Constructor'.PHP_EOL .
+			' * '.PHP_EOL .
+			' * @return bool: always returns true on successful construction of view'.PHP_EOL .
+			' * '.PHP_EOL .
+			' */'.PHP_EOL ."\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
 			fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 			fclose($fp);
 		}
