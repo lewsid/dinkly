@@ -452,9 +452,16 @@ class DinklyBuilder extends Dinkly
 			//create base model
 			if($fp = fopen($base_file, 'w+'))
 			{
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, '# This is an auto-generated file. Please do not alter this file. Instead, make changes to the model file that extends it.');
-				fwrite($fp, PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL);
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.'Base'.$model_name. PHP_EOL.
+				' *'. PHP_EOL.
+				' * # This is an auto-generated file. Please do not alter this file. Instead, make changes to the model file that extends it.'. PHP_EOL.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsBaseClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class Base' . $model_name . ' extends DinklyDataModel' . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\t" . 'public $registry = array(' . PHP_EOL);
 
@@ -495,7 +502,16 @@ class DinklyBuilder extends Dinkly
 				echo "Creating custom models...";
 
 				$fp = fopen($custom_file, 'w+');
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL );
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.$model_name. PHP_EOL.
+				' *'. PHP_EOL.
+				' *'.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsCustomClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class ' . $model_name . ' extends Base' . $model_name . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);
@@ -507,7 +523,16 @@ class DinklyBuilder extends Dinkly
 			if(!file_exists($custom_collection_file))
 			{
 				$fp = fopen($custom_collection_file, 'w+');
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL);
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.$model_name.'Collection'. PHP_EOL.
+				' *'. PHP_EOL.
+				' *'.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsCustomClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class ' . $model_name . 'Collection extends DinklyDataCollection' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);
