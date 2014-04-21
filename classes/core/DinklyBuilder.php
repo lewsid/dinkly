@@ -288,9 +288,22 @@ class DinklyBuilder extends Dinkly
 				fclose($fp);
 
 				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL );
+				fwrite($fp, '/**'.PHP_EOL .
+				' * '.Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL.
+				' *'.PHP_EOL .
+				' *'.PHP_EOL .
+				' * @package    Dinkly'.PHP_EOL .
+				' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL .
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
+				' */' . PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
-				fwrite($fp, "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
+				fwrite($fp,'/**'.PHP_EOL .
+				' * Load default view'.PHP_EOL .
+				' *'.PHP_EOL . 
+				' * @return bool: always returns true on successful construction of view'.PHP_EOL .
+				' *'.PHP_EOL .
+				' */'.PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
 			}
@@ -336,9 +349,23 @@ class DinklyBuilder extends Dinkly
 			fclose($fp);
 
 			$fp = fopen($app_dir . "/" . Dinkly::convertToCamelCase($app_name, true) . "Controller.php", 'w+');
-			fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+			fwrite($fp, '<?php'.PHP_EOL.
+			'/**'.PHP_EOL .
+			' * '.Dinkly::convertToCamelCase($app_name, true).'Controller'.PHP_EOL.
+
+			' * '.PHP_EOL .
+			' *'.PHP_EOL .
+			' * @package    Dinkly'.PHP_EOL .
+			' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).'Controller'.PHP_EOL .
+			' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
+			' */' . PHP_EOL . PHP_EOL);
 			fwrite($fp, 'class ' . Dinkly::convertToCamelCase($app_name, true) . 'Controller extends Dinkly' . PHP_EOL . '{' . PHP_EOL);
-			fwrite($fp, "\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
+			fwrite($fp, '/**'.PHP_EOL .
+			' * Default Constructor'.PHP_EOL .
+			' * '.PHP_EOL .
+			' * @return bool: always returns true on successful construction of view'.PHP_EOL .
+			' * '.PHP_EOL .
+			' */'.PHP_EOL ."\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
 			fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 			fclose($fp);
 		}
@@ -425,9 +452,16 @@ class DinklyBuilder extends Dinkly
 			//create base model
 			if($fp = fopen($base_file, 'w+'))
 			{
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
-				fwrite($fp, '# This is an auto-generated file. Please do not alter this file. Instead, make changes to the model file that extends it.');
-				fwrite($fp, PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL);
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.'Base'.$model_name. PHP_EOL.
+				' *'. PHP_EOL.
+				' * # This is an auto-generated file. Please do not alter this file. Instead, make changes to the model file that extends it.'. PHP_EOL.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsBaseClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class Base' . $model_name . ' extends DinklyDataModel' . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp, "\t" . 'public $registry = array(' . PHP_EOL);
 
@@ -468,7 +502,16 @@ class DinklyBuilder extends Dinkly
 				echo "Creating custom models...";
 
 				$fp = fopen($custom_file, 'w+');
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL );
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.$model_name. PHP_EOL.
+				' *'. PHP_EOL.
+				' *'.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsCustomClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class ' . $model_name . ' extends Base' . $model_name . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);
@@ -480,7 +523,16 @@ class DinklyBuilder extends Dinkly
 			if(!file_exists($custom_collection_file))
 			{
 				$fp = fopen($custom_collection_file, 'w+');
-				fwrite($fp, '<?php' . PHP_EOL . PHP_EOL);
+				fwrite($fp, '<?php' . PHP_EOL);
+				fwrite($fp, '/**'. PHP_EOL.
+				' * '.$model_name.'Collection'. PHP_EOL.
+				' *'. PHP_EOL.
+				' *'.
+				' *'. PHP_EOL.
+				' * @package    Dinkly'. PHP_EOL.
+				' * @subpackage ModelsCustomClasses'. PHP_EOL.
+				' * @author     Christopher Lewis <lewsid@lewsid.com>'. PHP_EOL.
+				' */'. PHP_EOL);
 				fwrite($fp, 'class ' . $model_name . 'Collection extends DinklyDataCollection' . PHP_EOL . '{' . PHP_EOL . PHP_EOL);
 				fwrite($fp, '}' . PHP_EOL . PHP_EOL);
 				fclose($fp);

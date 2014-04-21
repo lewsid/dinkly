@@ -27,11 +27,18 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 					)
 				)
 			);
-
+		$this->bad_config = 
+					array(
+				"settings" => array(
+					"dinkly_version" => Dinkly::getConfigValue('dinkly_version', 'global')
+				),
+				"apps" => array(
+				)
+			);
 		$this->valid_modules = array("home","login","user");
-		
+		$context=null;
 		$this->valid_context = 
-			array('current_app_name' => 'admin', 'module' => 'home', 'view' => 'default', 'parameters'=>array('id'));
+			array('current_app_name' => 'admin', 'module' => 'home', 'view' => 'default', 'parameters'=>array('id'=>1));
 	}
 
 	public function testRoute()
@@ -41,26 +48,67 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 
 	public function testLoadError()
 	{
+		$this->base= new DinklyBase();
+		//make sure nothing is being returned
+		$this->assertEmpty($this->base->loadError("admin","home"));
+	}
+	public function testGetContext()
+	{
+		$this->base= new DinklyBase();
+		$example_uri = "/home/default/id/1";
+		$this->context =$this->base->getContext($example_uri);
+		$test_context= $this->valid_context;
+		//test to make sure context is formatted correctly against example context
+		$this->assertEquals($test_context['current_app_name'],$this->context['current_app_name']);
+		$this->assertEquals($test_context['module'],$this->context['module']);
+		$this->assertEquals($test_context['view'],$this->context['view']);
+		$this->assertEquals($test_context['parameters']['id'],$this->context['parameters']['id']);
 
 	}
 
 	public function testLoadModule()
 	{
-
+		$this->base= new DinklyBase();
+		$this->base->loadModule('admin');
+		//Provide sample URI to be used
+		$_SERVER['REQUEST_URI']="/home/default/id/1";
+		//make sure view is constructed correctly
+		$this->assertEquals($this->base->getCurrentView(),'default');
+		//make sure module is constructed correctly
+		$this->assertEquals($this->base->getCurrentModule(),'home');
+		//make sure parameters stored correctly
+		$parameters=$this->base->getParameters();
+		$this->assertEquals($parameters['id'],1);
+		//test upon failure to load module
+		$this->bad_base= new DinklyBase();
+		$this->assertFalse($this->bad_base->loadModule('bad'));
 	}
 
-	public function testCurrentView()
+	public function testGetCurrentView()
 	{
-
+			$this->base= new DinklyBase();
+			$_SERVER['REQUEST_URI']="/home/default/id/1";
+			//make sure current view is set correctly based on URI
+			$this->assertEquals($this->base->getCurrentView(),'default');
 	}
 
-	public function testCurrentModule()
+	public function testGetCurrentModule()
 	{
-
+			$this->base= new DinklyBase();
+			$_SERVER['REQUEST_URI']="/home/default/id/1";
+			//make sure current module is set correctly based on URI
+			$this->assertEquals($this->base->getCurrentModule(),'home');
 	}
 
 	public function testGetParameters()
 	{
+	  $this->base= new DinklyBase();
+		$example_uri = "/home/default/id/200";
+		$this->context =$this->base->getContext($example_uri);
+		$parameters=$this->base->getParameters();
+		//test stored parameters agains sample context that is set
+		$this->assertEquals($parameters['id'],200);
+		
 		
 	}
 
@@ -143,6 +191,13 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 
 		//Test invalid header
 		$this->assertNotEquals(DinklyBase::getModuleHeader(), 'error');
+	}
+		public function testValidateConfig()
+	{
+		//test using a well constructed valid config
+		$config = $this->valid_config;
+		$this->assertTrue(DinklyBase::validateConfig($config));
+
 	}
 
 	public function testLoadApp()
