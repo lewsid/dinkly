@@ -13,16 +13,18 @@ abstract class DinklyDataCollection extends DinklyDataModel
 {
 	/**
 	 * Retrieve all objects
+	 *
+	 * @param PDO object $db Optional PDO object for recycling existing connections
 	 * 
 	 * @return Array of objects or false if not found
 	 */
-	public static function getAll()
+	public static function getAll($db = null)
 	{
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
 		if(class_exists($peer_class)) 
 		{
 			$peer_object = new $peer_class();
-			return self::getCollection($peer_object, $peer_object->getSelectQuery());
+			return self::getCollection($peer_object, $peer_object->getSelectQuery(), $db);
 		}
 		return false;
 	}
@@ -43,9 +45,11 @@ abstract class DinklyDataCollection extends DinklyDataModel
 	 *					The following would simply return 700 records:
 	 *					array(0 => 700)
 	 *
+	 ** @param PDO object $db Optional PDO object for recycling existing connections
+	 *
 	 * @return Array of matching objects or false if not found
 	 */
-	public static function getWith($properties, $order = array(), $limit = array())
+	public static function getWith($properties, $order = array(), $limit = array(), $db = null)
 	{
 		//Dynamically find class name and ensure it exists
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
@@ -53,7 +57,9 @@ abstract class DinklyDataCollection extends DinklyDataModel
 		{
 			//Build the basic select query
 			$peer_object = new $peer_class();
-			$db = self::fetchDB();
+
+			if($db == null) { $db = self::fetchDB(); }
+
 			$cols = array();
 			foreach($properties as $property => $value)
 			{
@@ -110,7 +116,9 @@ abstract class DinklyDataCollection extends DinklyDataModel
 				if($is_valid) { $where .= $chunk; }
 			}
 
-			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where);
+			$db = null;
+
+			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where, $db);
 		}
 	}
 	
@@ -119,12 +127,14 @@ abstract class DinklyDataCollection extends DinklyDataModel
 	 *
 	 * @param object $peer_object Object from which to get class of collection objects 
 	 * @param string $query String to filter database query on  
+	 * @param PDO object $db Optional PDO object for recycling existing connections
 	 *
 	 * @return Array of matching objects filtered on query
 	 */
-	protected static function getCollection($peer_object, $query)
+	protected static function getCollection($peer_object, $query, $db = null)
 	{
-		$db = self::fetchDB();
+		if($db == null) { $db = self::fetchDB(); }
+		
 		$results = $db->query($query)->fetchAll();
 
 		if($results != array() && $results != NULL)
@@ -141,6 +151,9 @@ abstract class DinklyDataCollection extends DinklyDataModel
 
 				$i++;
 			}
+
+			$db = null;
+
 			return $arrObject;
 		}
 	}

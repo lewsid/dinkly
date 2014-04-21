@@ -35,7 +35,7 @@ class AdminUserTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($this->user->isLoggedIn());
 
 		//Test now with the right creds
-		$username = "bfett";
+		$username = "admin";
 		$password = "password";
 		$this->user->authenticate($username, $password);
 		
