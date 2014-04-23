@@ -6,8 +6,8 @@
 $(document).ready(function() {
 	/* Table initialisation */
 	$('#user-list').dataTable();
-
 });
+
 $.extend( true, $.fn.dataTable.defaults, {
     "sDom": "<'row'<'col-6'><'col-6'l><'pull-right' f>r>t<'row'<'col-6'i><'col-6'<'pull-right' p>>>",
     "sPaginationType": "bootstrap",
@@ -15,7 +15,8 @@ $.extend( true, $.fn.dataTable.defaults, {
         "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": ""
     }
-} );
+});
+
 $(function(){
     $('#user-list').each(function(){
         var datatable = $(this);
@@ -24,11 +25,6 @@ $(function(){
         search_input.attr('placeholder', 'Search')
         search_input.addClass('form-control input-small')
         search_input.css('width', '250px')
-
-        
-        
-       // search_input.css('position', 'absolute')
-        //search_input.css('right', '100px')
  
         // SEARCH CLEAR - Use an Icon
         var clear_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] a');
@@ -45,7 +41,5 @@ $(function(){
         var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_info]');
         length_sel.css('margin-top', '18px')
     });
-
-
 });
 </script>

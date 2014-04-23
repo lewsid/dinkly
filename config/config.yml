@@ -7,7 +7,7 @@ global:
             default_app: true
             default_module: landing
             base_href: /
-            app_name: Dinkly
+            app_name: Dinkly Frontend
             app_description: The humble little PHP MVC Framework
         admin:
             default_module: home

@@ -181,46 +181,24 @@ class DinklyBase
 	 * Load error Page when given a app that doesn't exist in context or 
 	 * load default module if no error file
 	 *
-	 * @param string $app_name name of app we are trying to load
-	 * @param string $camel_module_name module we are looking for in camel case
-	 * 
+	 * @param string $$requested_app_name name of app we are trying to load
+	 * @param string $requested_camel_module_name module we are looking for in camel case
+	 * @param string $requested_view_name view we are looking for in camel case
 	 * 
 	 */
-	public function loadError($app_name, $camel_module_name)
+	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null)
 	{
-		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/" . $app_name . "/modules/error/ErrorController.php";
-			
+		//Check for base dinkly 404
+		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/error/ErrorController.php";
+		
 		if(file_exists($error_controller))
 		{
-			$camel_module_name = "ErrorController";
-			$module_name = 'error';
-			$controller_file = $error_controller;
-			$view_name = '404';
-		}
-		else
-		{
-			//Check for base dinkly 404
-			$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/error/ErrorController.php";
-			
-			if(file_exists($error_controller))
-			{
-				$app_name = 'error';
-				$camel_module_name = "ErrorController";
-				$module_name = 'error';
-				$controller_file = $error_controller;
-				$view_name = '404';
-			}
-			else
-			{
-				$camel_module_name = self::convertToCamelCase(self::getConfigValue('default_module', $app_name), true) . "Controller";
-				$module_name = self::getConfigValue('default_module', $app_name);
-				$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . self::getConfigValue('default_module', $app_name) . '/' . $camel_module_name . ".php";
-			}
+			return $this->loadModule('error', 'error', '404', true, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
 		}
 	}
 
 	/**
-	 * Load application base in order to istantiate the app controller
+	 * Load application base in order to instantiate the app controller
 	 * 
 	 *
 	 * @param string $app_name name of app we are trying to load
@@ -261,6 +239,8 @@ class DinklyBase
 	 */
 	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 	{
+		header_remove();
+
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 		
@@ -301,8 +281,7 @@ class DinklyBase
 		//If the controller doesn't exist, load 404 error page if one is available, otherwise load default module
 		if(!file_exists($controller_file))
 		{
-			$this->loadError($app_name, $camel_module_name);
-
+			$this->loadError($app_name, $camel_module_name, $view_name);
 			return false;
 		}
 
@@ -363,6 +342,16 @@ class DinklyBase
 					}
 				}
 			}
+			else
+			{
+				$this->loadError($app_name, $camel_module_name, $view_name);
+				return false;
+			}
+		}
+		else
+		{
+			$this->loadError($app_name, $camel_module_name, $view_name);
+			return false;
 		}
 
 		return true;

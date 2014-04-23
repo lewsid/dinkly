@@ -66,13 +66,13 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
               <li>
-                  <a href="/">
+                  <a href="/admin">
                     Home
                   </a>
               </li>
             <?php if(AdminUser::isLoggedIn()): ?>
             <li>
-              <a href="/user/user_list/">
+              <a href="/admin/user/user_list/">
                 User List
               </a>
             </li>
@@ -81,14 +81,14 @@
           <div class="nav navbar-nav navbar-right" >
             <?php if(AdminUser::isLoggedIn()): ?>
             <li>
-              <a href="/login/logout/">
+              <a href="/admin/login/logout/">
                 Logout
               </a>
             </li>
             <?php endif; ?>
           </ul>
           <?php if(!AdminUser::isLoggedIn()): ?>
-          <form id="sign-in-form" class="navbar-form pull-right" action="/login/" method="post">
+          <form id="sign-in-form" class="navbar-form pull-right" action="/admin/login/" method="post">
             <div class="form-group">
               <input name="username" type="text" placeholder="Username" class="form-control">
             </div>

@@ -1,7 +1,7 @@
 <div class="jumbotron">
   <div>
     <h1>
-      You're using <?php echo Dinkly::getConfigValue('app_name'); ?>! (v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?>)
+      Welcome to Dinkly! (v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?>)
     </h1>
     <p>
       <?php echo Dinkly::getConfigValue('app_description'); ?>
