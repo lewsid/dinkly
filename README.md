@@ -36,7 +36,7 @@ Installation
 Setup Basic Admin and Authentication
 ------------------------------------
 
-1. Update `config/db.yml` to match your environment's database connection.
+1. Update `config/config.yml` to match your environment's database connection.
 
 2. Generate the basic admin models:
 
