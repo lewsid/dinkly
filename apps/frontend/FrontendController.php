@@ -18,6 +18,6 @@ class FrontendController extends Dinkly
  */
 	public function __construct()
 	{
-		return $this->loadModule('admin', 'home', 'default', false);
+		return true;
 	}
 }
