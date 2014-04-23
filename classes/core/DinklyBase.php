@@ -239,7 +239,8 @@ class DinklyBase
 	 */
 	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 	{
-		header_remove();
+		//If nested, prevent output from doubling
+		if(headers_sent()) { return false; }
 
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
@@ -268,6 +269,7 @@ class DinklyBase
 
 			header("Location: " . $path);
 		}
+		else { $this->loadApp($app_name); }
 
 		//Get module controller
 		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
@@ -354,7 +356,7 @@ class DinklyBase
 			return false;
 		}
 
-		return true;
+		return $draw_layout;
 	}
 
 	/**
