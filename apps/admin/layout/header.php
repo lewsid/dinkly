@@ -3,7 +3,7 @@
   
   <head>
     <meta charset="utf-8">
-    <title><?php echo Dinkly::getConfigValue('app_name'); ?> v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?></title>
+    <title><?php echo Dinkly::getConfigValue('app_name', 'admin'); ?> v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -60,7 +60,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">
-            <?php echo Dinkly::getConfigValue('app_name'); ?>
+            <?php echo Dinkly::getConfigValue('app_name', 'admin'); ?>
           </a>
         </div>
         <div class="navbar-collapse collapse">
