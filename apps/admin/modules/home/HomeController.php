@@ -16,8 +16,12 @@ class HomeController extends AdminController
 	 * @return bool: always returns true on successful construction of default admin home view
 	 * 
 	 */
-	public function loadDefault()
+	public function loadDefault($parameters = array())
 	{
+		$this->invalid_login = false;
+
+		if(isset($parameters['invalid_login'])) $this->invalid_login = true;
+
 		return true;
 	}
 }

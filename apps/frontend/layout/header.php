@@ -31,11 +31,12 @@
     
     <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/js/dinkly.js"></script>
 
     <?php echo $this->getModuleHeader(); ?>
   </head>
   <body>
+  </div>
+    <div class="container"><!-- Primary Container -->
     <?php if($this->getCurrentEnvironment() == 'dev'): ?>
       <!-- Handy Dev Mode Info Label -->
       <h3 class="dev-mode-indicator-label">
@@ -49,61 +50,3 @@
         </span>
       </h3>
     <?php endif; ?>
-
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">
-            <?php echo Dinkly::getConfigValue('app_name'); ?>
-          </a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li>
-                  <a href="/">
-                    Home
-                  </a>
-              </li>
-            <?php if(AdminUser::isLoggedIn()): ?>
-            <li>
-              <a href="/user/user_list/">
-                User List
-              </a>
-            </li>
-            <?php endif; ?>
-            </ul>
-          <div class="nav navbar-nav navbar-right" >
-            <?php if(AdminUser::isLoggedIn()): ?>
-            <li>
-              <a href="/login/logout/">
-                Logout
-              </a>
-            </li>
-            <?php endif; ?>
-          </ul>
-          <?php if(!AdminUser::isLoggedIn()): ?>
-          <form id="sign-in-form" class="navbar-form pull-right" action="/login/" method="post">
-            <div class="form-group">
-              <input name="username" type="text" placeholder="Username" class="form-control">
-            </div>
-            <div class="form-group">
-             <input name="password" type="password" placeholder="Password" class="form-control">
-            </div>
-            <div class="form-group">
-              <button class="btn btn-success" id="sign-in">
-                Sign in
-              </button>
-            </div>
-          </div>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-  </div>
-    <div class="container"><!-- Primary Container -->

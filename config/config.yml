@@ -1,14 +1,19 @@
 global:
     settings:
-        dinkly_version: 1.28
+        dinkly_version: 1.30
 
     apps:
-        admin:
+        frontend:
             default_app: true
-            default_module: home
+            default_module: landing
             base_href: /
+            app_name: Dinkly
+            app_description: The humble little PHP MVC Framework
+        admin:
+            default_module: home
+            base_href: /admin
             app_name: Dinkly Admin
-            app_description: Just a humble little PHP MVC Framework
+            app_description: The humble little PHP MVC Framework
             copyright: Dinkly
         api:
             app_name: Dinkly API

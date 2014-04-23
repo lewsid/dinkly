@@ -417,6 +417,17 @@ class DinklyBase
 	}
 
 	/**
+	 * Get current environment name
+	 *
+	 * 
+	 * @return string name of the current environment
+	 */
+	public function getCurrentEnvironment()
+	{
+		return $_SESSION['dinkly']['environment'];
+	}
+
+	/**
 	 * Get current contexts parameters
 	 *
 	 * 

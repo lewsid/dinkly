@@ -1,0 +1,11 @@
+.dev-mode-indicator-label {
+	position: fixed;
+	bottom:15px;
+	right:15px
+}
+
+.dev-mode-info-label {
+	position: fixed;
+	left: 15px;
+	bottom:15px;
+}

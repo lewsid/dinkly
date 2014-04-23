@@ -18,16 +18,17 @@ class LoginController extends AdminController
 	 */
 	public function loadDefault()
 	{
+		$error = null;
+
 		if(isset($_POST['username']) && isset($_POST['password']))
 		{
 			if(!AdminUser::authenticate($_POST['username'], $_POST['password']))
 			{
-				$_SESSION['dinkly']['badlogin'] = true;
+				$error = array('invalid_login' => 1);
 			}
-			else if(isset($_SESSION['dinkly']['badlogin'])) { unset($_SESSION['dinkly']['badlogin']); }
 		}
 
-		$this->loadModule('admin', 'home', 'default', true);
+		$this->loadModule('admin', 'home', 'default', true, true, $error);
 
 		return false;
 	}
