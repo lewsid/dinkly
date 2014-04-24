@@ -415,7 +415,10 @@ class DinklyBase
 	 */
 	public function getCurrentEnvironment()
 	{
-		return $_SESSION['dinkly']['environment'];
+		if(isset($_SESSION['dinkly']['environment']))
+		{
+			return $_SESSION['dinkly']['environment'];
+		}
 	}
 
 	/**
@@ -442,7 +445,10 @@ class DinklyBase
 	 */
 	public static function getCurrentAppName()
 	{
-		return $_SESSION['dinkly']['current_app_name'];
+		if(isset($_SESSION['dinkly']['current_app_name']))
+		{
+			return $_SESSION['dinkly']['current_app_name'];
+		}
 	}
 
 	/**
