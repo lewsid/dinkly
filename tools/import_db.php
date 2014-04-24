@@ -1,6 +1,8 @@
 <?php
 
 /*
+	EXPERIMENTAL!
+
 	This function is used to read the structure of a database table or 
 	an entire database and create yml files for Dinkly
 
@@ -23,7 +25,7 @@ if($options['s']) getDbStructure($options['s'], $model_name);
 else echo "\nYou must specify a database\n";
 
 //this function theoretically would be moved into Dinkly core when completed
-function getDbStructure($schema, $model_name = null, $verbose_output = true, $override_database_name = null)
+function getDbStructure($schema, $model_name = null, $verbose_output = true)
 {
 	//set active connection to schema and stop if there is no matching schema
 	if(!DinklyDataConfig::setActiveConnection($schema))
