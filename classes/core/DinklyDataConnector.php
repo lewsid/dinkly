@@ -60,7 +60,7 @@ class DinklyDataConnector
 				}
 			}
 
-			return self::fetchDB();
+			if(self::fetchDB()) return true;
 		}
 		catch (PDOException $e)
 		{
@@ -68,6 +68,6 @@ class DinklyDataConnector
     		return false;
 		}
 
-		return true;
+		return false;
 	}
 }
