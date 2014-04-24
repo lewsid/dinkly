@@ -516,6 +516,16 @@ class DinklyBase
 						}
 					}
 				}
+				if(isset($raw_config[$env]['databases']))
+				{
+					foreach($raw_config[$env]['databases'] as $schema => $db_config)
+					{
+						foreach($db_config as $config_name => $config_value)
+						{
+							$config['databases'][$schema][$config_name] = $config_value;
+						}
+					}
+				}
 			}
 
 			if(self::validateConfig($config)) { $_SESSION['dinkly']['config'] = $config; }
