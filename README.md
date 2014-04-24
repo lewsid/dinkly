@@ -1,4 +1,4 @@
-Dinkly v1.30
+Dinkly v1.31
 ============
 
 The biggest little PHP framework
@@ -74,7 +74,11 @@ Generate a new Dinkly module for a given application:
 
     php tools/gen_module.php -a=<app name> -m=<module name>
 
-Run unit tests:
+Test database connection for a given schema:
+
+    php tools/test_db.php -s=<schema name>
+
+Run unit tests (assuming you've installed the additional dev packages with composer):
 
     php tools/run_unit_tests.php
 

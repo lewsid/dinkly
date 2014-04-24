@@ -39,15 +39,28 @@ class DinklyDataConnector
 	/**
 	 * Test function to make check for successful DB connection
 	 *
-	 * @param int $error_mode Int  1 = show warnings
+	 * @param string $schema defaults to dev
 	 * @return bool true on successful connection false otherwise
 	 * @throws Exception if connection failed
 	 */
-	public static function testDB($error_mode = 1)
+	public static function testDB($schema = null)
 	{
 		try
 		{
-			self::fetchDB();
+			if($schema)
+			{ 
+				if(DinklyDataConfig::hasConnection($schema))
+				{
+					DinklyDataConfig::setActiveConnection($schema);
+				}
+				else
+				{ 
+					echo "Connection failed: Schema does not exist\n";
+					return false;
+				}
+			}
+
+			return self::fetchDB();
 		}
 		catch (PDOException $e)
 		{
