@@ -39,7 +39,7 @@ class DinklyDataConnector
 	/**
 	 * Test function to make check for successful DB connection
 	 *
-	 * @param string $schema defaults to dev
+	 * @param string $schema defaults to first found in config
 	 * @return bool true on successful connection false otherwise
 	 * @throws Exception if connection failed
 	 */

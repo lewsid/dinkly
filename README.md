@@ -74,9 +74,9 @@ Generate a new Dinkly module for a given application:
 
     php tools/gen_module.php -a=<app name> -m=<module name>
 
-Test database connection for a given schema:
+Test database connection for a given schema (and optionally by environment):
 
-    php tools/test_db.php -s=<schema name>
+    php tools/test_db.php -s=<schema name> [-e=<environment>]
 
 Run unit tests (assuming you've installed the additional dev packages with composer):
 
