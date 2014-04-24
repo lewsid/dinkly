@@ -1,7 +1,7 @@
 <?php
 
 /*
-	This function is mean't to read the structure of a database table or 
+	This function is used to read the structure of a database table or 
 	an entire database and create yml files for Dinkly
 
 	Example Usages: 
@@ -36,6 +36,7 @@ function getDbStructure($schema, $model_name = null, $verbose_output = true, $ov
 	//Connect to database
 	$db = DinklyDataConnector::fetchDB();
 
+	$db_name = $creds['name'];
 	$db_name = DinklyBuilder::sanitize($db, $db_name);
 	$model_name = DinklyBuilder::sanitize($db, $model_name);
 
