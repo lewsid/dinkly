@@ -37,18 +37,6 @@ dev:
         admin:
             app_name: Dinkly Admin Dev
 prod:
-    databases:
-        admin:
-            host: localhost
-            user: root
-            pass: root
-            name: dinkly_admin
-
-        unit_test:
-            host: localhost
-            user: root
-            pass: root
-            name: dinkly_unit_test
     apps:
         admin:
             app_name: Dinkly Admin

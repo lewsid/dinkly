@@ -33,14 +33,8 @@ function getDbStructure($schema, $model_name = null, $verbose_output = true, $ov
 		return false;
 	} 
 
-	//Use the proper DB credentials, or apply a passed-in override
-	$creds = DinklyDataConfig::getDBCreds();
-	$db_name = $creds['DB_NAME'];
-	if($override_database_name) { $db_name = $override_database_name; }
-
 	//Connect to database
-	$host = "localhost";
-	$db = new PDO("mysql:host=".$creds['DB_HOST'].";dbname=".$db_name."", $creds['DB_USER'], $creds['DB_PASS']);
+	$db = new DinklyDataConnector::fetchDB();
 
 	$db_name = DinklyBuilder::sanitize($db, $db_name);
 	$model_name = DinklyBuilder::sanitize($db, $model_name);
