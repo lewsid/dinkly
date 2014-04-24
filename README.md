@@ -30,7 +30,13 @@ Installation
 
     `php composer.phar install --no-dev`
     
-3. Set the `web` folder to be web-accessible by your server software.   
+3. Set the `web` folder to be web-accessible by your server software.
+
+
+The Basics
+----------
+
+1. Pay close to attention to `config/bootstrap.php`, it is here that you will want to toggle between your environments, if needed. It defaults to `dev` but can be changed to match other environments found in `config/config.yml`.
 
 
 Setup Basic Admin and Authentication
