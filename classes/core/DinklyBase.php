@@ -506,11 +506,14 @@ class DinklyBase
 
 			if(isset($raw_config[$env]))
 			{
-				foreach($raw_config[$env]['apps'] as $app_name => $app_config)
+				if(isset($raw_config[$env]['apps']))
 				{
-					foreach($app_config as $config_name => $config_value)
+					foreach($raw_config[$env]['apps'] as $app_name => $app_config)
 					{
-						$config['apps'][$app_name][$config_name] = $config_value;
+						foreach($app_config as $config_name => $config_value)
+						{
+							$config['apps'][$app_name][$config_name] = $config_value;
+						}
 					}
 				}
 			}
