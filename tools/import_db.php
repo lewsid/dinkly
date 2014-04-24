@@ -34,7 +34,7 @@ function getDbStructure($schema, $model_name = null, $verbose_output = true, $ov
 	} 
 
 	//Connect to database
-	$db = new DinklyDataConnector::fetchDB();
+	$db = DinklyDataConnector::fetchDB();
 
 	$db_name = DinklyBuilder::sanitize($db, $db_name);
 	$model_name = DinklyBuilder::sanitize($db, $model_name);
