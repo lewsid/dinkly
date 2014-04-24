@@ -13,10 +13,7 @@ if(!isset($options['s']))
 
 if(isset($options['e']))
 {
-	if($options['e'] != 'dev')
-	{
-		$Dinkly = new Dinkly($options['e']);
-	}
+	$Dinkly = new Dinkly($options['e']);
 }
 
 if(DinklyDataConnector::testDB($options['s'])) { echo "\nSuccessfully connected to database!\n"; }
