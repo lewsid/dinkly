@@ -30,7 +30,6 @@ $(function(){
         var clear_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] a');
         clear_input.html('<i class="icon-remove-circle icon-large"></i>')
         clear_input.css('margin-left', '5px')
-
  
         // LENGTH - Inline-Form control
         var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
