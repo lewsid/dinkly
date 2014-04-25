@@ -63,13 +63,13 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-              <li>
+              <li <?php echo (Dinkly::getCurrentModule() == 'home') ? 'class="active"' : ''; ?>>
                   <a href="/admin">
                     Home
                   </a>
               </li>
             <?php if(AdminUser::isLoggedIn()): ?>
-            <li>
+            <li <?php echo (Dinkly::getCurrentModule() == 'user') ? 'class="active"' : ''; ?>>
               <a href="/admin/user/user_list/">
                 User List
               </a>
