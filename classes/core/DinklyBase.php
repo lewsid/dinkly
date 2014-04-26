@@ -38,6 +38,10 @@ class DinklyBase
 		//If the dinkly session doesn't exist yet, create it
 		if(!isset($_SESSION['dinkly']) || $empty_session) { $_SESSION['dinkly'] = array(); }
 
+		//If the current application root does not match what we have in session, reset the dinkly session
+		//...this prevents issues when going from one Dinkly project to another in a local environment
+		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
+
 		//Set mode (prod or dev) (dev to display errors, disable config cache)
 		if(isset($_SESSION['dinkly']['environment']))
 		{
@@ -51,10 +55,6 @@ class DinklyBase
 
 		//If the dinkly setting for the app root doesn't exist, create it
 		if(!isset($_SESSION['dinkly']['app_root'])) { $_SESSION['dinkly']['app_root'] = $_SERVER['APPLICATION_ROOT']; }
-
-		//If the current application root does not match what we have in session, reset the dinkly session
-		//...this prevents issues when going from one Dinkly project to another in a local environment
-		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
 	}
 
 	/**
