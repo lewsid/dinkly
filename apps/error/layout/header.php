@@ -37,7 +37,7 @@
   <body>
   </div>
     <div class="container"><!-- Primary Container -->
-    <?php if($this->getCurrentEnvironment() == 'dev'): ?>
+    <?php if(Dinkly::getCurrentEnvironment() == 'dev'): ?>
       <!-- Handy Dev Mode Info Label -->
       <h3 class="dev-mode-indicator-label">
         <span class="label label-warning">

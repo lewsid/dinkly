@@ -305,6 +305,7 @@ class DinklyBase
 			{
 				if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 				{
+					throw new Exception('Module "' . $module_name . '" cannot be loaded.');
 					return false;
 				}
 
@@ -413,7 +414,7 @@ class DinklyBase
 	 * 
 	 * @return string name of the current environment
 	 */
-	public function getCurrentEnvironment()
+	public static function getCurrentEnvironment()
 	{
 		if(isset($_SESSION['dinkly']['environment']))
 		{
@@ -607,7 +608,7 @@ class DinklyBase
 	{
 		$valid_modules = null;
 
-		if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]))
+		if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]) || self::getCurrentEnvironment() == 'dev')
 		{
 			$valid_modules = array();
 			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
