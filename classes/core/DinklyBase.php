@@ -345,11 +345,6 @@ class DinklyBase
 					}
 				}
 			}
-			else
-			{
-				$this->loadError($app_name, $camel_module_name, $view_name);
-				return false;
-			}
 		}
 		else
 		{
