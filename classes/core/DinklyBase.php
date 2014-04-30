@@ -204,24 +204,23 @@ class DinklyBase
 	 * @param string $app_name name of app we are trying to load
 	 * 
 	 * 
-	 * @return bool true if app loaded currectly else false and sent to default app
+	 * @return bool true if app controller is locoated and instantiated
 	 */
 	public function loadApp($app_name)
 	{
 		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
 		$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/' . $camel_app_controller_name . '.php';
 
-		if(!file_exists($app_controller_file))
+		if(file_exists($app_controller_file))
 		{
-			$this->loadError($app_name, 'DefaultController');
-			return false;
+			//Instantiate controller object
+			require_once $app_controller_file;
+			$controller = new $camel_app_controller_name();
+
+			return true;
 		}
 
-		//Instantiate controller object
-		require_once $app_controller_file;
-		$controller = new $camel_app_controller_name();
-
-		return true;
+		return false;
 	}
 
 	/**
