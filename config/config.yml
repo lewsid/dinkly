@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: 1.31
+        dinkly_version: 1.32
 
     apps:
         frontend:

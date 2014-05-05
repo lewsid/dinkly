@@ -300,48 +300,52 @@ class DinklyBase
 
 		if(method_exists($controller, $view_function))
 		{
+			//If controller function returns false, don't draw layout wrapper
 			if($controller->$view_function($parameters))
 			{
-				if(!in_array($module_name, Dinkly::getValidModules($app_name)))
+				$draw_layout = true;
+			}
+			else { $draw_layout = false; }
+
+			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
+			{
+				throw new Exception('Module "' . $module_name . '" cannot be loaded.');
+				return false;
+			}
+
+			//Migrate the scope of the declared variables to be local to the view
+			$vars = get_object_vars($controller);
+			foreach ($vars as $name => $value)
+				$$name = $value;
+
+			//Get module view
+			if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+			{
+				if($draw_layout)
 				{
-					throw new Exception('Module "' . $module_name . '" cannot be loaded.');
-					return false;
+					if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+					{
+						ob_start();
+						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
+						$header = ob_get_contents();
+						ob_end_clean();
+						$this->setModuleHeader($header);
+					}
+					
+					//Set the powered-by header if the version number is in the config
+					if($version = self::getConfigValue('dinkly_version', 'global'))
+					{
+						header('X-Powered-By: DINKLY/' . $version);
+					}
+
+					include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
 				}
 
-				//Migrate the scope of the declared variables to be local to the view
-				$vars = get_object_vars($controller);
-				foreach ($vars as $name => $value)
-					$$name = $value;
-
-				//Get module view
-				if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+				require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
+				
+				if($draw_layout)
 				{
-					if($draw_layout)
-					{
-						if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
-						{
-							ob_start();
-							include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
-							$header = ob_get_contents();
-							ob_end_clean();
-							$this->setModuleHeader($header);
-						}
-						
-						//Set the powered-by header if the version number is in the config
-						if($version = self::getConfigValue('dinkly_version', 'global'))
-						{
-							header('X-Powered-By: DINKLY/' . $version);
-						}
-
-						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
-					}
-
-					require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-					
-					if($draw_layout)
-					{
-						require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php');
-					}
+					require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php');
 				}
 			}
 		}
