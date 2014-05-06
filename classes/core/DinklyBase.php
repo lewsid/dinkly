@@ -204,7 +204,7 @@ class DinklyBase
 	 * @param string $app_name name of app we are trying to load
 	 * 
 	 * 
-	 * @return bool true if app controller is locoated and instantiated
+	 * @return bool true if app controller is locoated and instantiated, false if one can't be found
 	 */
 	public function loadApp($app_name)
 	{
@@ -268,7 +268,9 @@ class DinklyBase
 
 			header("Location: " . $path);
 		}
-		else { $this->loadApp($app_name); }
+		
+		//Load the app controller, if one exists
+		$this->loadApp($app_name);
 
 		//Get module controller
 		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
