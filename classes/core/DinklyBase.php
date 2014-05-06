@@ -40,7 +40,10 @@ class DinklyBase
 
 		//If the current application root does not match what we have in session, reset the dinkly session
 		//...this prevents issues when going from one Dinkly project to another in a local environment
-		if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
+		if(isset($_SESSION['dinkly']['app_root']))
+		{
+			if($_SERVER['APPLICATION_ROOT'] != $_SESSION['dinkly']['app_root']) { $_SESSION['dinkly'] = array(); }
+		}
 
 		//Set mode (prod or dev) (dev to display errors, disable config cache)
 		if(isset($_SESSION['dinkly']['environment']))
