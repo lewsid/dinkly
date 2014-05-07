@@ -63,8 +63,8 @@ table.dataTable thead .sorting_asc_disabled { background: url('../img/sort_asc_d
 table.dataTable thead .sorting_desc_disabled { background: url('../img/sort_desc_disabled.png') no-repeat center right; }
 
 table.dataTable thead > tr > th {
-	padding-left: 18px;
-	padding-right: 18px;
+	/*padding-left: 18px;
+	padding-right: 18px;*/
 }
 
 table.dataTable th:active {
