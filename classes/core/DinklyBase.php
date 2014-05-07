@@ -33,7 +33,7 @@ class DinklyBase
 	 * 
 	 * 
 	 */
-	public function __construct($environment = 'dev', $empty_session = false)
+	public function __construct($environment = null, $empty_session = false)
 	{
 		//If the dinkly session doesn't exist yet, create it
 		if(!isset($_SESSION['dinkly']) || $empty_session) { $_SESSION['dinkly'] = array(); }

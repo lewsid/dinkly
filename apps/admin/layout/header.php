@@ -57,7 +57,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/admin">
             <?php echo Dinkly::getConfigValue('app_name', 'admin'); ?>
           </a>
         </div>
