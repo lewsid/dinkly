@@ -51,7 +51,11 @@ class DinklyBase
 			//If the passed environment doesn't match the one in session, refresh the session
 			if($_SESSION['dinkly']['environment'] != $environment) { $_SESSION['dinkly'] = array(); }
 		}
-		$_SESSION['dinkly']['environment'] = $environment;
+		else
+		{
+			if(!$environment) { $environment = 'dev'; }
+			$_SESSION['dinkly']['environment'] = $environment;
+		}
 
 		//Enable display of errors if we're in dev
 		if($_SESSION['dinkly']['environment'] == 'dev') { ini_set('display_errors', 1); }
