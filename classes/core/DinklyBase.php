@@ -58,7 +58,10 @@ class DinklyBase
 		}
 
 		//Enable display of errors if we're in dev
-		if($_SESSION['dinkly']['environment'] == 'dev') { ini_set('display_errors', 1); }
+		if(isset($_SESSION['dinkly']['environment']))
+		{
+			if($_SESSION['dinkly']['environment'] == 'dev') { ini_set('display_errors', 1); }
+		}
 
 		//If the dinkly setting for the app root doesn't exist, create it
 		if(!isset($_SESSION['dinkly']['app_root'])) { $_SESSION['dinkly']['app_root'] = $_SERVER['APPLICATION_ROOT']; }
@@ -89,8 +92,6 @@ class DinklyBase
 		$context['parameters'] = array_merge($context['parameters'], $parameters);
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
-
-		$this->loadApp($context['current_app_name']);
 
 		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, true, $context['parameters']);
 	}
@@ -205,32 +206,6 @@ class DinklyBase
 	}
 
 	/**
-	 * Load application base in order to instantiate the app controller
-	 * 
-	 *
-	 * @param string $app_name name of app we are trying to load
-	 * 
-	 * 
-	 * @return bool true if app controller is locoated and instantiated, false if one can't be found
-	 */
-	public function loadApp($app_name)
-	{
-		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
-		$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/' . $camel_app_controller_name . '.php';
-
-		if(file_exists($app_controller_file))
-		{
-			//Instantiate controller object
-			require_once $app_controller_file;
-			$controller = new $camel_app_controller_name();
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Load desired module and redirect if necessary
 	 * 
 	 *
@@ -277,7 +252,17 @@ class DinklyBase
 		}
 		
 		//Load the app controller, if one exists
-		$this->loadApp($app_name);
+		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
+		$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/' . $camel_app_controller_name . '.php';
+
+		$has_app_controller = false;
+		if(file_exists($app_controller_file))
+		{
+			//Instantiate controller object
+			require_once $app_controller_file;
+
+			$has_app_controller = true;
+		}
 
 		//Get module controller
 		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
@@ -291,8 +276,15 @@ class DinklyBase
 		//If the controller doesn't exist, load 404 error page if one is available, otherwise load default module
 		if(!file_exists($controller_file))
 		{
-			$this->loadError($app_name, $camel_module_name, $view_name);
-			return false;
+			if($has_app_controller)
+			{
+				$app_controller = new $camel_app_controller_name();
+			}
+			else
+			{
+				$this->loadError($app_name, $camel_module_name, $view_name);
+				return false;
+			}
 		}
 
 		//Instantiate controller object

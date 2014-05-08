@@ -211,15 +211,6 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(DinklyBase::validateConfig($config));
 	}
 
-	public function testLoadApp()
-	{
-		//Test on app that exists
-		$this->assertTrue(DinklyBase::loadApp('admin'));
-
-		//Test on app that does not exist
-		$this->assertFalse(DinklyBase::loadApp('null'));
-	}
-
 	public function loadError()
 	{
 		//just need this to bypass DinklyBase::loadError()
