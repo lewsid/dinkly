@@ -49,7 +49,10 @@ class DinklyBase
 		if(isset($_SESSION['dinkly']['environment']))
 		{
 			//If the passed environment doesn't match the one in session, refresh the session
-			if($_SESSION['dinkly']['environment'] != $environment) { $_SESSION['dinkly'] = array(); }
+			if($environment)
+			{
+				if($_SESSION['dinkly']['environment'] != $environment) { $_SESSION['dinkly'] = array(); }
+			}
 		}
 		else
 		{
