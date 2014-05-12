@@ -1,14 +1,13 @@
 <?php
 /**
- * AdminUserCollection
+ * DinklyUserGroup
  *
- * 
- *
+ * *
  * @package    Dinkly
  * @subpackage ModelsCustomClasses
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class AdminUserCollection extends DinklyDataCollection
+class DinklyUserGroup extends BaseDinklyUserGroup
 {
 
 }

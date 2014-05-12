@@ -1,13 +1,13 @@
 <?php
 /**
- * TestUser
+ * DinklyGroupPermission
  *
  * *
  * @package    Dinkly
  * @subpackage ModelsCustomClasses
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class TestUser extends BaseTestUser
+class DinklyGroupPermission extends BaseDinklyGroupPermission
 {
 
 }

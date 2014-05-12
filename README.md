@@ -1,4 +1,4 @@
-Dinkly v1.33
+Dinkly v1.34
 ============
 
 The biggest little PHP framework
@@ -44,15 +44,15 @@ Setup Basic Admin and Authentication
 
 1. Update `config/config.yml` to match your environment's database connection.
 
-2. Generate the basic admin models:
+2. Generate the basic user authentication models:
 
-    `php tools/gen_models.php -s=admin -i`
+    `php tools/gen_models.php -s=dinkly -i`
 
   This command will automatically create a new database called 'admin' if one doesn't already exist. It will also generate the necessary tables.
 
-3. Create a basic admin user:
+3. Create an admin user:
 
-    `php tools/load_fixtures.php -s=admin`
+    `php tools/load_fixtures.php -s=dinkly`
 
     Unless changed, the default admin user created will use 'admin' for the username and 'password' for the password.
 

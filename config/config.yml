@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: 1.33
+        dinkly_version: 1.34
 
     apps:
         frontend:
@@ -21,11 +21,11 @@ global:
             default_module: api
 
     databases:
-        admin:
+        dinkly:
             host: localhost
             user: root
             pass: root
-            name: dinkly_admin
+            name: dinkly_app
 
         unit_test:
             host: localhost

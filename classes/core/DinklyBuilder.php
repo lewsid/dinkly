@@ -849,6 +849,9 @@ class DinklyBuilder extends Dinkly
 				$model = new $model_name();
 				foreach($record as $col_name => $value)
 				{
+					//Automatically set created date if none was passed
+					if($col_name == 'created_at' && $value == "") { $value = date('Y-m-d G:i:s'); }
+					
 					$set_field = 'set' . Dinkly::convertToCamelCase($col_name, true);
 					$model->$set_field($value);
 				}

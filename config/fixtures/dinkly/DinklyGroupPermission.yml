@@ -1,0 +1,6 @@
+table_name: dinkly_group_permission
+records:
+    -   
+        id: 1
+        dinkly_group_id: 1
+        dinkly_permission_id: 1

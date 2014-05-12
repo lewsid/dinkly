@@ -22,7 +22,7 @@ class LoginController extends AdminController
 
 		if(isset($_POST['username']) && isset($_POST['password']))
 		{
-			if(!AdminUser::authenticate($_POST['username'], $_POST['password']))
+			if(!DinklyUser::authenticate($_POST['username'], $_POST['password']))
 			{
 				$error = array('invalid_login' => 1);
 			}
@@ -39,7 +39,7 @@ class LoginController extends AdminController
 	 */
 	public function loadLogout()
 	{
-		AdminUser::logout();
+		DinklyUser::logout();
 
 		$this->loadModule('admin', 'home', 'default', true);
 

@@ -5,7 +5,7 @@
  * 
  *
  * @package    Dinkly
- * @subpackage AppsAdminUserUserController
+ * @subpackage AppsDinklyUserController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 class UserController extends AdminController
@@ -18,7 +18,7 @@ class UserController extends AdminController
 	 */
 	public function __construct()
 	{
-		if(!AdminUser::isLoggedIn())
+		if(!DinklyUser::isLoggedIn() || !DinklyUser::isMemberOf('admin'))
 		{
 			$this->loadModule('admin', 'home', 'default', true);
 			return false;
@@ -32,18 +32,7 @@ class UserController extends AdminController
 	 */
 	public function loadDefault()
 	{
-		$this->loadModule('admin', 'user', 'user_list', true);
-		return false;
-	}
-	/**
-	 * Loads User List module in admin partition and get user data from database
-	 * 
-	 * @return bool: always returns true on successful load of user data
-	 * 
-	 */
-	public function loadUserList()
-	{
-		$this->users = AdminUserCollection::getAll();
+		$this->users = DinklyUserCollection::getAll();
 		return true;
 	}
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * TestUser
+ * DinklyUserCollection
  *
  * *
  * @package    Dinkly
  * @subpackage ModelsCustomClasses
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class TestUser extends BaseTestUser
+class DinklyUserCollection extends DinklyDataCollection
 {
 
 }

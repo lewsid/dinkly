@@ -27,7 +27,9 @@ abstract class DinklyDataCollection extends DinklyDataModel
 
 			if($db == null) { $db = self::fetchDB(); }
 			
-			return self::getCollection($peer_object, $peer_object->getSelectQuery(), $db);
+			$query = $peer_object->getSelectQuery();
+
+			return self::getCollection($peer_object, $query, $db);
 		}
 		return false;
 	}

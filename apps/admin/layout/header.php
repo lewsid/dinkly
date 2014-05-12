@@ -62,24 +62,29 @@
                     Home
                   </a>
               </li>
-            <?php if(AdminUser::isLoggedIn()): ?>
+            <?php if(DinklyUser::isMemberOf('admin')): ?>
             <li <?php echo (Dinkly::getCurrentModule() == 'user') ? 'class="active"' : ''; ?>>
-              <a href="/admin/user/user_list/">
-                User List
-              </a>
-            </li>
-            <?php endif; ?>
-            </ul>
-          <div class="nav navbar-nav navbar-right" >
-            <?php if(AdminUser::isLoggedIn()): ?>
-            <li>
-              <a href="/admin/login/logout/">
-                Logout
+              <a href="/admin/user/">
+                Users
               </a>
             </li>
             <?php endif; ?>
           </ul>
-          <?php if(!AdminUser::isLoggedIn()): ?>
+          <ul class="nav navbar-nav pull-right dinkly-admin-user-menu">
+            <?php if(DinklyUser::isLoggedIn()): ?>
+            <li>
+              <div class="btn-group">
+                <button type="button" class="btn  btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                  <strong><?php echo DinklyUser::getLoggedUsername(); ?></strong> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                  <li><a href="/admin/login/logout/">Logout</a></li>
+                </ul>
+              </div>
+            </li>
+            <?php endif; ?>
+          </ul>
+          <?php if(!DinklyUser::isLoggedIn()): ?>
           <form id="sign-in-form" class="navbar-form pull-right" action="/admin/login/" method="post">
             <div class="form-group">
               <input name="username" type="text" placeholder="Username" class="form-control">

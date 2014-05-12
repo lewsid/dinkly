@@ -276,12 +276,15 @@ class DinklyBase
 		$this->module = $module_name;
 		$this->parameters = $parameters;
 
-		//If the controller doesn't exist, load 404 error page if one is available, otherwise load default module
+		//If the controller doesn't exist, load 404 error page
 		if(!file_exists($controller_file))
 		{
+			//If there's an app controller, we instantiate that, in case it has overrides
 			if($has_app_controller)
 			{
 				$app_controller = new $camel_app_controller_name();
+				$this->loadError($app_name, $camel_module_name, $view_name);
+				return false;
 			}
 			else
 			{
@@ -610,7 +613,9 @@ class DinklyBase
 	{
 		$valid_modules = null;
 
-		if(!isset($_SESSION['dinkly']['valid_modules_' . $app_name]) || self::getCurrentEnvironment() == 'dev')
+		if(!isset($_SESSION['dinkly']['valid_modules'])) { $_SESSION['dinkly']['valid_modules'] = array(); }
+
+		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::getCurrentEnvironment() == 'dev')
 		{
 			$valid_modules = array();
 			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
@@ -622,10 +627,10 @@ class DinklyBase
 				} 
 				closedir($handle);
 				
-				$_SESSION['dinkly']['valid_modules_' . $app_name] = $valid_modules;
+				$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
 			}
 		}
-		else { $valid_modules = $_SESSION['dinkly']['valid_modules_' . $app_name]; }
+		else { $valid_modules = $_SESSION['dinkly']['valid_modules'][$app_name]; }
 
 		return $valid_modules;
 	}
