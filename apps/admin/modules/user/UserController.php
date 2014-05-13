@@ -10,12 +10,6 @@
  */
 class UserController extends AdminController
 {
-	/**
-	 * Default Constructor loads module if admin logged in
-	 * 
-	 * @return bool: always returns false on successful construction of admin module
-	 * 
-	 */
 	public function __construct()
 	{
 		if(!DinklyUser::isLoggedIn() || !DinklyUser::isMemberOf('admin'))
@@ -24,15 +18,41 @@ class UserController extends AdminController
 			return false;
 		}
 	}
-	/**
-	 * Loads default module in admin partition of site if admin is logged in
-	 * 
-	 * @return bool: always returns false on successful construction of user default module
-	 * 
-	 */
+
 	public function loadDefault()
 	{
 		$this->users = DinklyUserCollection::getAll();
 		return true;
+	}
+
+	public function loadEdit($parameters)
+	{
+		$this->user = null;
+
+		if(isset($parameters['id']))
+		{
+			$this->user = new DinklyUser();
+			$this->user->init($parameters['id']);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public function loadDetail($parameters)
+	{
+		$this->user = null;
+		$this->saved = null;
+
+		if(isset($parameters['id']))
+		{
+			$this->user = new DinklyUser();
+			$this->user->init($parameters['id']);
+
+			return true;
+		}
+
+		return false;
 	}
 }
