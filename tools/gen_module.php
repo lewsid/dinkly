@@ -5,11 +5,11 @@ require_once('config/bootstrap.php');
 $options = getopt("a:m:");
 if(!isset($options['a']))
 {
-	echo "\nPlease use the -a flag to indicate which application this module will be contained in.\nExample: php gen_module.php -a=admin -m=test_module\n\n";
+	echo "\nPlease use the -a flag to indicate which application this module will be contained in.\nExample: php gen_module.php -a=dinkly -m=test_module\n\n";
 }
 else if(!isset($options['m']))
 {
-	echo "\nPlease use the -m flag to indicate the desired module name to use.\nExample: php gen_module.php -a=admin -m=test_module\n\n";
+	echo "\nPlease use the -m flag to indicate the desired module name to use.\nExample: php gen_module.php -a=dinkly -m=test_module\n\n";
 }
 else
 {

@@ -3,6 +3,18 @@
   <li><a href="/admin/user/detail/id/<?php echo $user->getId(); ?>">User Detail</a></li>
   <li class="active">Edit User Info</li>
 </ol>
+
+<?php if($errors != array()): ?>
+<div class="alert alert-danger">
+    <button type="button" class="close message-close" aria-hidden="true">&times;</button>
+    <ul>
+      <?php foreach($errors as $error): ?>
+        <li><?php echo $error; ?></li>
+      <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
 <h3>Edit User Info <button type="button" data-toggle="modal" data-target="#delete-user-modal" class="pull-right btn btn-link">Delete User</button></h3>
 <hr>
 <div class="row">

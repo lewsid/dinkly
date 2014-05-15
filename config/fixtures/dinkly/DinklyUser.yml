@@ -8,5 +8,4 @@ records:
         password:   password
         first_name: Boba
         last_name:  Fett
-        title:  |
-            Professional Space Bounty Hunter
+        title: "Professional Space Bounty Hunter"

@@ -1,7 +1,7 @@
 <?php if($invalid_login): ?>
 <div class="alert alert-danger">
   Invalid login
-  <button type="button" class="close login-error-close" aria-hidden="true">&times;</button>
+  <button type="button" class="close message-close" aria-hidden="true">&times;</button>
 </div>
 <?php endif; ?>
 <div class="jumbotron">

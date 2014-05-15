@@ -5,7 +5,14 @@
 
 <?php if($saved): ?>
 <div class="alert alert-success">
-  User Saved
+  User successfully updated
+  <button type="button" class="close message-close" aria-hidden="true">&times;</button>
+</div>
+<?php endif; ?>
+
+<?php if($created): ?>
+<div class="alert alert-success">
+  User created
   <button type="button" class="close message-close" aria-hidden="true">&times;</button>
 </div>
 <?php endif; ?>

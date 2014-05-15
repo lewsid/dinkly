@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$(".login-error-close").click(function() {
+	$(".message-close").click(function() {
 		$(this).parents('.alert').slideUp();
 	});
 });
