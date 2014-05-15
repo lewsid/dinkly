@@ -1,4 +1,4 @@
-<h3>Users</h3>
+<h3>Users <button type="button" class="btn btn-primary btn-add-group pull-right">Create User</button></h3>
 <hr>
 
 <table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered" id="user-list">

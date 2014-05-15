@@ -69,7 +69,7 @@
 		</form>
 	</div>
 	<div class="col-md-7">
-		<legend>Groups <button data-toggle="modal" data-target="#new-list-modal" type="button" class="btn btn-xs btn-link btn-add-list">Create</button></legend>
+		<legend>Groups <button data-toggle="modal" data-target="#new-group-modal" type="button" class="btn btn-xs btn-link btn-add-group">Add</button></legend>
 		<table class="table">
 			<thead>
 				<tr>
