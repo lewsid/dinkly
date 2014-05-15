@@ -52,7 +52,16 @@ class UserController extends AdminController
 					    $this->errors[] = "Invalid username. It must be a valid email address.";
 					}
 
-					if(!$has_error) { $this->user->setUsername($_POST['username']); }
+					if(!$has_error)
+					{
+						$this->user->setUsername($_POST['username']);
+
+						//If we're editing the current user, we should update the session'd username
+						if($this->user->getId() == DinklyUser::getAuthSessionValue('logged_id'))
+						{
+							DinklyUser::setAuthSessionValue('logged_username', $this->user->getUsername());
+						}
+					}
 				}
 
 				if($_POST['password'] != "" && $_POST['confirm-password'] != "")

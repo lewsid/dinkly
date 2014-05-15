@@ -73,14 +73,19 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Created</th>
-					<th>Title</th>
-					<th>Short Name</th>
+					<th>Name</th>
+					<th>Abrreviation</th>
 					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody class="table-striped table-hover">
-				
+				<?php foreach($user->getGroups() as $group): ?>
+					<tr>
+						<td><?php echo $group->getName(); ?></td>
+						<td><?php echo $group->getAbbreviation(); ?></td>
+						<td><a href="/admin/user/remove_group/id/<?php echo $user->getId(); ?>/group_id/<?php echo $group->getId(); ?>">remove</a>
+					</tr>
+				<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>
