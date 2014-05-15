@@ -1,6 +1,7 @@
 global:
     settings:
         dinkly_version: 1.34
+        date_format: m-d-Y h:ia
 
     apps:
         frontend:

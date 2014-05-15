@@ -11,31 +11,34 @@ class DinklyUser extends BaseDinklyUser
 {
 	protected $groups = array();
 
-	public function getCreatedAt($format)
+	protected function convertDate($format = null, $datetime)
 	{
 		if($format)
 		{
-			return date($format, strtotime($this->CreatedAt));
+			if($datetime == '0000-00-00 00:00:00' || !$datetime)
+			{
+				return null;
+			}
+
+			return date($format, strtotime($datetime));
 		}
-		return $this->CreatedAt;
+
+		return $datetime;
 	}
 
-	public function getUpdatedAt($format)
+	public function getCreatedAt($format = null)
 	{
-		if($format)
-		{
-			return date($format, strtotime($this->UpdatedAt));
-		}
-		return $this->UpdatedAt;
+		return $this->convertDate($format, $this->CreatedAt);
 	}
 
-	public function getLastLoginAt($format)
+	public function getUpdatedAt($format = null)
 	{
-		if($format)
-		{
-			return date($format, strtotime($this->LastLoginAt));
-		}
-		return $this->LastLoginAt;
+		return $this->convertDate($format, $this->UpdatedAt);
+	}
+
+	public function getLastLoginAt($format = null)
+	{
+		return $this->convertDate($format, $this->LastLoginAt);
 	}
 
 	public function getGroups()

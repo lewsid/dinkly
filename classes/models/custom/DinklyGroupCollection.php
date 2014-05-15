@@ -27,5 +27,16 @@ class DinklyGroupCollection extends DinklyDataCollection
 
 		return self::getCollection($peer_object, $query, $db);
 	}
+
+	public static function getAll($db = null)
+	{
+		$peer_object = new DinklyGroup();
+
+		if($db == null) { $db = self::fetchDB(); }
+		
+		$query = $peer_object->getSelectQuery() . " order by name";
+
+		return self::getCollection($peer_object, $query, $db);
+	}
 }
 

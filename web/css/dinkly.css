@@ -25,3 +25,7 @@
 	padding-top: 10px;
 }
 
+#add-group-modal .modal-dialog {
+	width: 375px;
+}
+

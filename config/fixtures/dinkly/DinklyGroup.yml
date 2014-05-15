@@ -5,3 +5,8 @@ records:
         name: Administrators
         description: "Administrators have access to all admin features."
         abbreviation: admin
+    -   
+        id: 2
+        name: Client
+        description: "Just your everyday user."
+        abbreviation: client

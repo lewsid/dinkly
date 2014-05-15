@@ -113,11 +113,25 @@ class UserController extends AdminController
 		return false;
 	}
 
+	public function loadAddGroup($parameters)
+	{
+		if(isset($parameters['id']))
+		{
+			if(isset($_POST['group']))
+			{
+				$user = new DinklyUser();
+				$user->init($parameters['id']);
+				$user->addToGroups($_POST['group']);
+			}
+		}
+	}
+
 	public function loadDetail($parameters)
 	{
 		$this->user = null;
 		$this->saved = false;
 		$this->created = false;
+		$this->available_groups = array();
 
 		if(isset($parameters['id']))
 		{
@@ -126,6 +140,23 @@ class UserController extends AdminController
 
 			$this->user = new DinklyUser();
 			$this->user->init($parameters['id']);
+
+			//Build a collection of groups that the user in not currently in
+			$temp_groups = DinklyGroupCollection::getAll();
+
+			foreach($temp_groups as $temp_group)
+			{
+				$has_group = false;
+				foreach($this->user->getGroups() as $g)
+				{
+					if($temp_group->getId() == $g->getId())
+					{
+						$has_group = true;
+					}
+				}
+
+				if(!$has_group) { $this->available_groups[] = $temp_group; }
+			}
 
 			return true;
 		}
