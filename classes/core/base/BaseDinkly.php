@@ -204,7 +204,7 @@ class BaseDinkly
 		
 		if(file_exists($error_controller))
 		{
-			return $this->loadModule('error', 'error', '404', true, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
+			return $this->loadModule('error', 'error', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
 		}
 	}
 
@@ -235,12 +235,13 @@ class BaseDinkly
 		//If no view is passed, look for one called 'default'
 		if(!$view_name) $view_name = 'default';
 
-		//Determine if we are currently on this module/view or not
+		//Redirect page if true
 		if($redirect)
 		{
 			$base_href = Dinkly::getConfigValue('base_href', $app_name);
 			if($base_href == '/') { $base_href = null; }
 			$path = $base_href . '/' . $module_name . '/' . $view_name;
+			die($path);
 
 			//Deal with parameters
 			if($parameters)

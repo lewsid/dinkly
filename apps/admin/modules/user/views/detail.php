@@ -3,16 +3,9 @@
   <li class="active">User Detail</li>
 </ol>
 
-<?php if($saved): ?>
+<?php if(DinklyFlash::exists('good_user_message')): ?>
 <div class="alert alert-success">
-  User successfully updated
-  <button type="button" class="close message-close" aria-hidden="true">&times;</button>
-</div>
-<?php endif; ?>
-
-<?php if($created): ?>
-<div class="alert alert-success">
-  User created
+  <?php echo DinklyFlash::get('good_user_message'); ?>
   <button type="button" class="close message-close" aria-hidden="true">&times;</button>
 </div>
 <?php endif; ?>

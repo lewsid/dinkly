@@ -116,7 +116,9 @@ class UserController extends AdminController
 				{
 					$this->user->save();
 
-					return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $this->user->getId(), 'saved' => 1));
+					DinklyFlash::set('good_user_message', 'User successfully updated');
+
+					return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $this->user->getId()));
 				}
 			}
 
@@ -136,9 +138,13 @@ class UserController extends AdminController
 				$user->init($parameters['id']);
 				$user->addToGroups($_POST['group']);
 
-				
+				DinklyFlash::set('good_user_message', 'User groups updated');
+
+				return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $user->getId()));
 			}
 		}
+
+		return false;
 	}
 
 	public function loadDetail($parameters)
