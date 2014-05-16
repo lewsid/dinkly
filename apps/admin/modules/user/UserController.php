@@ -55,7 +55,7 @@ class UserController extends AdminController
 	public function loadNew($parameters)
 	{
 		$this->user = new DinklyUser();
-		$this->user->setCreatedAt(date(Dinkly::getConfigValue('date_format')));
+		$this->user->setCreatedAt(date('Y-m-d G:i:s'));
 
 		if(isset($_POST['username']))
 		{
@@ -80,32 +80,24 @@ class UserController extends AdminController
 		//If the passed username doesn't match the existing one, update
 		if($post_array['username'] != $this->user->getUsername())
 		{
-			$has_error = false;
-
 			//Check the password for uniqueness
 			if(!DinklyUserCollection::isUniqueUsername($post_array['username']))
 			{
-				$has_error = true;
 				$this->errors[] = "Email address already in use, please try another.";
 			}
 
 			//Make sure it's also a valid email address
 			if(!filter_var($post_array['username'], FILTER_VALIDATE_EMAIL))
 			{
-				$has_error = true;
 			    $this->errors[] = "Invalid username. It must be a valid email address.";
 			}
 
-			//If its valid, update
-			if(!$has_error)
-			{
-				$this->user->setUsername($post_array['username']);
+			$this->user->setUsername($post_array['username']);
 
-				//If we're editing the current user, we should update the session'd username
-				if($this->user->getId() == DinklyUser::getAuthSessionValue('logged_id'))
-				{
-					DinklyUser::setAuthSessionValue('logged_username', $this->user->getUsername());
-				}
+			//If we're editing the current user, we should update the session'd username
+			if($this->user->getId() == DinklyUser::getAuthSessionValue('logged_id'))
+			{
+				DinklyUser::setAuthSessionValue('logged_username', $this->user->getUsername());
 			}
 		}
 
@@ -130,6 +122,10 @@ class UserController extends AdminController
 
 			//If the password is valid, update
 			if(!$has_error) { $this->user->setPassword($post_array['password']); }
+		}
+		else if($_POST['user-id'] == "" && $_POST['password'] == "")
+		{
+			$this->errors[] = "Password is a required field";
 		}
 
 		//If the first name isn't empty and doesn't match the existing one, update

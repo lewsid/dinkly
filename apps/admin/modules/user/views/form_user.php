@@ -45,6 +45,7 @@
 			<button type="button" class="btn btn-link btn-cancel-user" data-dismiss="modal">Cancel</button>
 		</div>
 	</div>
+	<input type="hidden" name="user-id" id="user-id" value="<?php echo $user->getId(); ?>">
 </form>
 
 <script type="text/javascript">
