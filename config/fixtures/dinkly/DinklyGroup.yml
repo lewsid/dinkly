@@ -7,6 +7,6 @@ records:
         abbreviation: admin
     -   
         id: 2
-        name: Client
+        name: Clients
         description: "Just your everyday user."
         abbreviation: client

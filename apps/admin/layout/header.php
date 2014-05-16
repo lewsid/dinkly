@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  
   <head>
     <meta charset="utf-8">
     <title><?php echo Dinkly::getConfigValue('app_name', 'admin'); ?> v<?php echo Dinkly::getConfigValue('dinkly_version', 'global'); ?></title>

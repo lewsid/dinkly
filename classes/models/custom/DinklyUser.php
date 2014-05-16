@@ -51,6 +51,22 @@ class DinklyUser extends BaseDinklyUser
 		return $this->groups;
 	}
 
+	public function delete()
+	{
+		$group_ids = array();
+		$groups = $this->getGroups();
+
+		if($groups != array())
+		{
+			foreach($groups as $group)
+			{
+				$this->removeFromGroup($group->getId());
+			}
+		}
+
+		parent::delete();
+	}
+
 	public function removeFromGroup($group_id)
 	{
 		$group = new DinklyGroup();

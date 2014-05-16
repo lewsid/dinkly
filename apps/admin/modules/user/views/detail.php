@@ -10,7 +10,7 @@
 </div>
 <?php endif; ?>
 
-<h3>User Detail</h3>
+<h3>User Detail <button type="button" data-toggle="modal" data-target="#delete-user-modal" class="pull-right btn btn-link">Delete User</button></h3>
 <hr>
 <div class="row">
 	<div class="col-md-5">
@@ -72,13 +72,19 @@
 				</tr>
 			</thead>
 			<tbody class="table-striped table-hover">
-				<?php foreach($user->getGroups() as $group): ?>
+				<?php if($user->getGroups() != array()): ?>
+					<?php foreach($user->getGroups() as $group): ?>
+						<tr>
+							<td><?php echo $group->getName(); ?></td>
+							<td><?php echo $group->getAbbreviation(); ?></td>
+							<td><a href="/admin/user/remove_group/id/<?php echo $user->getId(); ?>/group_id/<?php echo $group->getId(); ?>">remove</a>
+						</tr>
+					<?php endforeach; ?>
+				<?php else: ?>
 					<tr>
-						<td><?php echo $group->getName(); ?></td>
-						<td><?php echo $group->getAbbreviation(); ?></td>
-						<td><a href="/admin/user/remove_group/id/<?php echo $user->getId(); ?>/group_id/<?php echo $group->getId(); ?>">remove</a>
+						<td colspan="3"><em>This user is currently not in any groups</em></td>
 					</tr>
-				<?php endforeach; ?>
+				<?php endif; ?>
 			</tbody>
 		</table>
 	</div>
@@ -116,6 +122,24 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="delete-user-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Delete User</h4>
+      </div>
+      <div class="modal-body">
+        Are you sure you wish to delete this user?
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default btn-cancel-delete-user" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-danger btn-delete-user">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <script type="text/javascript">
 $(document).ready(function() {
 	$('.btn-edit-project').click(function() { 
@@ -126,6 +150,10 @@ $(document).ready(function() {
 	$('.btn-add-user-to-group').click(function() {
 		$('#add-group-form').submit();
 		return false;
+	});
+
+	$('.btn-delete-user').click(function() {
+		window.location = "/admin/user/delete/id/<?php echo $user->getId(); ?>";
 	});
 });	
 </script>

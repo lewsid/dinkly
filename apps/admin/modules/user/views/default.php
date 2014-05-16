@@ -1,4 +1,11 @@
-<h3>Users <button type="button" class="btn btn-primary btn-add-group pull-right">Create User</button></h3>
+<?php if(DinklyFlash::exists('warning_user_message')): ?>
+<div class="alert alert-warning">
+  <?php echo DinklyFlash::get('warning_user_message'); ?>
+  <button type="button" class="close message-close" aria-hidden="true">&times;</button>
+</div>
+<?php endif; ?>
+
+<h3>Users <button type="button" class="btn btn-primary btn-create-user pull-right">Create User</button></h3>
 <hr>
 
 <table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered" id="user-list">
@@ -23,3 +30,12 @@
     <?php endforeach; ?>
   </tbody>
 </table>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.btn-create-user').click(function() { 
+    window.location = "/admin/user/new/";
+    return true;
+  });
+}); 
+</script>
