@@ -1,6 +1,6 @@
 <?php
 /**
- * DinklyDataCollection
+ * BaseDinklyDataCollection
  *
  * Children of this class should contain only static functions that return arrays
  *
@@ -9,7 +9,7 @@
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 
-abstract class DinklyDataCollection extends DinklyDataModel
+abstract class BaseDinklyDataCollection extends DinklyDataModel
 {
 	/**
 	 * Retrieve all objects

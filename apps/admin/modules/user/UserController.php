@@ -12,6 +12,8 @@ class UserController extends AdminController
 {
 	public function __construct()
 	{
+		parent::__construct();
+
 		if(!DinklyUser::isLoggedIn() || !DinklyUser::isMemberOf('admin'))
 		{
 			$this->loadModule('admin', 'home', 'default', true);
@@ -36,22 +38,26 @@ class UserController extends AdminController
 
 			if(isset($_POST['username']))
 			{
+				//If the passed username doesn't match the existing one, update
 				if($_POST['username'] != $this->user->getUsername())
 				{
 					$has_error = false;
 
+					//Check the password for uniqueness
 					if(!DinklyUserCollection::isUniqueUsername($_POST['username']))
 					{
 						$has_error = true;
 						$this->errors[] = "Email address already in use, please try another.";
 					}
 
+					//Make sure it's also a valid email address
 					if(!filter_var($_POST['username'], FILTER_VALIDATE_EMAIL))
 					{
 						$has_error = true;
 					    $this->errors[] = "Invalid username. It must be a valid email address.";
 					}
 
+					//If its valid, update
 					if(!$has_error)
 					{
 						$this->user->setUsername($_POST['username']);
@@ -64,41 +70,48 @@ class UserController extends AdminController
 					}
 				}
 
+				//If the password isn't blank
 				if($_POST['password'] != "" && $_POST['confirm-password'] != "")
 				{
 					$has_error = false;
 
+					//Make sure both match
 					if($_POST['password'] != $_POST['confirm-password'])
 					{
 						$has_error = true;
 						$this->errors[] = "Passwords do not match.";
 					}
 
+					//Check for length
 					if(strlen($_POST['password']) < 8)
 					{
 						$has_error = true;
 						$this->errors[] = "Password must be at least 8 characters in length.";
 					}
 
+					//If the password is valid, update
 					if(!$has_error) { $this->user->setPassword($_POST['password']); }
 				}
 
+				//If the first name isn't empty and doesn't match the existing one, update
 				if($_POST['first-name'] != "" && $_POST['first-name'] != $this->user->getFirstName())
 				{
 					$this->user->setFirstName($_POST['first-name']);
 				}
 
+				//If the last name isn't empty and doesn't match the exiting one, update
 				if($_POST['last-name'] != "" && $_POST['last-name'] != $this->user->getLastName())
 				{
 					$this->user->setLastName($_POST['last-name']);
 				}
 
+				//If the title isn't empty and does't match the existing one, update
 				if($_POST['title'] != "" && $_POST['title'] != $this->user->getTitle())
 				{
 					$this->user->setTitle($_POST['first_name']);
 				}
 
-				//If we have no errors, save the user
+				//If we have no errors, save the user and redirect to detail
 				if($this->errors == array())
 				{
 					$this->user->save();
@@ -122,6 +135,8 @@ class UserController extends AdminController
 				$user = new DinklyUser();
 				$user->init($parameters['id']);
 				$user->addToGroups($_POST['group']);
+
+				
 			}
 		}
 	}

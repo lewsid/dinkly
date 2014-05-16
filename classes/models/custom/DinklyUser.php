@@ -51,6 +51,37 @@ class DinklyUser extends BaseDinklyUser
 		return $this->groups;
 	}
 
+	public function addToGroups($group_ids)
+	{
+		if($group_ids != array())
+		{
+			foreach($group_ids as $id)
+			{
+				$group = new DinklyGroup();
+				$group->init($id);
+
+				//If the group isn't new, that means it exists, which is a good thing
+				if(!$group->isNew())
+				{
+					//Make sure this join record doesn't already exist first
+					$group_join = new DinklyUserGroup();
+					$group_join->initWithUserAndGroup($this->getId(), $id);
+					
+					if($group_join->isNew())
+					{
+						$group_join->setDinklyUserId($this->getId());
+						$group_join->setDinklyGroupId($id);
+						$group_join->save();
+					}
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public static function isMemberOf($group_abbreviation)
 	{
 		if(self::getLoggedGroups() != array())

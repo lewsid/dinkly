@@ -1,6 +1,6 @@
-<?php
+<?php 
 /**
- * Dinkly
+ * DinklyDataConfig
  *
  * 
  *
@@ -10,7 +10,7 @@
  */
 use Symfony\Component\Yaml\Yaml;
 
-class Dinkly extends DinklyBase
+class DinklyDataConfig extends BaseDinklyDataConfig
 {
-	//Put your juicy overrides here
+	//Put overrides here...
 }

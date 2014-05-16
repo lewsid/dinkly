@@ -1,6 +1,6 @@
 <?php 
 /**
- * DinklyDataModel
+ * BaseDinklyDataModel
  *
  * 
  *
@@ -35,7 +35,7 @@
 
 ***************************************************************************************************************/
 
-abstract class DinklyDataModel extends DinklyDataConnector
+abstract class BaseDinklyDataModel extends DinklyDataConnector
 {
 	protected $db;
 	protected $dbTable;
@@ -71,8 +71,8 @@ abstract class DinklyDataModel extends DinklyDataConnector
 	{
 		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
 
-		$Select = $this->getSelectQuery() . " where id=" . $this->db->quote($id);
-		$result = $this->db->query($Select)->fetchAll();
+		$query = $this->getSelectQuery() . " where id=" . $this->db->quote($id);
+		$result = $this->db->query($query)->fetchAll();
 				
 		if($result != array())
 		{

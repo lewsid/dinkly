@@ -1,6 +1,6 @@
 <?php
 /**
- * DinklyDataConnector
+ * BaseDinklyDataConnector
  *
  * 
  *
@@ -8,7 +8,7 @@
  * @subpackage CoreClasses
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class DinklyDataConnector
+class BaseDinklyDataConnector
 {
 	/**
 	 * Fetch database connection from DB credentials in Config file

@@ -1,6 +1,6 @@
 <?php
 /**
- * DinklyBase
+ * BaseDinkly
  *
  * 
  *
@@ -11,7 +11,7 @@
 
 use Symfony\Component\Yaml\Yaml;
 
-class DinklyBase
+class BaseDinkly
 {
 	protected $module_header;
 
@@ -252,6 +252,7 @@ class DinklyBase
 			}
 
 			header("Location: " . $path);
+			die();
 		}
 		
 		//Load the app controller, if one exists

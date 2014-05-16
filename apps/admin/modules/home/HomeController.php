@@ -18,10 +18,6 @@ class HomeController extends AdminController
 	 */
 	public function loadDefault($parameters = array())
 	{
-		$this->invalid_login = false;
-
-		if(isset($parameters['invalid_login'])) $this->invalid_login = true;
-
 		return true;
 	}
 }

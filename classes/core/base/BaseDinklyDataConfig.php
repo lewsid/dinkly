@@ -1,6 +1,6 @@
 <?php 
 /**
- * DinklyDataConfig
+ * BaseDinklyDataConfig
  *
  * 
  *
@@ -10,7 +10,7 @@
  */
 use Symfony\Component\Yaml\Yaml;
 
-class DinklyDataConfig
+class BaseDinklyDataConfig
 {
 
 	/**

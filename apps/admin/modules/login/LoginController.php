@@ -10,6 +10,12 @@
  */
 class LoginController extends AdminController 
 {
+
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
 	/**
 	 * Loads default admin login and runs authentication
 	 * 
@@ -18,17 +24,15 @@ class LoginController extends AdminController
 	 */
 	public function loadDefault()
 	{
-		$error = null;
-
 		if(isset($_POST['username']) && isset($_POST['password']))
 		{
 			if(!DinklyUser::authenticate($_POST['username'], $_POST['password']))
 			{
-				$error = array('invalid_login' => 1);
+				DinklyFlash::set('invalid_login', 'Invalid login');
 			}
 		}
 
-		$this->loadModule('admin', 'home', 'default', true, true, $error);
+		$this->loadModule('admin', 'home', 'default', true, true);
 
 		return false;
 	}

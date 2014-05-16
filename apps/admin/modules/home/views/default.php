@@ -1,6 +1,6 @@
-<?php if($invalid_login): ?>
+<?php if(DinklyFlash::exists('invalid_login')): ?>
 <div class="alert alert-danger">
-  Invalid login
+  <?php echo DinklyFlash::get('invalid_login'); ?>
   <button type="button" class="close message-close" aria-hidden="true">&times;</button>
 </div>
 <?php endif; ?>

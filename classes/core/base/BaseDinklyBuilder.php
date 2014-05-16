@@ -1,6 +1,6 @@
 <?php
 /**
- * DinklyBuilder
+ * BaseDinklyBuilder
  *
  * Children of this class should contain only static functions that return arrays
  *
@@ -11,7 +11,7 @@
 
 use Symfony\Component\Yaml\Yaml;
 
-class DinklyBuilder extends Dinkly
+class BaseDinklyBuilder extends Dinkly
 {
 	/**
 	 * Alter an existing database table based on new schema for data model
@@ -298,12 +298,19 @@ class DinklyBuilder extends Dinkly
 				' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
 				' */' . PHP_EOL . PHP_EOL);
 				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
-				fwrite($fp,'/**'.PHP_EOL .
-				' * Load default view'.PHP_EOL .
-				' *'.PHP_EOL . 
-				' * @return bool: always returns true on successful construction of view'.PHP_EOL .
-				' *'.PHP_EOL .
-				' */'.PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
+				fwrite($fp,"\t/**".PHP_EOL .
+				"\t * Constructor".PHP_EOL .
+				"\t *".PHP_EOL . 
+				"\t * @return void".PHP_EOL .
+				"\t *".PHP_EOL .
+				"\t */".PHP_EOL . "\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
+				fwrite($fp, "\t\tparent::__construct();" . PHP_EOL . "\t}" . PHP_EOL . PHP_EOL);
+				fwrite($fp,"\t/**".PHP_EOL .
+				"\t * Load default view".PHP_EOL .
+				"\t *".PHP_EOL . 
+				"\t * @return bool: always returns true on successful construction of view".PHP_EOL .
+				"\t *".PHP_EOL .
+				"\t */".PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
 			}
@@ -360,12 +367,12 @@ class DinklyBuilder extends Dinkly
 			' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
 			' */' . PHP_EOL . PHP_EOL);
 			fwrite($fp, 'class ' . Dinkly::convertToCamelCase($app_name, true) . 'Controller extends Dinkly' . PHP_EOL . '{' . PHP_EOL);
-			fwrite($fp, '/**'.PHP_EOL .
-			' * Default Constructor'.PHP_EOL .
-			' * '.PHP_EOL .
-			' * @return bool: always returns true on successful construction of view'.PHP_EOL .
-			' * '.PHP_EOL .
-			' */'.PHP_EOL ."\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
+			fwrite($fp, "\t/**".PHP_EOL .
+			"\t * Default Constructor".PHP_EOL .
+			"\t * ".PHP_EOL .
+			"\t * @return bool".PHP_EOL .
+			"\t * ".PHP_EOL .
+			"\t */".PHP_EOL ."\tpublic function __construct()" . PHP_EOL . "\t{" . PHP_EOL);
 			fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 			fclose($fp);
 		}
