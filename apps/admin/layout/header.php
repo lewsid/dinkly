@@ -58,15 +58,14 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
               <li <?php echo (Dinkly::getCurrentModule() == 'home') ? 'class="active"' : ''; ?>>
-                  <a href="/admin">
-                    Home
-                  </a>
+                  <a href="/admin">Home</a>
               </li>
             <?php if(DinklyUser::isMemberOf('admin')): ?>
             <li <?php echo (Dinkly::getCurrentModule() == 'user') ? 'class="active"' : ''; ?>>
-              <a href="/admin/user/">
-                Users
-              </a>
+              <a href="/admin/user/">Users</a>
+            </li>
+            <li <?php echo (Dinkly::getCurrentModule() == 'group') ? 'class="active"' : ''; ?>>
+              <a href="/admin/group/">Groups</a>
             </li>
             <?php endif; ?>
           </ul>
@@ -93,9 +92,7 @@
              <input name="password" type="password" placeholder="Password" class="form-control">
             </div>
             <div class="form-group">
-              <button class="btn btn-success" id="sign-in">
-                Sign in
-              </button>
+              <button class="btn btn-success" id="sign-in">Sign in</button>
             </div>
           </div>
           <?php endif; ?>
