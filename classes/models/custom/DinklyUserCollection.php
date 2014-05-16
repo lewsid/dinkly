@@ -25,5 +25,24 @@ class DinklyUserCollection extends DinklyDataCollection
 		}
 		else { return true; }
 	}
+
+	public static function getByArrayOfIds($user_ids, $db = null)
+	{
+		$peer_object = new DinklyUser();
+
+		if($db == null) { $db = self::fetchDB(); }
+
+		$clean_ids = array();
+		if(!is_array($user_ids)) { return false; }
+
+		foreach($user_ids as $id)
+		{
+			if(is_numeric($id)) { $clean_ids[] = $id; }
+		}
+		
+		$query = $peer_object->getSelectQuery() . " where id in (" . implode(',', $clean_ids) . ")";
+
+		return self::getCollection($peer_object, $query, $db);
+	}
 }
 

@@ -36,5 +36,31 @@ class DinklyUserGroupCollection extends DinklyDataCollection
 		
 		return false;
 	}
+
+	public static function getUsersByGroup($group_id, $db = null)
+	{
+		$peer_object = new DinklyUserGroup();
+		if($db == null) { $db = self::fetchDB(); }
+
+		$query = $peer_object->getSelectQuery() . " where dinkly_group_id = " . $db->quote($group_id);
+
+		$user_group_joins = self::getCollection($peer_object, $query, $db);
+
+		if($user_group_joins != array())
+		{
+			$user_ids = array();
+			foreach($user_group_joins as $group_join)
+			{
+				$user_ids[] = $group_join->getDinklyUserId();
+			}
+
+			$users = DinklyUserCollection::getByArrayOfIds($user_ids, $db);
+
+			if($users != array())
+			{
+				return $users;
+			}
+		}
+	}
 }
 

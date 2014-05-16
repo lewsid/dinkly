@@ -10,6 +10,7 @@
     <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/dinkly.css" rel="stylesheet">
+    <link href="/css/datatables-bootstrap.css" rel="stylesheet">
     <style>
       body { padding-top: 60px; /* 60px to make the container go all the way
       to the bottom of the topbar */ }
@@ -22,6 +23,8 @@
     
     <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/js/dataTables.bootstrap.js"></script>
     <script type="text/javascript" src="/js/dinkly.js"></script>
 
     <?php echo $this->getModuleHeader(); ?>

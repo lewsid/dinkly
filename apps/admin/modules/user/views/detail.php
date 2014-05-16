@@ -14,8 +14,8 @@
 <hr>
 <div class="row">
 	<div class="col-md-5">
-		<form class="form-horizontal" role="form" action="" method="post" id="new-project-form">	  
-			<legend>User Info <button style="" type="button" class="btn btn-xs btn-link btn-edit-project">Edit</button></legend>
+		<form class="form-horizontal" role="form" action="" method="post" id="user-detail-form">	  
+			<legend>User Info <button style="" type="button" class="btn btn-xs btn-link btn-edit-user">Edit</button></legend>
 			<div class="form-group">
 				<label class="col-sm-3 control-label" for="created">Created</label>
 				<div class="col-md-7">
@@ -142,7 +142,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$('.btn-edit-project').click(function() { 
+	$('.btn-edit-user').click(function() { 
 		window.location = "/admin/user/edit/id/<?php echo $user->getId(); ?>";
 		return true;
 	});

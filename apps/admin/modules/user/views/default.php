@@ -8,14 +8,14 @@
 <h3>Users <button type="button" class="btn btn-primary btn-create-user pull-right">Create User</button></h3>
 <hr>
 
-<table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered" id="user-list">
+<table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered dinkly-datatable" id="user-list">
   <thead>
     <tr>
       <th>Username</th>
       <th>Created</th>
       <th>Last Login</th>
       <th>Login Count</th>
-      <th>Action</th>
+      <th class="no-sort">Action</th>
     </tr>
   </thead>
   <tbody>
