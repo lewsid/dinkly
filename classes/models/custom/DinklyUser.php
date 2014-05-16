@@ -51,6 +51,28 @@ class DinklyUser extends BaseDinklyUser
 		return $this->groups;
 	}
 
+	public function removeFromGroup($group_id)
+	{
+		$group = new DinklyGroup();
+		$group->init($group_id);
+
+		//If the group isn't new, that means it exists, which is a good thing
+		if(!$group->isNew())
+		{
+			$group_join = new DinklyUserGroup();
+			$group_join->initWithUserAndGroup($this->getId(), $group_id);
+			
+			if(!$group_join->isNew())
+			{
+				$group_join->delete();
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function addToGroups($group_ids)
 	{
 		if($group_ids != array())

@@ -241,7 +241,6 @@ class BaseDinkly
 			$base_href = Dinkly::getConfigValue('base_href', $app_name);
 			if($base_href == '/') { $base_href = null; }
 			$path = $base_href . '/' . $module_name . '/' . $view_name;
-			die($path);
 
 			//Deal with parameters
 			if($parameters)

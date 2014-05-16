@@ -147,18 +147,30 @@ class UserController extends AdminController
 		return false;
 	}
 
+	public function loadRemoveGroup($parameters)
+	{
+		if(isset($parameters['id']) && isset($parameters['group_id']))
+		{
+			$user = new DinklyUser();
+			$user->init($parameters['id']);
+
+			$user->removeFromGroup($parameters['group_id']);
+
+			DinklyFlash::set('good_user_message', 'User removed from group');
+
+			return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $user->getId()));
+		}
+
+		return false;
+	}
+
 	public function loadDetail($parameters)
 	{
 		$this->user = null;
-		$this->saved = false;
-		$this->created = false;
 		$this->available_groups = array();
 
 		if(isset($parameters['id']))
 		{
-			if(isset($parameters['saved'])) { $this->saved = true; }
-			if(isset($parameters['created'])) { $this->created = true; }
-
 			$this->user = new DinklyUser();
 			$this->user->init($parameters['id']);
 
