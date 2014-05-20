@@ -63,7 +63,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="add-group-modal">
+<div class="modal fade" id="add-permission-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -73,7 +73,7 @@
 			<div class="modal-body">
 				<?php if($available_permissions != array()): ?>
 					<form class="form-horizontal" id="add-permission-form" method="post" action="/admin/group/add_permission/id/<?php echo $group->getId(); ?>" role="form">
-						<select id="permissions" name="permissions[]" class="form-control multiselect" multiple="multiple">
+						<select id="permission" name="permission[]" class="form-control multiselect" multiple="multiple">
 							<?php if($available_permissions != array()): ?>
 								<?php foreach($available_permissions as $perm): ?>
 									<option value="<?php echo $perm->getId(); ?>"><?php echo $perm->getName(); ?></option>

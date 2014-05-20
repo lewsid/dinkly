@@ -25,10 +25,85 @@ class GroupController extends AdminController
 		}
 	}
 
+	public function loadDeletePermission($parameters)
+	{
+		if(isset($_POST['permission_id']))
+		{
+			$permission = new DinklyPermission();
+			$permission->init($_POST['permission_id']);
+
+			if(!$permission->isNew())
+			{
+				$permission->delete();
+				echo 'success';
+			}
+		}
+
+		return false;
+	}
+
+	public function loadCreatePermission($parameters)
+	{
+		$errors = array();
+
+		if(isset($_POST['permission_name']))
+		{
+			//Check for length
+			if($_POST['permission_name'] == "")
+			{
+				$errors[] = "Name cannot be blank.";
+			}
+
+			//Check for whitespace in the abbreviation
+			if(stristr($_POST['permission_name'], ' '))
+			{
+				$errors[] = "Abbreviation cannot contain whitespace.";
+			}
+
+			//Check the name for uniqueness
+			if(!DinklyPermissionCollection::isUniqueName($_POST['permission_name']))
+			{
+				$errors[] = "Name already in use, please try another.";
+			}
+
+			//Make sure that the abbreviation is also alphanumeric, without funky symbols
+			$valid_symbols = array('-', '_'); 
+			if(!ctype_alnum(str_replace($valid_symbols, '', $_POST['permission_name'])))
+			{
+				$errors[] = "Name must be alphanumeric. Underscores and dashes are allowed.";
+			}
+
+			if($errors != array())
+			{
+				echo implode('<br>', $errors);
+			}
+			else
+			{
+				$permission = new DinklyPermission();
+				$permission->setName($_POST['permission_name']);
+				$permission->setDescription($_POST['permission_description']);
+				$permission->save();
+
+				echo 'success';
+			}
+		}
+
+		return false;
+	}
+
 	public function loadDefault($parameters)
 	{
 		$this->groups = DinklyGroupCollection::getAll();
+		$this->all_permissions = DinklyPermissionCollection::getAll();
+
 		return true;
+	}
+
+	public function loadPermissionTable($parameters)
+	{
+		$this->all_permissions = DinklyPermissionCollection::getAll();
+
+		return false;
 	}
 
 	public function loadDetail($parameters)
@@ -41,7 +116,7 @@ class GroupController extends AdminController
 			$this->group = new DinklyGroup();
 			$this->group->init($parameters['id']);
 
-			//Build a collection of permissions that the group does not current have
+			//Build a collection of permissions that the group does not currently have
 			$temp_permissions = DinklyPermissionCollection::getAll();
 
 			if($temp_permissions != array())
@@ -149,7 +224,7 @@ class GroupController extends AdminController
 			//If we have no errors, save the user and redirect to detail
 			if($this->errors == array())
 			{
-				$this->user->save();
+				$this->group->save();
 
 				DinklyFlash::set('good_group_message', 'Group successfully created');
 
@@ -158,6 +233,42 @@ class GroupController extends AdminController
 		}
 
 		return true;
+	}
+
+	public function loadRemovePermission($parameters)
+	{
+		if(isset($parameters['id']) && isset($parameters['permission_id']))
+		{
+			$group = new DinklyGroup();
+			$group->init($parameters['id']);
+
+			$group->removePermission($parameters['permission_id']);
+
+			DinklyFlash::set('good_group_message', 'Permission removed');
+
+			return $this->loadModule('admin', 'group', 'detail', true, true, array('id' => $group->getId()));
+		}
+
+		return false;
+	}
+
+	public function loadAddPermission($parameters)
+	{
+		if(isset($parameters['id']))
+		{
+			if(isset($_POST['permission']))
+			{
+				$group = new DinklyGroup();
+				$group->init($parameters['id']);
+				$group->addPermissions($_POST['permission']);
+
+				DinklyFlash::set('good_group_message', 'Permissions updated');
+
+				return $this->loadModule('admin', 'group', 'detail', true, true, array('id' => $group->getId()));
+			}
+		}
+
+		return false;
 	}
 
 	public function loadEdit($parameters)

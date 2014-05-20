@@ -2,13 +2,13 @@
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="name">Name</label>
 		<div class="col-md-5">
-			<input value="<?php echo $group->getName(); ?>" type="text" class="form-control" id="name" name="name">
+			<input maxlength="100" value="<?php echo $group->getName(); ?>" type="text" class="form-control" id="name" name="name">
 		</div>
 	</div>	
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="abbreviation">Abbreviation</label>
 		<div class="col-md-5">
-			<input value="<?php echo $group->getAbbreviation(); ?>" type="text" class="form-control" id="abbreviation" name="abbreviation">
+			<input maxlength="25" value="<?php echo $group->getAbbreviation(); ?>" type="text" class="form-control" id="abbreviation" name="abbreviation">
 			<span class="help-block">Cannot contain whitespace. Must be alphanumeric. Dashes and underscores allowed.</span>
 		</div>
 	</div>

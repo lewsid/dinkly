@@ -27,5 +27,33 @@ class DinklyPermissionCollection extends DinklyDataCollection
 
 		return self::getCollection($peer_object, $query, $db);
 	}
+
+	public static function getAll($db = null)
+	{
+		$peer_object = new DinklyPermission();
+
+		if($db == null) { $db = self::fetchDB(); }
+		
+		$query = $peer_object->getSelectQuery() . " order by name";
+
+		return self::getCollection($peer_object, $query, $db);
+	}
+
+	public static function isUniqueName($name, $db = null)
+	{
+		$user = new DinklyPermission();
+
+		if($db == null) { $db = self::fetchDB(); }
+		
+		$query = $user->getSelectQuery() . " where name=" . $db->quote($name);
+
+		$results = $db->query($query)->fetchAll();
+
+		if($results != array() && $results != NULL)
+		{
+			return false;
+		}
+		else { return true; }
+	}
 }
 

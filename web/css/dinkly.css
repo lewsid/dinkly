@@ -29,3 +29,6 @@
 	width: 375px;
 }
 
+#manage-permissions-modal .modal-dialog {
+	width: 800px;
+}
