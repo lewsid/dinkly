@@ -11,14 +11,18 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach($groups as $pos => $group): ?>
-    <tr class="<?php echo ($pos % 2 == 0) ? 'odd' : 'even'; ?>">
-      <td><?php echo $group->getName(); ?></td>
-      <td><?php echo $group->getAbbreviation(); ?></td>
-      <td><?php echo $group->getMemberCount(); ?></td>
-      <td><a href="/admin/group/detail/id/<?php echo $group->getId(); ?>">view</a></td>
-    </tr> 
-    <?php endforeach; ?>
+    <?php if($groups != array()): ?>
+      <?php foreach($groups as $pos => $group): ?>
+      <tr class="<?php echo ($pos % 2 == 0) ? 'odd' : 'even'; ?>">
+        <td><?php echo $group->getName(); ?></td>
+        <td><?php echo $group->getAbbreviation(); ?></td>
+        <td><?php echo $group->getMemberCount(); ?></td>
+        <td><a href="/admin/group/detail/id/<?php echo $group->getId(); ?>">view</a></td>
+      </tr> 
+      <?php endforeach; ?>
+    <?php else: ?>
+      There are no groups to display
+    <?php endif; ?>
   </tbody>
 </table>
 
