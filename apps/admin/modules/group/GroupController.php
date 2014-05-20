@@ -70,7 +70,51 @@ class GroupController extends AdminController
 
 	public function validateGroupPost($post_array)
 	{
-		
+		if(isset($post_array['name']))
+		{
+			//Just in case the js validation didn't already catch it
+			if($post_array['name'] == "")
+			{
+				$this->errors[] = "Name cannot be blank.";
+			}
+
+			//Check the name for uniqueness
+			if(!DinklyGroupCollection::isUniqueName($post_array['name']) && $post_array['name'] != $this->group->getName())
+			{
+				$this->errors[] = "Name already in use, please try another.";
+			}
+
+			//Check the abbreviation for uniqueness
+			if(!DinklyGroupCollection::isUniqueAbbreviation($post_array['abbreviation']) 
+				&& $post_array['abbreviation'] != $this->group->getAbbreviation())
+			{
+				$this->errors[] = "Abbreviation already in use, please try another.";
+			}
+
+			//Check for whitespace in the abbreviation
+			if(stristr($post_array['abbreviation'], ' '))
+			{
+				$this->errors[] = "Abbreviation cannot contain whitespace.";
+			}
+
+			//Make sure that the abbreviation is also alphanumeric, without funky symbols
+			$valid_symbols = array('-', '_'); 
+			if(!ctype_alnum(str_replace($valid_symbols, '', $post_array['abbreviation'])))
+			{
+				$this->errors[] = "Abbreviation must be alphanumeric. Underscores and dashes are allowed.";
+			}
+
+			//Duh
+			if($post_array['abbreviation'] == "")
+			{
+				$this->errors[] = "Abbreviation cannot be blank.";
+			}
+
+			//Update group (don't worry, we don't save unless everything is valid)
+			$this->group->setName($post_array['name']);
+			$this->group->setAbbreviation($post_array['abbreviation']);
+			$this->group->setDescription($post_array['description']);
+		}
 	}
 
 	public function loadDelete($parameters)
@@ -128,7 +172,7 @@ class GroupController extends AdminController
 			{
 				$this->validateGroupPost($_POST);
 
-				//If we have no errors, save the user and redirect to detail
+				//If we have no errors, save the group and redirect to detail
 				if($this->errors == array())
 				{
 					$this->group->save();

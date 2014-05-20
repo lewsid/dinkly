@@ -80,7 +80,7 @@ class UserController extends AdminController
 		//If the passed username doesn't match the existing one, update
 		if($post_array['username'] != $this->user->getUsername())
 		{
-			//Check the password for uniqueness
+			//Check the username/email for uniqueness
 			if(!DinklyUserCollection::isUniqueUsername($post_array['username']))
 			{
 				$this->errors[] = "Email address already in use, please try another.";

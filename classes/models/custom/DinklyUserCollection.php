@@ -15,7 +15,7 @@ class DinklyUserCollection extends DinklyDataCollection
 
 		if($db == null) { $db = self::fetchDB(); }
 		
-		$query = $user->getSelectQuery() . " where username='" . $username . "'";
+		$query = $user->getSelectQuery() . " where username=" . $db->quote($username);
 
 		$results = $db->query($query)->fetchAll();
 
