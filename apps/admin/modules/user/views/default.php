@@ -8,6 +8,7 @@
 <h3>Users <button type="button" class="btn btn-primary btn-create-user pull-right">Create User</button></h3>
 <hr>
 
+<?php if($users != array()): ?>
 <table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered dinkly-datatable" id="user-list">
   <thead>
     <tr>
@@ -30,6 +31,9 @@
     <?php endforeach; ?>
   </tbody>
 </table>
+<?php else: ?>
+  No users to display
+<?php endif; ?>
 
 <script type="text/javascript">
 $(document).ready(function() {
