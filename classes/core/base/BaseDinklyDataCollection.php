@@ -41,6 +41,9 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 *
 	 * @param array $order Array of class property names to order results by
 	 *
+	 * @param array $direction String Order 'asc' or 'desc' - Only does something if an array
+	 *						was passed for $order parameter.
+	 *
 	 * @param array $limit Array containing one or two elements. If a single element is passed,
 	 *					   it will return a dataset of that size or less. If two elements are
 	 *					   set, the first will be an offset and the second a range
@@ -54,7 +57,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 *
 	 * @return Array of matching objects or false if not found
 	 */
-	public static function getWith($properties, $order = array(), $limit = array(), $db = null)
+	public static function getWith($properties, $order = array(), $direction = 'asc', $limit = array(), $db = null)
 	{
 		//Dynamically find class name and ensure it exists
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
@@ -97,7 +100,13 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 					}
 				}
 
-				if($is_valid) { $where .= rtrim($chunk, ', '); }
+				if($is_valid)
+				{
+					$where .= rtrim($chunk, ', ');
+
+					if($direction == 'asc') { $where .= 'ASC'; }
+					else if($direction == 'desc') { $where .= 'DESC'; }
+				}
 			}
 
 			//Enforce a limit on the results
