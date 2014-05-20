@@ -1,6 +1,7 @@
 <h3>Groups <button type="button" data-toggle="modal" data-target="#manage-permissions-modal" class="btn btn-link btn-manage-permissions">Manage Permissions</button><button type="button" class="btn btn-primary btn-create-group pull-right">Create Group</button></h3>
 <hr>
 
+<?php if($groups != array()): ?>
 <table cellpadding="0" cellspacing="0" border="0"  class="table table-striped table-bordered dinkly-datatable" id="user-list">
   <thead>
     <tr>
@@ -11,7 +12,6 @@
     </tr>
   </thead>
   <tbody>
-    <?php if($groups != array()): ?>
       <?php foreach($groups as $pos => $group): ?>
       <tr class="<?php echo ($pos % 2 == 0) ? 'odd' : 'even'; ?>">
         <td><?php echo $group->getName(); ?></td>
@@ -20,11 +20,11 @@
         <td><a href="/admin/group/detail/id/<?php echo $group->getId(); ?>">view</a></td>
       </tr> 
       <?php endforeach; ?>
-    <?php else: ?>
-      There are no groups to display
-    <?php endif; ?>
   </tbody>
 </table>
+<?php else: ?>
+  There are no groups to display
+<?php endif; ?>
 
 <div class="modal fade" id="manage-permissions-modal">
   <div class="modal-dialog">
