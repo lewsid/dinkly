@@ -15,18 +15,18 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 * Retrieve all objects
 	 *
 	 * @param PDO object $db Optional PDO object for recycling existing connections
-	 * 
+	 *
 	 * @return Array of objects or false if not found
 	 */
 	public static function getAll($db = null)
 	{
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
-		if(class_exists($peer_class)) 
+		if(class_exists($peer_class))
 		{
 			$peer_object = new $peer_class();
 
 			if($db == null) { $db = self::fetchDB(); }
-			
+
 			$query = $peer_object->getSelectQuery();
 
 			return self::getCollection($peer_object, $query, $db);
@@ -38,7 +38,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 * Retrieve all objects matching array of passed property/value pairs
 	 *
 	 * @param array $properties Array of class property names and values to filter on
-	 * 
+	 *
 	 * @param array $order Array of class property names to order results by
 	 *
 	 * @param array $limit Array containing one or two elements. If a single element is passed,
@@ -58,7 +58,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	{
 		//Dynamically find class name and ensure it exists
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
-		if(class_exists($peer_class) && $properties != array()) 
+		if(class_exists($peer_class) && $properties != array())
 		{
 			//Build the basic select query
 			$peer_object = new $peer_class();
@@ -80,7 +80,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 				$is_valid = true;
 			}
 
-			if($is_valid) { $where = ' where ' . trim($where, ' AND'); }			
+			if($is_valid) { $where = ' where ' . trim($where, ' AND'); }
 
 			//Enforce an order on the results
 			$is_valid = false;
@@ -89,7 +89,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 				$chunk = ' order by ';
 				foreach($order as $p)
 				{
-					$col_name = Dinkly::convertFromCamelCase($property);
+					$col_name = Dinkly::convertFromCamelCase($p);
 					if(array_key_exists($col_name, $peer_object->registry))
 					{
 						$chunk .= $col_name . ', ';
@@ -97,7 +97,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 					}
 				}
 
-				if($is_valid) { $where = rtrim($chunk, ', '); }
+				if($is_valid) { $where .= rtrim($chunk, ', '); }
 			}
 
 			//Enforce a limit on the results
@@ -126,12 +126,12 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where, $db);
 		}
 	}
-	
+
 	/**
 	 * Retrieve all objects of specified object given a specific query
 	 *
-	 * @param object $peer_object Object from which to get class of collection objects 
-	 * @param string $query String to filter database query on  
+	 * @param object $peer_object Object from which to get class of collection objects
+	 * @param string $query String to filter database query on
 	 * @param PDO object $db Optional PDO object for recycling existing connections
 	 *
 	 * @return Array of matching objects filtered on query
@@ -139,7 +139,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	protected static function getCollection($peer_object, $query, $db = null)
 	{
 		if($db == null) { $db = self::fetchDB(); }
-		
+
 		$results = $db->query($query)->fetchAll();
 
 		if($results != array() && $results != NULL)
