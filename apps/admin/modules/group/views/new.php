@@ -17,7 +17,15 @@
 <h3>New Group Info</h3>
 <hr>
 <div class="row">
-  <div class="col-md-5">
+  <div class="col-md-7">
     <?php include('form_group.php'); ?>
   </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.btn-cancel-group').click(function() {
+    window.location = "/admin/group/";
+  });
+});
+</script>

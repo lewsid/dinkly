@@ -21,3 +21,11 @@
     <?php include('form_user.php'); ?>
   </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.btn-cancel-user').click(function() {
+    window.location = "/admin/user/";
+  });
+});
+</script>

@@ -1,5 +1,4 @@
 <form class="form-horizontal" role="form" action="" method="post" id="group-form">	  
-	<legend>Edit Group Info <button style="" type="button" class="btn btn-xs btn-link btn-edit-group">Edit</button></legend>
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="name">Name</label>
 		<div class="col-md-5">
