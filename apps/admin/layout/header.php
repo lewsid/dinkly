@@ -26,6 +26,7 @@
     <script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="/js/dataTables.bootstrap.js"></script>
     <script type="text/javascript" src="/js/dinkly.js"></script>
+    <script type="text/javascript" src="/js/dinkly-datatables.js"></script>
 
     <?php echo $this->getModuleHeader(); ?>
   </head>
