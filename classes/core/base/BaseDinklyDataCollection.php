@@ -130,8 +130,6 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 				if($is_valid) { $where .= $chunk; }
 			}
 
-			$db = null;
-
 			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where, $db);
 		}
 	}
@@ -165,8 +163,6 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 
 				$i++;
 			}
-
-			$db = null;
 
 			return $arrObject;
 		}
