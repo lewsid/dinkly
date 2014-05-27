@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.02"
+        dinkly_version: "2.03"
         date_format: m-d-Y h:ia
 
     apps:
