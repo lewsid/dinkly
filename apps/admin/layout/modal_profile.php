@@ -78,9 +78,9 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$('#profile-first_name').val("<?php echo htmlentities($logged_user->getFirstName()); ?>");
-	$('#profile-last_name').val("<?php echo htmlentities($logged_user->getLastName()); ?>");
-	$('#profile-title').val("<?php echo htmlentities($logged_user->getTitle()); ?>");
+	$('#profile-first_name').val("<?php echo htmlentities($logged_user->getFirstName(), ENT_HTML5); ?>");
+	$('#profile-last_name').val("<?php echo htmlentities($logged_user->getLastName(), ENT_HTML5); ?>");
+	$('#profile-title').val("<?php echo htmlentities($logged_user->getTitle(), ENT_HTML5); ?>");
 
 	//Reset profile form state
 	$('#profile-modal').on('hidden.bs.modal', function (e) {
