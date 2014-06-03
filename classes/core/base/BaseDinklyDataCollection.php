@@ -79,8 +79,27 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 			$is_valid = false;
 			foreach($cols as $col => $value)
 			{
-				$where .= ' AND `' . $col . '` = ' . $db->quote($value);
-				$is_valid = true;
+				if(is_array($value) && count($value) > 1)
+				{
+					$in_string = '';
+					foreach($value as $temp)
+					{
+						$in_string .= $db->quote($temp) . ',';
+					}
+					$in_string = trim($in_string, ',');
+					$where .= ' AND `' . $col . '` IN (' . $in_string . ')';
+					$is_valid = true;
+				}
+				elseif(is_array($value) && count($value) === 1)
+				{
+					$where .= ' AND `' . $col . '` = ' . $db->quote($value[0]);
+					$is_valid = true;
+				}
+				elseif(!is_array($value))
+				{
+					$where .= ' AND `' . $col . '` = ' . $db->quote($value);
+					$is_valid = true;
+				}
 			}
 
 			if($is_valid) { $where = ' where ' . trim($where, ' AND'); }
