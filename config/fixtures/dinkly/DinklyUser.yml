@@ -9,3 +9,4 @@ records:
         first_name: Boba
         last_name:  Fett
         title: "Professional Space Bounty Hunter"
+        date_format: 'Y-m-d'

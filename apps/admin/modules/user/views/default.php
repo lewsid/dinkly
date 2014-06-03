@@ -23,8 +23,8 @@
     <?php foreach($users as $pos => $user): ?>
     <tr class="<?php echo ($pos % 2 == 0) ? 'odd' : 'even'; ?>">
       <td><?php echo $user->getUsername(); ?></td>
-      <td><?php echo $user->getCreatedAt(Dinkly::getConfigValue('date_format')); ?></td>
-      <td><?php echo $user->getLastLoginAt(Dinkly::getConfigValue('date_format')); ?></td>
+      <td><?php echo $user->getCreatedAt($date_format); ?></td>
+      <td><?php echo $user->getLastLoginAt($date_format); ?></td>
       <td><?php echo $user->getLoginCount(); ?></td>
       <td><a href="/admin/user/detail/id/<?php echo $user->getId(); ?>">view</a></td>
     </tr> 

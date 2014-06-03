@@ -10,6 +10,11 @@
  */
 class HomeController extends AdminController 
 {
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
 	/**
 	 * Loads default admin home page using headers
 	 * 

@@ -19,13 +19,13 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label" for="created">Created</label>
 				<div class="col-md-7">
-					<input value="<?php echo $user->getCreatedAt(Dinkly::getConfigValue('date_format')); ?>" type="text" disabled="disabled" class="form-control" id="created" name="created">
+					<input value="<?php echo $user->getCreatedAt($date_format); ?>" type="text" disabled="disabled" class="form-control" id="created" name="created">
 				</div>
 			</div>	
 			<div class="form-group">
 				<label class="col-sm-3 control-label" for="updated">Updated</label>
 				<div class="col-md-7">
-					<input value="<?php echo $user->getUpdatedAt(Dinkly::getConfigValue('date_format')); ?>" type="text" disabled="disabled" class="form-control" id="updated" name="updated">
+					<input value="<?php echo $user->getUpdatedAt($date_format); ?>" type="text" disabled="disabled" class="form-control" id="updated" name="updated">
 				</div>
 			</div>
 			<hr>

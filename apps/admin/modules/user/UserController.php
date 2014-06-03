@@ -159,14 +159,35 @@ class UserController extends AdminController
 			{
 				$this->validateUserPost($_POST);
 
+				if($_POST['source'] == 'profile')
+				{
+					if($_POST['date-format'] == 'MM/DD/YY')
+					{
+						$this->user->setDateFormat('m/d/y');
+					}
+					else if($_POST['date-format'] == 'YYYY-MM-DD')
+					{
+						$this->user->setDateFormat('Y-m-d');
+					}
+				}
+
 				//If we have no errors, save the user and redirect to detail
 				if($this->errors == array())
 				{
 					$this->user->save();
 
-					DinklyFlash::set('good_user_message', 'User successfully updated');
+					//If the source is 'profile' this was in a modal, and sent via ajax
+					if($_POST['source'] == 'profile')
+					{
+						echo 'success';
+						die();
+					}
+					else
+					{
+						DinklyFlash::set('good_user_message', 'User successfully updated');
 
-					return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $this->user->getId()));
+						return $this->loadModule('admin', 'user', 'detail', true, true, array('id' => $this->user->getId()));
+					}
 				}
 			}
 

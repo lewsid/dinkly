@@ -11,6 +11,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/dinkly.css" rel="stylesheet">
     <link href="/css/datatables-bootstrap.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
     <style>
       body { padding-top: 60px; /* 60px to make the container go all the way
       to the bottom of the topbar */ }
@@ -80,6 +81,8 @@
                   <strong><?php echo DinklyUser::getLoggedUsername(); ?></strong> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu pull-right" role="menu">
+                  <li><a data-toggle="modal" data-target="#profile-modal" href="#">Edit Profile</a></li>
+                  <li role="presentation" class="divider"></li>
                   <li><a href="/admin/login/logout/">Logout</a></li>
                 </ul>
               </div>

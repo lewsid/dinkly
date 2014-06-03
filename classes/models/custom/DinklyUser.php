@@ -26,6 +26,15 @@ class DinklyUser extends BaseDinklyUser
 		return $datetime;
 	}
 
+	public function getDateFormat()
+	{
+		if(!$this->DateFormat)
+		{
+			return 'm/d/y';
+		}
+		else { return $this->DateFormat; }
+	}
+
 	public function getCreatedAt($format = null)
 	{
 		return $this->convertDate($format, $this->CreatedAt);
