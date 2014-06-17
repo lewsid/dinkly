@@ -287,17 +287,17 @@ class BaseDinklyBuilder extends Dinkly
 				$fp = fopen($module_folder . "/views/default.php", 'w+');
 				fclose($fp);
 
-				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
+				$fp = fopen($module_folder . "/" . Dinkly::convertToCamelCase($app_name, true) . Dinkly::convertToCamelCase($module_name, true) . "Controller.php", 'w+');
 				fwrite($fp, '<?php' . PHP_EOL );
 				fwrite($fp, '/**'.PHP_EOL .
 				' * '.Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL.
 				' *'.PHP_EOL .
 				' *'.PHP_EOL .
 				' * @package    Dinkly'.PHP_EOL .
-				' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true).Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL .
+				' * @subpackage Apps'.Dinkly::convertToCamelCase($app_name, true) . Dinkly::convertToCamelCase($module_name, true).'Controller'.PHP_EOL .
 				' * @author     Christopher Lewis <lewsid@lewsid.com>'.PHP_EOL .
 				' */' . PHP_EOL . PHP_EOL);
-				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
+				fwrite($fp, 'class ' . Dinkly::convertToCamelCase($app_name, true) . Dinkly::convertToCamelCase($module_name, true) . 'Controller extends ' . Dinkly::convertToCamelCase($app_name, true) . "Controller" . PHP_EOL . '{' . PHP_EOL);
 				fwrite($fp,"\t/**".PHP_EOL .
 				"\t * Constructor".PHP_EOL .
 				"\t *".PHP_EOL . 

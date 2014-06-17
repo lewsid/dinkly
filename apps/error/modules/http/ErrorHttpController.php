@@ -1,14 +1,12 @@
 <?php
 /**
- * ErrorController
- *
- * 
+ * ErrorHttpController
  *
  * @package    Dinkly
  * @subpackage AppsErrorErrorController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class ErrorController extends Dinkly 
+class ErrorHttpController extends Dinkly 
 {
 	/**
 	 * Handle any URL errors when page is not found

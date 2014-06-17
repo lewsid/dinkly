@@ -1,14 +1,12 @@
 <?php
 /**
- * HomeController
- *
- * 
+ * AdminHomeController
  *
  * @package    Dinkly
  * @subpackage AppsAdminHomeHomeController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class HomeController extends AdminController 
+class AdminHomeController extends AdminController 
 {
 	public function __construct()
 	{

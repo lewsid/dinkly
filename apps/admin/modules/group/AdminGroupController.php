@@ -1,14 +1,13 @@
 <?php
 /**
- * GroupController
- *
+ * AdminGroupController
  *
  * @package    Dinkly
  * @subpackage AppsAdminGroupController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 
-class GroupController extends AdminController
+class AdminGroupController extends AdminController
 {
 	protected $group;
 

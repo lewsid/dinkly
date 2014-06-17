@@ -1,6 +1,6 @@
 <?php
 /**
- * ApiController
+ * ApiRouterController
  *
  * A ready-to-go Restful API, useful for interaction with JS MVC frameworks
  *
@@ -8,8 +8,13 @@
  * @subpackage AppsApiController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class ApiController extends Dinkly 
+class ApiRouterController extends Dinkly 
 {
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
 	/**
 	 * Handle any errors that occur internally with Server Side Data
 	 *

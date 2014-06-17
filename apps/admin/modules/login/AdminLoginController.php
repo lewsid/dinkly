@@ -1,14 +1,12 @@
 <?php
 /**
- * LoginController
- *
- * 
+ * AdminLoginController
  *
  * @package    Dinkly
  * @subpackage AppsAdminLoginLoginController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class LoginController extends AdminController 
+class AdminLoginController extends AdminController 
 {
 	public function __construct()
 	{

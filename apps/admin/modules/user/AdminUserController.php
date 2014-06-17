@@ -1,14 +1,12 @@
 <?php
 /**
- * UserController
- *
- * 
+ * AdminUserController
  *
  * @package    Dinkly
  * @subpackage AppsDinklyUserController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class UserController extends AdminController
+class AdminUserController extends AdminController
 {
 	protected $user;
 

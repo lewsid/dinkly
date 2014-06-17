@@ -1,14 +1,14 @@
 <?php
 /**
- * FrontendController
+ * ApiController
  * 
  *
  * @package    Dinkly
- * @subpackage AppsFrontendController
+ * @subpackage AppsApiController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 
-class FrontendController extends Dinkly
+class ApiController extends Dinkly
 {
 	/**
 	 * Default Constructor

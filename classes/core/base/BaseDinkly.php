@@ -269,7 +269,7 @@ class BaseDinkly
 		}
 
 		//Get module controller
-		$camel_module_name = self::convertToCamelCase($module_name, true) . "Controller";
+		$camel_module_name = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($module_name, true) . "Controller";
 		$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 
 		//Save these on the object so they can be retrieved as needed in controllers or views
