@@ -1,6 +1,7 @@
 {
     "require": {
-        "symfony/yaml": "2.4.x-dev"
+        "symfony/yaml": "2.4.x-dev",
+        "michelf/php-markdown": "1.4.*@dev"
     },
     "require-dev": {
     	"phpunit/phpunit": "4.0.*@dev",

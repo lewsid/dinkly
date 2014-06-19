@@ -7,6 +7,8 @@
   <?php if(DinklyUser::isLoggedIn()): ?>
   	<?php include('modal_profile.php'); ?>
   <?php endif; ?>
+
+  <?php echo $this->getModuleFooter(); ?>
   
   </body>
 </html>

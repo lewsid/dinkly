@@ -10,10 +10,13 @@
  */
 
 use Symfony\Component\Yaml\Yaml;
+use Michelf\Markdown;
 
 class BaseDinkly
 {
 	protected $module_header;
+
+	protected $module_footer;
 
 	protected $context;
 
@@ -326,34 +329,83 @@ class BaseDinkly
 			foreach ($vars as $name => $value)
 				$$name = $value;
 
-			//Get module view
-			if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php"))
+			//Draw headers
+			if($draw_layout)
 			{
-				if($draw_layout)
+				$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header";
+
+				if(file_exists($base_module_header_path . '.php') || file_exists($base_module_header_path . '.md'))
 				{
-					if(file_exists($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php"))
+					ob_start();
+
+					if(file_exists($base_module_header_path . '.php'))
 					{
-						ob_start();
-						include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header.php");
-						$header = ob_get_contents();
-						ob_end_clean();
-						$this->setModuleHeader($header);
+						include($base_module_header_path . '.php');
+					}
+					else if(file_exists($base_module_header_path . '.md'))
+					{
+						include($base_module_header_path . '.md');
 					}
 					
-					//Set the powered-by header if the version number is in the config
-					if($version = self::getConfigValue('dinkly_version', 'global'))
-					{
-						header('X-Powered-By: DINKLY/' . $version);
-					}
-
-					include($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php');
+					$header = ob_get_contents();
+					ob_end_clean();
+					$this->setModuleHeader($header);
+				}
+				
+				//Set the powered-by header if the version number is in the config
+				if($version = self::getConfigValue('dinkly_version', 'global'))
+				{
+					header('X-Powered-By: DINKLY/' . $version);
 				}
 
-				require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name . ".php");
-				
-				if($draw_layout)
+				$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php';
+				if(file_exists($app_header_path))
 				{
-					require_once($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php');
+					include($app_header_path);
+				}
+			}
+
+			//Draw view
+			$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name; 
+			
+			if(file_exists($base_view_path . '.php'))
+			{
+				include($base_view_path . '.php');
+			}
+			else if(file_exists($base_view_path . '.md'))
+			{
+				$markdown_template = file_get_contents($base_view_path . '.md');
+				$html = Markdown::defaultTransform($markdown_template);
+				echo $html;
+			}
+			
+			//Draw footer
+			if($draw_layout)
+			{
+				$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/footer";
+
+				if(file_exists($base_module_footer_path . '.php') || file_exists($base_module_footer_path . '.md'))
+				{
+					ob_start();
+
+					if(file_exists($base_module_footer_path . '.php'))
+					{
+						include($base_module_footer_path . '.php');
+					}
+					else if(file_exists($base_module_footer_path . '.md'))
+					{
+						include($base_module_footer_path . '.md');
+					}
+					
+					$header = ob_get_contents();
+					ob_end_clean();
+					$this->setModuleHeader($header);
+				}
+
+				$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+				if(file_exists($app_footer_path))
+				{
+					include($app_footer_path);
 				}
 			}
 		}
@@ -375,12 +427,28 @@ class BaseDinkly
 	public function setModuleHeader($header) { $this->module_header = $header; }
 
 	/**
+	 * Set module footer manually
+	 *
+	 * @param footer $footer String containing contents of footer.php file
+	 * 
+	 */
+	public function setModuleFooter($footer) { $this->module_footer = $footer; }
+
+	/**
 	 * Get contents of module header
 	 *
 	 * 
 	 * @return header contents of header.php file of a given module
 	 */
 	public function getModuleHeader() { return $this->module_header; }
+
+	/**
+	 * Get contents of footer header
+	 *
+	 * 
+	 * @return footer contents of footer.php file of a given module
+	 */
+	public function getModuleFooter() { return $this->module_footer; }
 
 	/**
 	 * Get current contexts view
