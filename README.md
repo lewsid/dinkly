@@ -1,4 +1,4 @@
-Dinkly v2.06
+Dinkly v2.08
 ============
 
 The biggest little PHP framework
@@ -13,7 +13,7 @@ Features
 
 - Easy to use and flexible MVC architecture
 - YAML configuration and customization
-- Support for Markdown templating
+- Support for Github Flavored Markdown templating
 - Full Composer support
 - Restful API
 - Minimal and flexible ORM

@@ -3,58 +3,46 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "f25380a25740cb3b27073c9af8b03463",
+    "hash": "bb7e9431e10d0ea3e3384470e3ef07dc",
     "packages": [
         {
-            "name": "michelf/php-markdown",
-            "version": "dev-lib",
+            "name": "erusev/parsedown",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michelf/php-markdown.git",
-                "reference": "123c43a65c783e7535384cfbec640d9702204c22"
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "e33ac1c56ea591f21b9cf2fa74356ef708d4e130"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/123c43a65c783e7535384cfbec640d9702204c22",
-                "reference": "123c43a65c783e7535384cfbec640d9702204c22",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/e33ac1c56ea591f21b9cf2fa74356ef708d4e130",
+                "reference": "e33ac1c56ea591f21b9cf2fa74356ef708d4e130",
                 "shasum": ""
             },
-            "require": {
-                "php": ">=5.3.0"
-            },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-lib": "1.4.x-dev"
-                }
-            },
             "autoload": {
                 "psr-0": {
-                    "Michelf": ""
+                    "Parsedown": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-3-Clause"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Michel Fortin",
-                    "email": "michel.fortin@michelf.ca",
-                    "homepage": "http://michelf.ca/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "John Gruber",
-                    "homepage": "http://daringfireball.net/"
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
                 }
             ],
-            "description": "PHP Markdown",
-            "homepage": "http://michelf.ca/projects/php-markdown/",
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
             "keywords": [
-                "markdown"
+                "markdown",
+                "parser"
             ],
-            "time": "2014-05-15 19:49:30"
+            "time": "2014-06-18 09:27:25"
         },
         {
             "name": "symfony/yaml",
@@ -113,7 +101,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "symfony/yaml": 20,
-        "michelf/php-markdown": 20,
+        "erusev/parsedown": 20,
         "phpunit/phpunit": 20,
         "phpdocumentor/phpdocumentor": 20
     },

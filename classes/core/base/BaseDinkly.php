@@ -10,7 +10,6 @@
  */
 
 use Symfony\Component\Yaml\Yaml;
-use Michelf\Markdown;
 
 class BaseDinkly
 {
@@ -203,11 +202,11 @@ class BaseDinkly
 	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null)
 	{
 		//Check for base dinkly 404
-		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/error/ErrorController.php";
+		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/http/ErrorHttpController.php";
 		
 		if(file_exists($error_controller))
 		{
-			return $this->loadModule('error', 'error', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
+			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
 		}
 	}
 
@@ -375,8 +374,8 @@ class BaseDinkly
 			else if(file_exists($base_view_path . '.md'))
 			{
 				$markdown_template = file_get_contents($base_view_path . '.md');
-				$html = Markdown::defaultTransform($markdown_template);
-				echo $html;
+				$Parsedown = new Parsedown();
+				echo $Parsedown->text($markdown_template);
 			}
 			
 			//Draw footer
