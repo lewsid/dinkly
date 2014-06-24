@@ -1,29 +1,33 @@
 global:
     settings:
-        dinkly_version: "2.08"
+        dinkly_version: "2.09"
         time_format: h:i a
 
     apps:
         frontend:
             default_app: true
             default_module: landing
+            enabled: true
             base_href: /
             app_name: Dinkly Frontend
-            app_description: The humble little PHP MVC Framework
+            app_description: The humblest little PHP MVC Framework
         admin:
             default_module: home
             base_href: /admin
+            enabled: true
             app_name: Dinkly Admin
-            app_description: The humble little PHP MVC Framework
+            app_description: Admin for the humblest little MVC
             copyright: Dinkly
         api:
             app_name: Dinkly API
             base_href: /api
+            enabled: true
             default_module: api
         doc:
             app_name: Dinkly Documentation
             base_href: /doc
             default_module: home
+            enabled: true
 
     databases:
         dinkly:

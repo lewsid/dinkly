@@ -230,6 +230,25 @@ class BaseDinkly
 
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
+
+		//Validate passed app
+		if(!in_array($app_name, Dinkly::getValidApps($app_name)))
+		{
+			throw new Exception('App "' . $app_name . '" cannot be loaded.');
+			return false;
+		}
+
+		if(!Dinkly::isAppEnabled($app_name))
+		{
+			$message = "The requested app (" . $app_name . ") is currently disabled.";
+			error_log($message);
+
+			if(self::getCurrentEnvironment() == 'dev')
+			{
+				echo $message;	
+			}
+			return false;
+		}
 		
 		//Set the current app to match whatever was passed
 		$_SESSION['dinkly']['current_app_name'] = $app_name;
@@ -672,6 +691,35 @@ class BaseDinkly
 	}
 
 	/**
+	 * Get existing apps
+	 *
+	 * @return Array of valid apps
+	 */
+	public static function getValidApps()
+	{
+		$valid_apps = null;
+
+		if(!isset($_SESSION['dinkly']['valid_apps']))
+		{ 
+			$_SESSION['dinkly']['valid_apps'] = array();
+			$valid_apps = array();
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/'))
+			{ 
+				/* loop through directory. */ 
+				while (false !== ($dir = readdir($handle)))
+				{ 
+					if($dir != '.' && $dir != '..') { $valid_apps[] = $dir; }
+				} 
+				closedir($handle);
+				
+				$_SESSION['dinkly']['valid_apps'] = $valid_apps;
+			}
+		}
+
+		return $_SESSION['dinkly']['valid_apps'];
+	}
+
+	/**
 	 * Get existing modules
 	 * @param string $app_name String name of app from which you want modules
 	 *
@@ -701,6 +749,25 @@ class BaseDinkly
 		else { $valid_modules = $_SESSION['dinkly']['valid_modules'][$app_name]; }
 
 		return $valid_modules;
+	}
+
+	/**
+	 * Determine if the passed app is enabled or not
+	 *
+	 * @param string $app_name
+	 *
+	 * @return bool
+	 */
+	public static function isAppEnabled($app_name)
+	{
+		$config = self::getConfig();
+
+		if(isset($config['apps'][$app_name]['enabled']))
+		{
+			if($config['apps'][$app_name]['enabled'] == false) { return false; }
+		}
+
+		return true;
 	}
 	
 	/**
