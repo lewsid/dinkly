@@ -1,14 +1,14 @@
 <?php
 /**
- * HomeController
+ * LearningMoreController
  *
  *
  * @package    Dinkly
- * @subpackage AppsDocHomeController
+ * @subpackage AppsDocLearningMoreController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 
-class DocHomeController extends DocController
+class DocLearningMoreController extends DocController
 {
 	/**
 	 * Constructor
@@ -32,7 +32,7 @@ class DocHomeController extends DocController
 		return true;
 	}
 
-	public function loadIntroduction()
+	public function loadConfiguration()
 	{
 		return true;
 	}

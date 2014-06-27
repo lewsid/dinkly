@@ -1,7 +1,7 @@
 Dinkly v2.09
 ============
 
-The biggest little PHP framework
+The humblest little MVC Framework
 
 What makes Dinkly special?
 --------------------------

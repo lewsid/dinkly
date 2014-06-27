@@ -10,7 +10,7 @@ global:
             enabled: true
             base_href: /
             app_name: Dinkly Frontend
-            app_description: The humblest little PHP MVC Framework
+            app_description: The humblest little MVC Framework
         admin:
             default_module: home
             base_href: /admin
@@ -45,7 +45,3 @@ dev:
     apps:
         admin:
             app_name: Dinkly Admin Dev
-prod:
-    apps:
-        admin:
-            app_name: Dinkly Admin

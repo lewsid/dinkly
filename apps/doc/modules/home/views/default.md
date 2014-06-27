@@ -4,22 +4,20 @@ Table of Contents
 Basics
 ------
 
- 1. First, get these ingredients:
+  1. [Introduction](/doc/home/introduction/)
+ 
+  2. [Getting Started](/doc/getting_started/)
 
-      * carrots
-      * celery
-      * lentils
+      1. [Requirements](/doc/getting_started/requirements/)
 
- 2. Boil some water.
+      2. [Installation](/doc/getting_started/installation/)
+      
+      3. [Configuration](/doc/getting_started/configuration/)
+      
+      4. [Initializing the Admin](/doc/getting_started/initializing_the_admin/) (Optional)
 
- 3. Dump everything in the pot and follow
-    this algorithm:
+      5. [Understanding the Architecture](/doc/getting_started/understanding_the_architecture/)
 
-	```php
-		public function __construct()
-		{
-			parent::__construct();
-		}
-	```
+  3. [Learning More](/doc/learning_more/)
 
-    Do not bump wooden spoon or it will fall.
+      1. [Configuration](/doc/learning_more/configuration/)

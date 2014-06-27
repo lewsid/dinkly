@@ -67,3 +67,4 @@
     </div>
   </div>
     <div class="container"><!-- Primary Container -->
+    <?php include('nav.php'); ?>
