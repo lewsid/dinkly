@@ -1,8 +1,6 @@
-Getting Started
-===============
+Getting Started: Requirements
+=============================
 
-Requirements
-------------
 
 To ensure that your Dinkly project runs without any issues, make sure your environment meets the following conditions:
 

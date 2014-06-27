@@ -1,10 +1,7 @@
-Getting Started
-===============
+Getting Started: Initializing the Admin
+=======================================
 
 Dinkly comes with a basic Admin interface for managing users, groups, and permissions. If you'd like to use it, follow these steps.
-
-Initializing the Admin
-----------------------
 
   1. Enter the following at the command line to generate the models and insert tables into the database:
 

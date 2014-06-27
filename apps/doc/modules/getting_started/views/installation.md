@@ -1,8 +1,6 @@
-Getting Started
-===============
+Getting Started: Installation
+=============================
 
-Installation
-------------
 
   1. Pull down the latest release from GitHub - https://github.com/lewsid/dinkly
 
