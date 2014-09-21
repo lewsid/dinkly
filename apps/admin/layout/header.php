@@ -72,7 +72,7 @@
             <li>
               <div class="btn-group">
                 <button type="button" class="btn  btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                  <strong><?php echo DinklyUser::getLoggedUsername(); ?></strong> <span class="caret"></span>
+                  <?php echo DinklyUser::getLoggedUsername(); ?> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu pull-right" role="menu">
                   <li><a data-toggle="modal" data-target="#profile-modal" href="#">Edit Profile</a></li>
