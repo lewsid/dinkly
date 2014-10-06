@@ -123,8 +123,8 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 				{
 					$where .= rtrim($chunk, ', ');
 
-					if($direction == 'asc') { $where .= 'ASC'; }
-					else if($direction == 'desc') { $where .= 'DESC'; }
+					if($direction == 'asc') { $where .= ' ASC'; }
+					else if($direction == 'desc') { $where .= ' DESC'; }
 				}
 			}
 
