@@ -195,13 +195,18 @@ class DinklyUser extends BaseDinklyUser
 		return false;
 	}
 
-	public static function setAuthSessionValue($key, $value)
+	public static function setAuthSessionValue($key, $value, $app = null)
 	{
-		if(!isset($_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()]))
+		if(!$app)
 		{
-			$_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()] = array();
+			$app = Dinkly::getCurrentAppName();
 		}
-		$_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()][$key] = $value;
+		
+		if(!isset($_SESSION['dinkly']['auth'][$app]))
+		{
+			$_SESSION['dinkly']['auth'][$app] = array();
+		}
+		$_SESSION['dinkly']['auth'][$app][$key] = $value;
 	}
 
 	/**
@@ -211,11 +216,13 @@ class DinklyUser extends BaseDinklyUser
 	 * @param string $username: username of admin user to set sessions
 	 * 
 	 */
-	public static function setLoggedIn($is_logged_in, $user_id, $username, $groups = array())
+	public static function setLoggedIn($is_logged_in, $user_id, $username, $groups = array(), $app = null)
 	{
-		self::setAuthSessionValue('logged_in', $is_logged_in);
-		self::setAuthSessionValue('logged_username', $username);
-		self::setAuthSessionValue('logged_id', $user_id);
+		if(!$app) $app = Dinkly::getCurrentAppName();
+
+		self::setAuthSessionValue('logged_in', $is_logged_in, $app);
+		self::setAuthSessionValue('logged_username', $username, $app);
+		self::setAuthSessionValue('logged_id', $user_id, $app);
 
 		if($groups != array())
 		{
@@ -237,8 +244,8 @@ class DinklyUser extends BaseDinklyUser
 				}
 			}
 
-			self::setAuthSessionValue('logged_groups', $logged_groups);
-			self::setAuthSessionValue('logged_permissions', $logged_permissions);
+			self::setAuthSessionValue('logged_groups', $logged_groups, $app);
+			self::setAuthSessionValue('logged_permissions', $logged_permissions, $app);
 		}
 	}
 
