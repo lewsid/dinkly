@@ -2,6 +2,11 @@
 
 class DinklyFlashTest extends PHPUnit_Framework_TestCase
 {
+	protected function setUp()
+	{
+		date_default_timezone_set("Europe/Paris");
+	}
+
 	public function testExists()
 	{
 		DinklyFlash::set('exists_test_key_1','1');
