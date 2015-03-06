@@ -1,7 +1,6 @@
 <?php
 class DinklyFlashTest extends PHPUnit_Framework_TestCase
 {
-
 	public function testExists()
 	{
 		DinklyFlash::set('exists_test_key_1','1');
@@ -68,5 +67,4 @@ class DinklyFlashTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse(DinklyFlash::exists('clear_test_key_1'));
 		$this->assertFalse(DinklyFlash::exists('clear_test_key_hello'));
 	}
-
 }
