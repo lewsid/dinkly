@@ -19,7 +19,9 @@ class BaseDinklyFlash
 	    		return true;
 	    	}
     	}
-	}
+	   
+       return false;
+    }
 
     public static function set($key, $value)
     {
@@ -53,7 +55,9 @@ class BaseDinklyFlash
     		$values = $_SESSION['dinkly']['flash'];
 
     		if($delete) { $_SESSION['dinkly']['flash'] = array(); }
-    	}
+    	
+            return $values;
+        }
     }
 
     public static function clear()

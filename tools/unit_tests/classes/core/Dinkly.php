@@ -16,20 +16,29 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 						"default_app" => true,
             			"default_module" => "landing",
             			"base_href" => "/",
+            			"enabled" => true,
             			"app_name" => "Dinkly Frontend",
-            			"app_description" => "The humble little PHP MVC Framework",
+            			"app_description" => "The humblest little MVC Framework",
             		),
 					"admin" => array(
 						"default_module" => "home",
 						"base_href" => "/admin",
-						"app_name" => "Dinkly Admin Dev",
-						"app_description" => "The humble little PHP MVC Framework",
+						"enabled" => true,
+						"app_name" => "Dinkly Admin",
+						"app_description" => "Admin for the humblest little MVC",
 						"copyright" => "Dinkly"
 					),
 					"api" => array(
 						"base_href" => "/api", 
+						"enabled" => true,
 						"default_module" => "api",
 						"app_name" => "Dinkly API"
+					),
+					"doc" => array(
+						"app_name" => "Dinkly Documentation",
+						"base_href" => "/doc",
+						"default_module"=> "home",
+						"enabled"=>true
 					)
 				)
 			);
