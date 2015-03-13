@@ -255,8 +255,9 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 				$i++;
 			}
 		}
-		
-		$query .= " where id='" . $this->Id . "'";
+
+		$primaryKey = $this->getPrimaryKey();
+		$query .= " where " . $primaryKey . "='" . $this->{Dinkly::convertToCamelCase($primaryKey, true)} . "'";
 
 		if($is_valid) { return $this->db->exec($query); }
 		else { return false; }
@@ -349,6 +350,20 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 	 * 
 	 */
 	protected function getDBTable() { return $this->dbTable; }
+
+	/**
+	 * Retrieve the primary key of a given model
+	 *
+	 * @return String that is the primary key of the database table containing an object
+	 * 
+	 */
+	public function getPrimaryKey()
+	{
+		$sql = "SHOW KEYS FROM " . $this->getDBTable() . " WHERE Key_name = 'PRIMARY'";
+		$result = $this->db->query($sql)->fetch();
+
+		return $result['Column_name'];
+	}
 
 	/**
 	 * Forces entire data model to refresh to completely wipe a record
