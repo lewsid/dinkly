@@ -1,17 +1,17 @@
 $(document).ready(function() {
-	$('.dinkly-datatable').dataTable();
+    $('.dinkly-datatable').DataTable();
 });
 
 $.extend( true, $.fn.dataTable.defaults, {
-    "sDom": "<'row'<'col-6'><'col-6'l><'pull-right' f>r>t<'row'<'col-6'i><'col-6'<'pull-right' p>>>",
-    "sPaginationType": "bootstrap",
-    "oLanguage": {
-        "sLengthMenu": "Show _MENU_ Rows",
-                "sSearch": ""
+    "Dom": "<'row'<'col-6'><'col-6'l><'pull-right' f>r>t<'row'<'col-6'i><'col-6'<'pull-right' p>>>",
+    "PaginationType": "bootstrap",
+    "Language": {
+        "LengthMenu": "Show _MENU_ Rows",
+                "Search": ""
     },
-    "aoColumnDefs": [{
-        "bSortable" : false,
-        "aTargets" : [ "no-sort" ]
+    "ColumnDefs": [{
+        "Sortable" : false,
+        "Targets" : [ "no-sort" ]
     }]
 });
 

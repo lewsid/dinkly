@@ -1,20 +1,20 @@
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
-	"sDom":
+	"Dom":
 		"<'row'<'col-xs-6'l><'col-xs-6'f>r>"+
 		"t"+
 		"<'row'<'col-xs-6'i><'col-xs-6'p>>",
-	"oLanguage": {
-		"sLengthMenu": "_MENU_ records per page"
+	"Language": {
+		"LengthMenu": "_MENU_ records per page"
 	}
 } );
 
 
 /* Default class modification */
 $.extend( $.fn.dataTableExt.oStdClasses, {
-	"sWrapper": "dataTables_wrapper form-inline",
-	"sFilterInput": "form-control input-sm",
-	"sLengthSelect": "form-control input-sm"
+	"Wrapper": "dataTables_wrapper form-inline",
+	"FilterInput": "form-control input-sm",
+	"LengthSelect": "form-control input-sm"
 } );
 
 // In 1.10 we use the pagination renderers to draw the Bootstrap paging,

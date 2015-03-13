@@ -22,10 +22,10 @@
       </script>
     <![endif]-->
     
-    <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/js/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="/js/dataTables.bootstrap3.js"></script>
     <script type="text/javascript" src="/js/dinkly.js"></script>
     <script type="text/javascript" src="/js/dinkly-datatables.js"></script>
 
