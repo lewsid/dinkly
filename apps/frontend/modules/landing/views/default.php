@@ -11,8 +11,9 @@
       <a href="https://github.com/ScottConnor-BHG">ScottConnor-BHG</a>,
       <a href="https://github.com/andrewvt">andrewvt</a>,
       <a href="https://github.com/smacewan101">smacewan101</a>,
+      <a href="https://github.com/unclecheese">unclecheese</a>,
       and
-      <a href="https://github.com/unclecheese">unclecheese</a>
+      <a href="https://github.com/elliott250">elliott250</a>
     </h5>
   </div>
 </div>
