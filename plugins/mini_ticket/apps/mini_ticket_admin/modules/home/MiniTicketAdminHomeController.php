@@ -10,7 +10,7 @@ class MiniTicketAdminHomeController extends MiniTicketAdminController
 	public function loadView($parameters = array())
 	{
 		//If comment post insert it
-		if(isset($_POST['type']) AND $_POST['type']=="comment")
+		if(isset($_POST['type']) AND $_POST['type'] == "comment")
 		{ 
 			$ticket_id = strip_tags($_POST['ticket_id']);
 			$comment = strip_tags($_POST['comment']);

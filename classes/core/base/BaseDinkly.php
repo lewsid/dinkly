@@ -275,10 +275,28 @@ class BaseDinkly
 			header("Location: " . $path);
 			die();
 		}
+
+		//Switch out paths later based on whether this is a plugin or not
+		$is_plugin = false;
+		if(Dinkly::getConfigValue('is_plugin', $app_name))
+		{
+			$is_plugin = true;
+		}
 		
 		//Load the app controller, if one exists
 		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
-		$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/' . $camel_app_controller_name . '.php';
+
+		if($is_plugin)
+		{
+			$plugin_name = Dinkly::getConfigValue('plugin_name', $app_name);
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+				. $app_name . '/' . $camel_app_controller_name . '.php';
+		}
+		else
+		{
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+				. '/' . $camel_app_controller_name . '.php';
+		}
 
 		$has_app_controller = false;
 		if(file_exists($app_controller_file))
@@ -291,7 +309,17 @@ class BaseDinkly
 
 		//Get module controller
 		$camel_module_name = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($module_name, true) . "Controller";
-		$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+
+		if($is_plugin)
+		{
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+				. $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+		}
+		else
+		{
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+		}
 
 		//Save these on the object so they can be retrieved as needed in controllers or views
 		$this->view = $view_name;
@@ -350,7 +378,16 @@ class BaseDinkly
 			//Draw headers
 			if($draw_layout)
 			{
-				$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/header";
+				if($is_plugin)
+				{
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+						. $app_name . '/modules/' . $module_name . '/views/header';
+				}
+				else
+				{
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+						. '/modules/' . $module_name . "/views/header";
+				}
 
 				if(file_exists($base_module_header_path . '.php') || file_exists($base_module_header_path . '.md'))
 				{
@@ -376,7 +413,16 @@ class BaseDinkly
 					header('X-Powered-By: DINKLY/' . $version);
 				}
 
-				$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php';
+				if($is_plugin)
+				{
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+						. '/apps/' . $app_name . '/layout/header.php';
+				}
+				else
+				{
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php';
+				}
+
 				if(file_exists($app_header_path))
 				{
 					include($app_header_path);
@@ -384,7 +430,16 @@ class BaseDinkly
 			}
 
 			//Draw view
-			$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name; 
+			if($is_plugin)
+			{
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+						. '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name; 
+			}
+			else
+			{
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+					. $module_name . '/views/' . $view_name; 
+			}
 			
 			if(file_exists($base_view_path . '.php'))
 			{
@@ -400,7 +455,16 @@ class BaseDinkly
 			//Draw footer
 			if($draw_layout)
 			{
-				$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' . $module_name . "/views/footer";
+				if($is_plugin)
+				{
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+						. '/apps/' . $app_name . '/modules/' . $module_name . "/views/footer";
+				}
+				else
+				{
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+						. $module_name . "/views/footer";
+				}
 
 				if(file_exists($base_module_footer_path . '.php') || file_exists($base_module_footer_path . '.md'))
 				{
@@ -420,7 +484,15 @@ class BaseDinkly
 					$this->setModuleHeader($header);
 				}
 
-				$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+				if($is_plugin)
+				{
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+				}
+				else
+				{
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+				}
+
 				if(file_exists($app_footer_path))
 				{
 					include($app_footer_path);
@@ -603,8 +675,25 @@ class BaseDinkly
 			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
 			$config = $raw_config['global'];
 
+			//Load Global Plugins Config
+			if(isset($raw_config['global']['plugins']))
+			{
+				foreach($raw_config['global']['plugins'] as $plugin_name => $plugin_config)
+				{
+					foreach($plugin_config['apps'] as $app_name => $app_config)
+					{	
+						foreach($app_config as $config_name => $config_value)
+						{
+							$config['apps'][$app_name][$config_name] = $config_value;
+							$config['apps'][$app_name]['plugin_name'] = $plugin_name;
+						}
+					}
+				}
+			}
+
 			if(isset($raw_config[$env]))
 			{
+				//Override/Merge Apps Config
 				if(isset($raw_config[$env]['apps']))
 				{
 					foreach($raw_config[$env]['apps'] as $app_name => $app_config)
@@ -615,6 +704,24 @@ class BaseDinkly
 						}
 					}
 				}
+
+				//Override/Merge Plugins Config
+				if(isset($raw_config[$env]['plugins']))
+				{
+					foreach($raw_config[$env]['plugins'] as $plugin_name => $plugin_config)
+					{
+						foreach($plugin_config as $app_name => $app_config)
+						{	
+							foreach($app_config as $config_name => $config_value)
+							{
+								$config['apps'][$app_name][$config_name] = $config_value;
+								$config['apps'][$app_name]['plugin_name'] = $plugin_name;
+							}
+						}
+					}
+				}
+
+				//Override/Merge Databases Config
 				if(isset($raw_config[$env]['databases']))
 				{
 					foreach($raw_config[$env]['databases'] as $schema => $db_config)
@@ -703,6 +810,8 @@ class BaseDinkly
 		{ 
 			$_SESSION['dinkly']['valid_apps'] = array();
 			$valid_apps = array();
+
+			//Load standard apps
 			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/'))
 			{ 
 				/* loop through directory. */ 
@@ -711,9 +820,37 @@ class BaseDinkly
 					if($dir != '.' && $dir != '..') { $valid_apps[] = $dir; }
 				} 
 				closedir($handle);
-				
-				$_SESSION['dinkly']['valid_apps'] = $valid_apps;
 			}
+
+			//Load plugins as valid apps
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			{
+				//loop through plugins directory
+				while (false !== ($dir = readdir($handle)))
+				{ 
+					if($dir != '.' && $dir != '..')
+					{
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						{
+							//loop through plugin apps directory
+							while (false !== ($plugin_dir = readdir($plugin_handle)))
+							{ 
+								if($plugin_dir != '.' && $plugin_dir != '..')
+								{ 
+									if(!in_array($plugin_dir, $valid_apps))
+									{
+										$valid_apps[] = $plugin_dir;
+									}
+								}
+							} 
+							closedir($plugin_handle);
+						}
+					}
+				} 
+				closedir($handle);
+			}
+
+			$_SESSION['dinkly']['valid_apps'] = $valid_apps;
 		}
 
 		return $_SESSION['dinkly']['valid_apps'];
@@ -734,16 +871,58 @@ class BaseDinkly
 		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::getCurrentEnvironment() == 'dev')
 		{
 			$valid_modules = array();
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
-			{ 
-				/* loop through directory. */ 
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+			{
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+				{ 
+					//loop through modules directory
+					while (false !== ($dir = readdir($handle)))
+					{ 
+						if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
+					} 
+					closedir($handle);
+					
+					$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
+				}
+			}
+			
+			//Load plugins as valid modules
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			{
+				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
+					if($dir != '.' && $dir != '..')
+					{
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						{
+							//loop through plugin apps directory
+							while (false !== ($plugin_dir = readdir($plugin_handle)))
+							{ 
+								if($plugin_dir != '.' && $plugin_dir != '..')
+								{ 
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									if(is_dir($plugin_modules_dir))
+									{
+										if($h = opendir($plugin_modules_dir))
+										{ 
+											//loop through modules directory
+											while (false !== ($d = readdir($h)))
+											{ 
+												if($d != '.' && $d != '..') { $valid_modules[] = $d; }
+											} 
+											closedir($h);
+											
+											$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
+										}
+									}
+								}
+							} 
+							closedir($plugin_handle);
+						}
+					}
 				} 
 				closedir($handle);
-				
-				$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
 			}
 		}
 		else { $valid_modules = $_SESSION['dinkly']['valid_modules'][$app_name]; }
