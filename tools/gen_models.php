@@ -1,33 +1,28 @@
 <?php
 
-// require_once('config/bootstrap.php');
-
-// $sql = $schema = null;
-// $options = getopt("s:i");
-// if(isset($options['i'])) { $sql = true; }
-// if(isset($options['s'])) { $schema = $options['s']; }
-// DinklyBuilder::buildAllModels($schema, $sql);
-
 require_once('config/bootstrap.php');
 
-echo "\n ============================ Generate All Dinkly Models in Schema ====================\n\n";
+echo "\n ======================== Generate All Dinkly Models in Schema  ========================\n\n";
     
 $options = getopt("hm:s:ip:");
 
 if(isset($options['h']) || $options == array())
 {
-    //Display some help
-    echo "   Usage: php tools/gen_model.php [args]\n\n";
-    echo "   The available args are:\n";
-    echo "       -h    		   Show this Help\n";
-    echo "       -m    		   Model name, in camel-case format (Required)\n";
-    echo "       -s    		   Schema name, in underscore format (Required)\n";
-    echo "       -p    		   Plugin name, in underscore format (Optional)\n";
-    echo "       -i    		   Insert SQL (Optional)\n";
+    echo "   This tool will build all models for a given schema and optionally insert a\n";
+    echo "   matching table into the database. If you add additional fields to your schema,\n";
+    echo "   you may re-run this script with the insert flag to update your tables.";
     echo "\n";
-    echo "   Example: php tools/gen_model.php -s=dinkly -m=FubarTown -i\n";
+    echo "   Usage: php tools/gen_models.php [args]\n\n";
+    echo "   The available arguments are:\n";
+    echo "       -h     Show this help\n";
+    echo "       -s     Schema name, in underscore format (required)\n";
+    echo "       -s     Schema name, in underscore format (required)\n";
+    echo "       -p     Plugin name, in underscore format (optional)\n";
+    echo "       -i     Insert SQL (optional)\n";
+    echo "\n";
+    echo "   Example: php tools/gen_models.php -s=monkey_tail -p=tail_extensions -i\n";
     
-    echo "\n =======================================================================\n\n";
+    echo "\n =======================================================================================\n\n";
     exit;
 }
 
@@ -45,3 +40,8 @@ if(!isset($options['m']))
 
 $plugin_name = null;
 if(isset($options['p'])) { $plugin_name = $options['p']; }
+
+$insert_sql = false;
+if(isset($options['i'])) { $insert_sql = true; }
+
+DinklyBuilder::buildAllModels($options['s'], $insert_sql, $plugin_name);

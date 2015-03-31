@@ -790,18 +790,54 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * 
 	 */
-	public static function buildAllModels($schema = null, $insert_sql = false)
+	public static function buildAllModels($schema = null, $insert_sql = false, $plugin_name = false)
 	{
 		$schema_names = array();
+		$plugin_schemas = array();
 
+		//No schema passed, search everywhere
 		if(!$schema)
 		{
+			//Start with the basics
 			$all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
 
 			foreach($all_folders as $folder)
 			{
 		  		if(substr($folder, 0, 1) != '.')
 		    	$schema_names[] = $folder;
+			}
+
+			$plugin_names = array();
+
+			//Scan for any plugins to build
+			if(!$plugin_name)
+			{
+				$plugin_base = scandir("plugins/");
+
+				foreach($plugins as $plugin)
+				{
+					if(substr($folder, 0, 1) != '.')
+					$plugin_names[] = $plugin;
+				}
+			}
+			else
+			{
+				$plugin_names[] = $plugin_name;
+			}
+
+			//Search through for plugin schemas
+			if($plugin_names != array())
+			{
+				foreach($plugin_names as $p)
+				{
+					$plugin_folders = scandir("plugins/" . $p . "/config/schemas/");
+
+					foreach($plugin_folders as $f)
+					{
+						//Keep track of the plugin name and its schemas
+						$plugin_schemas[$p] = $f;
+					}
+				}
 			}
 		}
 		else

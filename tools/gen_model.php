@@ -2,22 +2,24 @@
 
 require_once('config/bootstrap.php');
 
-echo "\n ============================ Generate Dinkly Model ====================\n\n";
+echo "\n ======================== Generate Dinkly Model ========================\n\n";
     
 $options = getopt("hm:s:ip:");
 
 if(isset($options['h']) || $options == array())
 {
-    //Display some help
-    echo "   Usage: php tools/gen_model.php [args]\n\n";
-    echo "   The available args are:\n";
-    echo "       -h    		   Show this Help\n";
-    echo "       -m    		   Model name, in camel-case format (Required)\n";
-    echo "       -s    		   Schema name, in underscore format (Required)\n";
-    echo "       -p    		   Plugin name, in underscore format (Optional)\n";
-    echo "       -i    		   Insert SQL (Optional)\n";
+    echo "   This tool will build a given model and optionally insert a matching\n";
+    echo "   table into the database.\n";
     echo "\n";
-    echo "   Example: php tools/gen_model.php -s=dinkly -m=FubarTown -i\n";
+    echo "   Usage: php tools/gen_model.php [args]\n\n";
+    echo "   The available arguments are:\n";
+    echo "       -h     Show this help\n";
+    echo "       -m     Model name, in camel-case format (required)\n";
+    echo "       -s     Schema name, in underscore format (required)\n";
+    echo "       -p     Plugin name, in underscore format (optional)\n";
+    echo "       -i     Insert SQL (optional)\n";
+    echo "\n";
+    echo "   Example: php tools/gen_model.php -s=monkey_tail -m=FunkyNugget -i\n";
     
     echo "\n =======================================================================\n\n";
     exit;
