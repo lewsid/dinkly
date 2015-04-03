@@ -1,7 +1,21 @@
 global:
     settings:
+<<<<<<< HEAD
         dinkly_version: "2.12"
+=======
+        dinkly_version: "2.11"
+>>>>>>> origin/plugin-feature
         time_format: h:i a
+
+    plugins:
+        mini_ticket:
+            apps:
+                mini_ticket_admin:
+                    app_name: MiniTicketAdmin
+                    is_plugin: true
+                    base_href: /ticket
+                    enabled: true
+                    default_module: home
 
     apps:
         frontend:
@@ -31,6 +45,12 @@ global:
 
     databases:
         dinkly:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_app
+
+        mini_ticket:
             host: localhost
             user: root
             pass: root

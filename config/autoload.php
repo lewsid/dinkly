@@ -11,6 +11,8 @@
 //Define autoloader 
 function dinkly_autoloader($class_name)
 {
+	$app_root = $_SERVER['APPLICATION_ROOT'];
+
 	//strip class name from namespaces
 	if(stristr($class_name,  '\\'))
 	{
@@ -19,15 +21,48 @@ function dinkly_autoloader($class_name)
 	}
 
 	//load models
-	$base_core_file  = $_SERVER['APPLICATION_ROOT'] . '/classes/core/base/' . $class_name . '.php';
-	$custom_core_file  = $_SERVER['APPLICATION_ROOT'] . '/classes/core/custom/' . $class_name . '.php';
-	$base_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/base/' . $class_name . '.php';
-	$custom_model_file = $_SERVER['APPLICATION_ROOT'] . '/classes/models/custom/' . $class_name . '.php';
+	$base_core_file  = $app_root . '/classes/core/base/' . $class_name . '.php';
+	$custom_core_file  = $app_root . '/classes/core/custom/' . $class_name . '.php';
+	$base_model_file = $app_root . '/classes/models/base/' . $class_name . '.php';
+	$custom_model_file = $app_root . '/classes/models/custom/' . $class_name . '.php';
 	
 	//third-party exceptions
-	$yaml_file        = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
-	$exception_file   = $_SERVER['APPLICATION_ROOT'] . '/vendor/symfony/yaml/Symfony/Component/Yaml/Exception/' . $class_name . '.php';
-	$custom_file      = $_SERVER['APPLICATION_ROOT'] . '/classes/thirdparty/' . $class_name . '.php';
+	$yaml_file        = $app_root . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
+	$exception_file   = $app_root . '/vendor/symfony/yaml/Symfony/Component/Yaml/Exception/' . $class_name . '.php';
+	$custom_file      = $app_root . '/classes/thirdparty/' . $class_name . '.php';
+
+	//load plugins
+	$plugin_dir = $app_root . '/plugins';
+
+	if(is_dir($plugin_dir))
+	{
+		$contents = scandir($plugin_dir);
+
+		foreach($contents as $file_or_dir)
+		{
+			if(is_dir($plugin_dir . '/' . $file_or_dir) && $file_or_dir != '..' && $file_or_dir != '.')
+			{
+				$class_dir = $plugin_dir . '/' . $file_or_dir . '/classes';
+
+				if(is_dir($class_dir))
+				{
+					$base_plugin_class = $class_dir . '/models/base/' . $class_name . '.php';
+					$custom_plugin_class = $class_dir . '/models/custom/' . $class_name . '.php';
+
+					if(file_exists($base_plugin_class))
+					{
+						require_once $base_plugin_class; 
+						return true; 
+					}
+					else if(file_exists($custom_plugin_class))
+					{
+						require_once $custom_plugin_class; 
+						return true; 
+					}
+				}
+			}
+		}
+	}
 	
 	if(file_exists($base_core_file))
 	{

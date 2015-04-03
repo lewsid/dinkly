@@ -70,7 +70,7 @@ class BaseDinklyBuilder extends Dinkly
 	 * 
 	 * @return bool true if fields added successfully, false otherwise
 	 */
-	public static function addMissingModelFieldsToDb($schema, $verbose_output = null)
+	public static function addMissingModelFieldsToDb($schema, $plugin_name = null, $verbose_output = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
@@ -91,7 +91,7 @@ class BaseDinklyBuilder extends Dinkly
 		$model_yaml = $table_names = array();
 		foreach($model_names as $model)
 		{
-			$model_yaml[$model] = self::parseModelYaml($schema, $model, false);
+			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
 			$table_names[$model] = $model_yaml[$model]['table_name'];
 		}
 
@@ -208,7 +208,7 @@ class BaseDinklyBuilder extends Dinkly
 	 * 
 	 * 
 	 */
-	public static function addMissingModelsToDb($schema, $verbose_output = null)
+	public static function addMissingModelsToDb($schema, $plugin_name, $verbose_output = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
@@ -230,7 +230,7 @@ class BaseDinklyBuilder extends Dinkly
 		$yaml_table_names = array();
 		foreach($model_names as $model)
 		{
-			$model_yaml = self::parseModelYaml($schema, $model, false);
+			$model_yaml = self::parseModelYaml($schema, $model, $plugin_name, false);
 			$yaml_table_names[] = $model_yaml['table_name'];
 		}
 
@@ -257,7 +257,7 @@ class BaseDinklyBuilder extends Dinkly
 			{
 				echo "Creating table " . $table . "...\n";
 			}
-			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, $verbose_output);
+			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, null, $verbose_output);
 		}
 	}
 
@@ -391,10 +391,19 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * @return mixed array | bool array containing parse yaml or false on failure
 	 */
-	public static function parseModelYaml($schema, $model_name, $verbose_output = true)
+	public static function parseModelYaml($schema, $model_name, $plugin_name = null, $verbose_output = true)
 	{
-		$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/"
-		  . $schema . "/" . $model_name . ".yml";
+		$file_path = null;
+		if($plugin_name)
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/config/schemas/"
+		  		. $schema . "/" . $model_name . ".yml";
+		}
+		else
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/"
+		  		. $schema . "/" . $model_name . ".yml";
+		}
 
 		if($verbose_output)
 		{
@@ -405,7 +414,7 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			if($verbose_output)
 			{
-				echo "Schema directory not found.\n";
+				echo "schema file not found - $file_path\n";
 			}
 			return false;
 		}
@@ -439,20 +448,28 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * @param string $schema String name of schema containing model
 	 * @param string $model_name String name of model yaml file to be parsed
-	 * 
+	 * @param string $plugin String name of plugin name 
 	 *
 	 * @return bool true if both base and custom classes created, false on failure
 	 */
-	public static function buildModel($schema, $model_name)
+	public static function buildModel($schema, $model_name, $plugin_name = null)
 	{
-		$raw_model = self::parseModelYaml($schema, $model_name);
+		$raw_model = self::parseModelYaml($schema, $model_name, $plugin_name);
 		if(!$raw_model) { return false; }
 
 		$table_name = $raw_model['table_name'];
 
 		if(isset($raw_model['registry']))
 		{
-			$base_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . ".php";
+			$base_file = null;
+			if($plugin_name)
+			{
+				$base_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/base/Base" . $model_name . ".php";
+			}
+			else
+			{
+				$base_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/base/Base" . $model_name . ".php";
+			}
 
 	  		echo "Attempting to create/write base '" . $model_name . "' models...\n";
 
@@ -494,15 +511,32 @@ class BaseDinklyBuilder extends Dinkly
 			}
 			else
 			{
-				echo "Failed! Aborting\n";
+				echo "Failed! Could not open model file - $base_file\n";
 				return false;
 			}
 
 			//create base collection class
 
 			//second, create the extensible model files, if one doesn't already exist (we never overwrite this one)
-			$custom_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . ".php";
-			$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . "Collection.php";
+			$custom_file = null;
+			if($plugin_name)
+			{
+				$custom_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . ".php";	
+			}
+			else
+			{
+				$custom_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . ".php";
+			}
+
+			$custom_collection_file = null;
+			if($plugin_name)
+			{
+				$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . "Collection.php";
+			}
+			else
+			{
+				$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "classes/models/custom/" . $model_name . "Collection.php";
+			}
 
 			if(!file_exists($custom_file))
 			{
@@ -624,17 +658,18 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * @param string $schema: name of the database schema to refer to
 	 * @param string $model_name: name of the model to build
+	 * @param string $plugin_name: name of the plugin where the model lives
 	 * @param string $model_yaml (optional): if passed, will override the automatic yaml parsing on the model based on the model name
 	 * @param bool $verbose_output (optional): how chatty would you like the build to be?
 	 * @param string $override_database_name (optional): if passed, this will override the name of the database as it appears in config/db.yml
 	 *
 	 * @return bool false if table does not exist, true if table dropped
 	 */
-	public static function buildTable($schema, $model_name, $model_yaml = null, $verbose_output = true, $override_database_name = null)
+	public static function buildTable($schema, $model_name, $plugin_name = null, $model_yaml = null, $verbose_output = true, $override_database_name = null)
 	{
 		if(!$model_yaml)
 		{
-			$model_yaml = self::parseModelYaml($schema, $model_name, $verbose_output);
+			$model_yaml = self::parseModelYaml($schema, $model_name, $plugin_name, $verbose_output);
 		}
 
 		if(!$model_yaml) { return false; }
@@ -755,18 +790,54 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * 
 	 */
-	public static function buildAllModels($schema = null, $insert_sql = false)
+	public static function buildAllModels($schema = null, $insert_sql = false, $plugin_name = false)
 	{
 		$schema_names = array();
+		$plugin_schemas = array();
 
+		//No schema passed, search everywhere
 		if(!$schema)
 		{
+			//Start with the basics
 			$all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
 
 			foreach($all_folders as $folder)
 			{
 		  		if(substr($folder, 0, 1) != '.')
 		    	$schema_names[] = $folder;
+			}
+
+			$plugin_names = array();
+
+			//Scan for any plugins to build
+			if(!$plugin_name)
+			{
+				$plugin_base = scandir("plugins/");
+
+				foreach($plugins as $plugin)
+				{
+					if(substr($folder, 0, 1) != '.')
+					$plugin_names[] = $plugin;
+				}
+			}
+			else
+			{
+				$plugin_names[] = $plugin_name;
+			}
+
+			//Search through for plugin schemas
+			if($plugin_names != array())
+			{
+				foreach($plugin_names as $p)
+				{
+					$plugin_folders = scandir("plugins/" . $p . "/config/schemas/");
+
+					foreach($plugin_folders as $f)
+					{
+						//Keep track of the plugin name and its schemas
+						$plugin_schemas[$p] = $f;
+					}
+				}
 			}
 		}
 		else

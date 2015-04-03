@@ -1,0 +1,16 @@
+table_name: ticket
+registry:
+  - id
+  - created_at
+  - updated_at
+  - associated_id: { type: int, length: 11, allow_null: false }
+  - user_id: { type: int, length: 11, allow_null: false }
+  - first_name: { type: varchar, length: 100, allow_null: false }
+  - last_name: { type: varchar, length: 100, allow_null: false }
+  - email: { type: varchar, length: 100, allow_null: false }
+  - subject: { type: text, allow_null: false }
+  - message: { type: text, allow_null: false }
+  - status: { type: varchar, length: 100, allow_null: false }
+  - is_deleted: { type: tinyint, length: 1, allow_null: false }
+  - session: { type: text, allow_null: false }
+  - time_spent: { type: int, length: 5, allow_null: false }
