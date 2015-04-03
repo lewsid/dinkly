@@ -1,4 +1,4 @@
-Dinkly v2.11
+Dinkly v2.12
 ============
 
 The humblest little MVC Framework
@@ -29,7 +29,7 @@ Installation
 
 2. From the command line (and inside the main project directory), run the following command to install basic dependencies using Composer:
 
-    `php composer.phar install --no-dev`
+    ` `
     
 3. Set the `web` folder to be web-accessible by your server software.
 

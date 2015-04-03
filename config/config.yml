@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.09"
+        dinkly_version: "2.12"
         time_format: h:i a
 
     apps:
