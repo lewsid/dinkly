@@ -208,7 +208,7 @@ class BaseDinklyBuilder extends Dinkly
 	 * 
 	 * 
 	 */
-	public static function addMissingModelsToDb($schema, $plugin_name, $verbose_output = null)
+	public static function addMissingModelsToDb($schema, $plugin_name = null, $verbose_output = null)
 	{
 		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
 
@@ -224,40 +224,51 @@ class BaseDinklyBuilder extends Dinkly
 			}
 		}
 
-		$model_names = self::getAllModels($schema);
-
-		//Gather up yaml table names for each model
-		$yaml_table_names = array();
-		foreach($model_names as $model)
+		$model_names = array();
+		if($plugin_name)
 		{
-			$model_yaml = self::parseModelYaml($schema, $model, $plugin_name, false);
-			$yaml_table_names[] = $model_yaml['table_name'];
+			$model_names = self::getAllPluginModels($plugin_name, $schema);
+		}
+		else
+		{
+			$model_names = self::getAllModels($schema);
 		}
 
-		//Gather up the table names for those in the database currently
-		$query = "show tables;";
-		$results = $db->query($query)->fetchAll();
-		$db_table_names = array();
-		foreach($results as $row) { $db_table_names[] = $row[0]; }
-
-		//Find out which tables are missing from the db, but defined in the yaml
-		$missing_tables = array();
-		foreach($yaml_table_names as $yaml_table_name)
+		if($model_names != array())
 		{
-			if(!in_array($yaml_table_name, $db_table_names))
+			//Gather up yaml table names for each model
+			$yaml_table_names = array();
+			foreach($model_names as $model)
 			{
-				$missing_tables[] = $yaml_table_name;
+				$model_yaml = self::parseModelYaml($schema, $model, $plugin_name, false);
+				$yaml_table_names[] = $model_yaml['table_name'];
 			}
-		}
 
-		//Create our missing tables in the database
-		foreach($missing_tables as $table)
-		{
-			if($verbose_output)
+			//Gather up the table names for those in the database currently
+			$query = "show tables;";
+			$results = $db->query($query)->fetchAll();
+			$db_table_names = array();
+			foreach($results as $row) { $db_table_names[] = $row[0]; }
+
+			//Find out which tables are missing from the db, but defined in the yaml
+			$missing_tables = array();
+			foreach($yaml_table_names as $yaml_table_name)
 			{
-				echo "Creating table " . $table . "...\n";
+				if(!in_array($yaml_table_name, $db_table_names))
+				{
+					$missing_tables[] = $yaml_table_name;
+				}
 			}
-			self::buildTable($schema, Dinkly::convertToCamelCase($table, true), null, null, $verbose_output);
+
+			//Create our missing tables in the database
+			foreach($missing_tables as $table)
+			{
+				if($verbose_output)
+				{
+					echo "Creating table " . $table . "...\n";
+				}
+				self::buildTable($schema, Dinkly::convertToCamelCase($table, true), $plugin_name, null, $verbose_output, null);
+			}
 		}
 	}
 
@@ -396,7 +407,7 @@ class BaseDinklyBuilder extends Dinkly
 		$file_path = null;
 		if($plugin_name)
 		{
-			$file_path = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/config/schemas/"
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/schemas/"
 		  		. $schema . "/" . $model_name . ".yml";
 		}
 		else
@@ -678,6 +689,7 @@ class BaseDinklyBuilder extends Dinkly
 
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
+
 		$name = $creds['name'];
 		if($override_database_name) { $name = $override_database_name; }
 
@@ -770,16 +782,81 @@ class BaseDinklyBuilder extends Dinkly
 	 */
 	public static function getAllModels($schema)
 	{
-		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/");
-
 		$model_names = array();
-		foreach($all_files as $file)
+		$schema_path = $_SERVER['APPLICATION_ROOT'] . "config/schemas/" . $schema . "/";
+
+		if(file_exists($schema_path))
 		{
-			if($file != '.' && $file != '..' && stristr($file, '.yml'))
-			$model_names[] = str_replace('.yml', '', $file);
+			$all_files = scandir($schema_path);	
+			$model_names = array();
+			
+			foreach($all_files as $file)
+			{
+				if($file != '.' && $file != '..' && stristr($file, '.yml'))
+				$model_names[] = str_replace('.yml', '', $file);
+			}	
+		}
+		
+		return $model_names;
+	}
+
+	public static function getAllPluginModels($plugin_name, $schema)
+	{
+		$model_names = array();
+		$schema_path = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/schemas/" . $schema . "/";
+
+		if(file_exists($schema_path))
+		{
+			$all_files = scandir($schema_path);	
+
+			$model_names = array();
+			foreach($all_files as $file)
+			{
+				if($file != '.' && $file != '..' && stristr($file, '.yml'))
+				$model_names[] = str_replace('.yml', '', $file);
+			}
 		}
 
 		return $model_names;
+	}
+
+	public static function findPluginSchemas($plugin_name = null)
+	{
+		$plugin_names = array();
+		$plugin_schemas = array();
+
+		//Scan for any plugins to build
+		if(!$plugin_name)
+		{
+			$plugins = scandir("plugins/");
+
+			foreach($plugins as $plugin)
+			{
+				if($plugin != '.' && $plugin != '..')
+				$plugin_names[] = $plugin;
+			}
+		}
+		else
+		{
+			$plugin_names[] = $plugin_name;
+		}
+
+		//Search through for plugin schemas
+		if($plugin_names != array())
+		{
+			foreach($plugin_names as $p)
+			{
+				$plugin_folders = scandir("plugins/" . $p . "/config/schemas/");
+
+				foreach($plugin_folders as $f)
+				{
+					//Keep track of the plugin name and its schemas
+					$plugin_schemas[$p] = $f;
+				}
+			}
+		}
+
+		return $plugin_schemas;
 	}
 
 	/**
@@ -793,10 +870,11 @@ class BaseDinklyBuilder extends Dinkly
 	public static function buildAllModels($schema = null, $insert_sql = false, $plugin_name = false)
 	{
 		$schema_names = array();
-		$plugin_schemas = array();
+		$plugin_schemas = self::findPluginSchemas($plugin_name);
+		$is_plugin_schema = false;
 
-		//No schema passed, search everywhere
-		if(!$schema)
+		//No schema passed, search everywhere, build everything
+		if(!$schema && !$plugin_name)
 		{
 			//Start with the basics
 			$all_folders = scandir($_SERVER['APPLICATION_ROOT'] . "config/schemas/");
@@ -806,58 +884,50 @@ class BaseDinklyBuilder extends Dinkly
 		  		if(substr($folder, 0, 1) != '.')
 		    	$schema_names[] = $folder;
 			}
-
-			$plugin_names = array();
-
-			//Scan for any plugins to build
-			if(!$plugin_name)
-			{
-				$plugin_base = scandir("plugins/");
-
-				foreach($plugins as $plugin)
-				{
-					if(substr($folder, 0, 1) != '.')
-					$plugin_names[] = $plugin;
-				}
-			}
-			else
-			{
-				$plugin_names[] = $plugin_name;
-			}
-
-			//Search through for plugin schemas
-			if($plugin_names != array())
-			{
-				foreach($plugin_names as $p)
-				{
-					$plugin_folders = scandir("plugins/" . $p . "/config/schemas/");
-
-					foreach($plugin_folders as $f)
-					{
-						//Keep track of the plugin name and its schemas
-						$plugin_schemas[$p] = $f;
-					}
-				}
-			}
 		}
-		else
+		else if(!$plugin_name)
 		{
 			$schema_names[] = $schema;
 		}
 
-		foreach($schema_names as $schema)
+		if($schema_names != array() && !$plugin_name)
 		{
-			$model_names = self::getAllModels($schema);
-
-			foreach($model_names as $model)
+			foreach($schema_names as $schema)
 			{
-				self::buildModel($schema, $model);
+				$model_names = self::getAllModels($schema);
+
+				if($model_names != array())
+				{
+					foreach($model_names as $model)
+					{
+						self::buildModel($schema, $model);
+					}
+
+					if($insert_sql)
+					{
+						self::addMissingModelsToDb($schema, null, true);
+						self::addMissingModelFieldsToDb($schema, null, true);
+					}
+				}
 			}
+		}
 
-			if($insert_sql)
+		if($plugin_schemas != array())
+		{
+			foreach($plugin_schemas as $plugin_name => $plugin_schema)
 			{
-				self::addMissingModelsToDb($schema, true);
-				self::addMissingModelFieldsToDb($schema, true);
+				$model_names = self::getAllPluginModels($plugin_name, $plugin_schema);
+
+				foreach($model_names as $model)
+				{
+					self::buildModel($schema, $model, $plugin_name);
+				}
+
+				if($insert_sql)
+				{
+					self::addMissingModelsToDb($schema, $plugin_name, true);
+					self::addMissingModelFieldsToDb($schema, $plugin_name, true);
+				}
 			}
 		}
 	}
@@ -873,7 +943,7 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * @return bool true if loaded successfully, false if load fails
 	 */
-	public static function loadFixture($set, $model_name, $truncate = true, $verbose_output = true, $override_database_name = null)
+	public static function loadFixture($set, $model_name, $plugin_name = null, $truncate = true, $verbose_output = true, $override_database_name = null)
 	{
 		//Use the proper DB credentials, or apply a passed-in override
 		$creds = DinklyDataConfig::getDBCreds();
@@ -886,7 +956,15 @@ class BaseDinklyBuilder extends Dinkly
 		//Create database if it doesn't exist
 		$db = self::fetchDB($creds);
 
-    	$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
+		$file_path = null;
+		if($plugin_name)
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/fixtures/" . $set . "/" . $model_name . ".yml";
+		}
+		else
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
+		}
 
 		if($verbose_output)
 		{
@@ -950,9 +1028,20 @@ class BaseDinklyBuilder extends Dinkly
 	 *
 	 * @return bool true if loaded successfully, false if load fails
 	 */
-	public static function loadAllFixtures($set, $verbose = true)
+	public static function loadAllFixtures($set, $plugin_name = null, $truncate = false, $verbose = true)
 	{
-		if(!is_dir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set))
+		$path = null;
+
+		if($plugin_name)
+		{
+			$path = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/fixtures/" . $set;
+		}
+		else
+		{
+			$path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set;
+		}
+
+		if(!is_dir($path))
 		{
 			if($verbose)
 			{
@@ -960,7 +1049,17 @@ class BaseDinklyBuilder extends Dinkly
 			}
 			return false;
 		}
-		$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set);
+
+		$all_files = array();
+
+		if($plugin_name)
+		{
+			$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/fixtures/" . $set);
+		}
+		else
+		{
+			$all_files = scandir($_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set);
+		}
 
 		$model_names = array();
 		foreach($all_files as $file)
@@ -971,7 +1070,7 @@ class BaseDinklyBuilder extends Dinkly
 
 		foreach($model_names as $model)
 		{
-			self::loadFixture($set, $model, true, $verbose);
+			self::loadFixture($set, $model, $plugin_name, $truncate, $verbose);
 		}
 
 		return true;

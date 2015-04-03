@@ -1,13 +1,12 @@
 <?php
 
 require_once('config/bootstrap.php');
-
-echo "\n ======================== Generate Dinkly Model ========================\n\n";
     
 $options = getopt("hm:s:ip:");
 
 if(isset($options['h']) || $options == array())
 {
+    echo "\n ======================== Generate Dinkly Model ========================\n\n";
     echo "   This tool will build a given model and optionally insert a matching\n";
     echo "   table into the database.\n";
     echo "\n";
@@ -19,8 +18,7 @@ if(isset($options['h']) || $options == array())
     echo "       -p     Plugin name, in underscore format (optional)\n";
     echo "       -i     Insert SQL (optional)\n";
     echo "\n";
-    echo "   Example: php tools/gen_model.php -s=monkey_tail -m=FunkyNugget -i\n";
-    
+    echo "   Example: php tools/gen_model.php -s=monkey_tail -m=FunkyNugget -i\n";  
     echo "\n =======================================================================\n\n";
     exit;
 }
