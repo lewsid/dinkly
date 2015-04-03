@@ -265,6 +265,11 @@ class DinklyUser extends BaseDinklyUser
 		return self::getAuthSessionValue('logged_groups');
 	}
 
+	public static function getLoggedId()
+	{
+		return self::getAuthSessionValue('logged_id');
+	}
+
 	/**
 	 * Clear Dinkly session variables to log out user
 	 *
