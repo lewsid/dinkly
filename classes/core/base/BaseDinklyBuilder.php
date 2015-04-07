@@ -475,7 +475,12 @@ class BaseDinklyBuilder extends Dinkly
 			$base_file = null;
 			if($plugin_name)
 			{
-				$base_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/base/Base" . $model_name . ".php";
+				$base_file = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/classes/models/base/Base" . $model_name . ".php";
+
+				if(!file_exists($_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/classes/models/base/"))
+				{
+					mkdir($_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/classes/models/base/");
+				}
 			}
 			else
 			{
@@ -912,21 +917,24 @@ class BaseDinklyBuilder extends Dinkly
 			}
 		}
 
-		if($plugin_schemas != array())
+		if($plugin_schemas != array() && $plugin_name)
 		{
 			foreach($plugin_schemas as $plugin_name => $plugin_schema)
 			{
-				$model_names = self::getAllPluginModels($plugin_name, $plugin_schema);
-
-				foreach($model_names as $model)
+				if($plugin_name == $plugin_name)
 				{
-					self::buildModel($schema, $model, $plugin_name);
-				}
+					$model_names = self::getAllPluginModels($plugin_name, $plugin_schema);
 
-				if($insert_sql)
-				{
-					self::addMissingModelsToDb($schema, $plugin_name, true);
-					self::addMissingModelFieldsToDb($schema, $plugin_name, true);
+					foreach($model_names as $model)
+					{
+						self::buildModel($schema, $model, $plugin_name);
+					}
+
+					if($insert_sql)
+					{
+						self::addMissingModelsToDb($schema, $plugin_name, true);
+						self::addMissingModelFieldsToDb($schema, $plugin_name, true);
+					}
 				}
 			}
 		}
