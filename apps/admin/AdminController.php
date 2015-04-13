@@ -24,7 +24,7 @@ class AdminController extends Dinkly
 		{
 			$this->logged_user = new DinklyUser();
 			$this->logged_user->init(DinklyUser::getAuthSessionValue('logged_id'));
-			$this->date_format = $this->logged_user->getDateFormat() . ' ' . Dinkly::getConfigValue('time_format');
+			$this->date_format = $logged_user->getDateFormat() . ' ' . $logged_user->getTimeFormat();
 			return false;
 		}
 
