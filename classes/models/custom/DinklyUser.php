@@ -178,7 +178,7 @@ class DinklyUser extends BaseDinklyUser
 	 */
 	public static function isLoggedIn($app = null)
 	{
-		if(self::getAuthSessionValue('logged_in')) { return true; }
+		if(self::getAuthSessionValue('logged_in', $app)) { return true; }
 		return false;
 	}
 
