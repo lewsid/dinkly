@@ -176,21 +176,27 @@ class DinklyUser extends BaseDinklyUser
 	 * 
 	 * @return bool true if logged in, false if not
 	 */
-	public static function isLoggedIn()
+	public static function isLoggedIn($app = null)
 	{
 		if(self::getAuthSessionValue('logged_in')) { return true; }
 		return false;
 	}
 
-	public static function getAuthSessionValue($key)
+	public static function getAuthSessionValue($key, $app = null)
 	{
+		if(!$app) { $app = Dinkly::getCurrentAppName(); }
+
 		if(!isset($_SESSION['dinkly']['auth'])) { $_SESSION['dinkly']['auth'] = array(); }
 
-		if(!isset($_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()]))
+		if(!isset($_SESSION['dinkly']['auth'][$app]))
 		{
-			$_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()] = array();
+			$_SESSION['dinkly']['auth'][$app] = array();
 		}
-		if(isset($_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()][$key])) { return $_SESSION['dinkly']['auth'][Dinkly::getCurrentAppName()][$key]; }
+
+		if(isset($_SESSION['dinkly']['auth'][$app][$key]))
+		{ 
+			return $_SESSION['dinkly']['auth'][$app][$key];
+		}
 
 		return false;
 	}
