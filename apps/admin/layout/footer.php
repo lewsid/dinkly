@@ -2,9 +2,14 @@
 
 	<?php echo $this->getModuleFooter(); ?>
 
-	<?php if(DinklyUser::isLoggedIn()): ?>
-		<?php include('modal_profile.php'); ?>
-	<?php endif; ?>
+	<div id="footer" class="container-fluid">
+		<div class="container">
+			<footer>
+				<p>Copyright © <?php echo Dinkly::getConfigValue('app_name') . ' ' . date('Y'); ?></p>
+				<p>&nbsp;</p>
+			</footer>
+		</div>
+	</div>
 
 	</body>
 </html>

@@ -75,7 +75,7 @@
                   <?php echo DinklyUser::getLoggedUsername(); ?> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu pull-right" role="menu">
-                  <li><a data-toggle="modal" data-target="#profile-modal" href="#">Edit Profile</a></li>
+                  <li><a href="/admin/profile">Edit Profile</a></li>
                   <li role="presentation" class="divider"></li>
                   <li><a href="/admin/login/logout/">Logout</a></li>
                 </ul>

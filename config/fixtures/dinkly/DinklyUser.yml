@@ -4,7 +4,7 @@ records:
         id: 1
         created_at:     
         updated_at:
-        username:   admin
+        username:   boba@fett.com
         password:   password
         first_name: Boba
         last_name:  Fett
