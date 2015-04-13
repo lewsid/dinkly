@@ -35,9 +35,22 @@ class DinklyUser extends BaseDinklyUser
 		else { return $this->DateFormat; }
 	}
 
-	public function getCreatedAt($format = null)
+	public function getCreatedAt($format = null, $timezone = null)
 	{
-		return $this->convertDate($format, $this->CreatedAt);
+		if(!$format) { $format = 'Y-m-d G:i:s'; }
+		
+		$date = new DateTime($this->CreatedAt);
+
+		if(!$timezone)
+		{
+			$date->setTimezone(new DateTimeZone('America/New_York'));
+		}
+		else
+		{
+			$date->setTimezone(new DateTimeZone($timezone));
+		}
+
+		return $date->format($format);
 	}
 
 	public function getUpdatedAt($format = null)
