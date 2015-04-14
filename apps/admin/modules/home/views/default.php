@@ -54,18 +54,17 @@
 <script type="text/javascript">
 $(document).ready(function() {
   $('.dashboard-jumbotron').hover(function() {
-     $(this).find('.btn-lg').css('background','#217dbb');
-     $(this).find('.btn-lg').css('border-color','#217dbb');
+     $(this).css('background','#C0C0C0');
+     $(this).css('border-color','#C0C0C0');
   },
   function(){
-    $(this).find('.btn-lg').css('background','#3498db');
-    $(this).find('.btn-lg').css('border-color','#3498db');
+    $(this).css('background','#f4f4f4');
+    $(this).css('border-color','#f4f4f4');
   });
 
   $('.dashboard-jumbotron').on('click', function() {
     var where = $(this).find('.jumbo-link').attr('href');
     window.location = where;
   });
-
 });
 </script>
