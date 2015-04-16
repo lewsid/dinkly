@@ -49,3 +49,8 @@ body {
 	margin-bottom: -32000px;
 	overflow: hidden;
 }
+
+.admin-login {
+	height: 400px;
+  	margin-top: 10%;
+}

@@ -183,6 +183,22 @@ class DinklyUser extends BaseDinklyUser
 		$this->regDirty['password'] = true;
 	}
 
+	public function sendSetPasswordEmail()
+	{
+		$link = Dinkly::getConfigValue('current_app_url') . "/login/reset_password/k/" . $this->getAutoLoginHash();
+
+		$to      = $this->getUsername();
+		$subject = "Reset Password";
+		$message = "Here's the link to reset your password: " . $link;
+		$headers = 'From: webmaster@example.com' 
+			. "\r\n" . 'Reply-To: webmaster@example.com' 
+			. "\r\n" . 'X-Mailer: PHP/' . phpversion();
+
+		mail($to, $subject, $message, $headers);
+
+		return true;
+	}
+
 	/**
 	 * Check Dinkly session to see if admin user is logged in
 	 *

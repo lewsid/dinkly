@@ -27,6 +27,10 @@ class AdminController extends Dinkly
 			$this->date_format = $this->date_format = $this->logged_user->getDateFormat() . ' ' . $this->logged_user->getTimeFormat();
 			return false;
 		}
+		else if(Dinkly::getCurrentModule() != 'login')
+		{
+			$this->loadModule('admin', 'login', 'default', true, true);
+		}
 
 		return true;
 	}
