@@ -107,6 +107,10 @@ class AdminLoginController extends AdminController
 			{
 				DinklyFlash::set('invalid_login', 'Invalid login');
 			}
+			else
+			{
+				$this->loadModule('admin', 'home', 'default', true);
+			}
 		}
 
 		return true;

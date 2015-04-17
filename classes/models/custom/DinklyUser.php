@@ -35,32 +35,88 @@ class DinklyUser extends BaseDinklyUser
 		else { return $this->DateFormat; }
 	}
 
+	public function getTimeFormat()
+	{
+		if(!$this->TimeFormat)
+		{
+			return 'H:i:s';
+		}
+		else { return $this->TimeFormat; }
+	}
+
 	public function getCreatedAt($format = null, $timezone = null)
 	{
-		if(!$format) { $format = 'Y-m-d G:i:s'; }
-		
-		$date = new DateTime($this->CreatedAt);
-
-		if(!$timezone)
+		if($this->CreatedAt != '' && $this->CreatedAt != null && $this->CreatedAt != '0000-00-00 00:00:00')
 		{
-			$date->setTimezone(new DateTimeZone('America/New_York'));
+			if(!$format) { $format = 'Y-m-d G:i:s'; }
+		
+			$date = new DateTime($this->CreatedAt);
+
+			if(!$timezone)
+			{
+				$date->setTimezone(new DateTimeZone('America/New_York'));
+			}
+			else
+			{
+				$date->setTimezone(new DateTimeZone($timezone));
+			}
+
+			return $date->format($format);
 		}
 		else
 		{
-			$date->setTimezone(new DateTimeZone($timezone));
+			return null;
 		}
-
-		return $date->format($format);
 	}
 
-	public function getUpdatedAt($format = null)
+	public function getUpdatedAt($format = null, $timezone = null)
 	{
-		return $this->convertDate($format, $this->UpdatedAt);
+		if($this->UpdatedAt != '' && $this->UpdatedAt != null && $this->UpdatedAt != '0000-00-00 00:00:00')
+		{
+			if(!$format) { $format = 'Y-m-d G:i:s'; }
+		
+			$date = new DateTime($this->UpdatedAt);
+
+			if(!$timezone)
+			{
+				$date->setTimezone(new DateTimeZone('America/New_York'));
+			}
+			else
+			{
+				$date->setTimezone(new DateTimeZone($timezone));
+			}
+
+			return $date->format($format);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
-	public function getLastLoginAt($format = null)
+	public function getLastLoginAt($format = null, $timezone = null)
 	{
-		return $this->convertDate($format, $this->LastLoginAt);
+		if($this->LastLoginAt != '' && $this->LastLoginAt != null && $this->LastLoginAt != '0000-00-00 00:00:00')
+		{
+			if(!$format) { $format = 'Y-m-d G:i:s'; }
+		
+			$date = new DateTime($this->LastLoginAt);
+
+			if(!$timezone)
+			{
+				$date->setTimezone(new DateTimeZone('America/New_York'));
+			}
+			else
+			{
+				$date->setTimezone(new DateTimeZone($timezone));
+			}
+
+			return $date->format($format);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public function getGroups()
@@ -179,7 +235,7 @@ class DinklyUser extends BaseDinklyUser
 	 */
 	public function setPassword($password)
 	{
-		$this->Password = crypt($password);
+		$this->Password = password_hash($password, PASSWORD_DEFAULT);
 		$this->regDirty['password'] = true;
 	}
 
@@ -354,7 +410,7 @@ class DinklyUser extends BaseDinklyUser
 			$user->init($result[0]['id']);
 			$hashed_password = $result[0]['password'];
 
-			if(crypt($input_password, $hashed_password) == $hashed_password)
+			if(password_verify($input_password, $hashed_password) == $hashed_password)
 			{
 				$count = $user->getLoginCount() + 1;
 

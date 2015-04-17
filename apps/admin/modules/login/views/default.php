@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3 admin-login" align="center">
-    <div class="panel panel-primary" align="center">
+    <div class="panel panel-primary" align="center" style="width: 80%;">
       <div class="panel-heading">Administrator Access</div>
       <div class="panel-body">
         <?php if(DinklyFlash::exists('invalid_login')): ?>

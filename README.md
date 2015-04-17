@@ -1,4 +1,4 @@
-Dinkly v2.14
+Dinkly v2.15
 ============
 
 The humblest little MVC Framework
@@ -39,6 +39,7 @@ The Basics
 
 1. Pay close to attention to `config/bootstrap.php`, it is here that you will want to toggle between your environments, if needed. It defaults to `dev` but can be changed to match other environments found in `config/config.yml`.
 
+2. Dinkly requires PHP 5.5 or newer
 
 Setup Basic Admin and Authentication
 ------------------------------------

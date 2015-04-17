@@ -53,7 +53,6 @@ class AdminUserController extends AdminController
 	public function loadNew($parameters)
 	{
 		$this->user = new DinklyUser();
-		$this->user->setCreatedAt(date('Y-m-d G:i:s'));
 
 		if(isset($_POST['username']))
 		{
