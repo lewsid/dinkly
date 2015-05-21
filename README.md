@@ -1,4 +1,4 @@
-Dinkly v2.15
+Dinkly v2.16
 ============
 
 The humblest little MVC Framework
@@ -20,6 +20,7 @@ Features
 - Data fixtures
 - Out-of-the-box user authentication
 - Ready-to-go Twitter Bootstrap admin interface
+- Internationalization (i18n) Support
 
 
 Installation

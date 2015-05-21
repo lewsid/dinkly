@@ -1,7 +1,15 @@
 global:
     settings:
-        dinkly_version: "2.15"
+        dinkly_version: "2.16"
         time_format: h:i a
+        languages:
+            english:
+                - en
+                - en_US
+            french: 
+                - fr
+                - fr_FR
+                - fr_CA
 
     plugins:
         mini_ticket:

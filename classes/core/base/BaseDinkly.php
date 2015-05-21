@@ -72,6 +72,41 @@ class BaseDinkly
 		if(!isset($_SESSION['dinkly']['app_root'])) { $_SESSION['dinkly']['app_root'] = $_SERVER['APPLICATION_ROOT']; }
 	}
 
+	public static function translate($source_string, $locale = null)
+	{
+		if(!$locale)
+		{
+			$locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+		}
+
+		$languages = self::getConfigValue('languages');
+
+		if($languages != array())
+		{
+			foreach($languages as $language_group => $language_codes)
+			{
+				if(file_exists($_SERVER['APPLICATION_ROOT'] . "config/i18n/" . $language_group . ".yml"))
+				{
+					foreach($language_codes as $code)
+					{
+						if(!isset($_SESSION['dinkly']['languages'])) { $_SESSION['dinkly']['languages'] = array(); }
+
+						$translations = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/i18n/" . $language_group . ".yml");
+						$_SESSION['dinkly']['languages'][$code] = $translations;
+					}
+				}
+			}
+		}
+		
+		if(isset($_SESSION['dinkly']['languages'][$locale]['translations'][$source_string]))
+		{
+			return $_SESSION['dinkly']['languages'][$locale]['translations'][$source_string];
+		}
+
+		//Default to original string
+		return $source_string;
+	}
+
 	/**
 	 * Interpret friendly URLS and load app and module based on Context 
 	 * as well as interpreting parameters where applicable
