@@ -29,7 +29,7 @@ function dinkly_autoloader($class_name)
 	//third-party exceptions
 	$yaml_file        = $app_root . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
 	$exception_file   = $app_root . '/vendor/symfony/yaml/Symfony/Component/Yaml/Exception/' . $class_name . '.php';
-	$custom_file      = $app_root . '/classes/thirdparty/' . $class_name . '.php';
+	$custom_file      = $app_root . '/classes/thirdparty/' . $class_name . '/' . $class_name . '.php';
 
 	//load plugins
 	$plugin_dir = $app_root . '/plugins';
