@@ -25,7 +25,7 @@
           <div class="col-md-4">
             <div class="jumbotron dashboard-jumbotron text-center">
               <i class="fa fa-user fa-5x"></i>
-              <h4><a class="jumbo-link" href="/user">Users</a></h4>
+              <h4><a class="jumbo-link" href="/admin/user">Users</a></h4>
               <hr>
               <p>Manage Users</p>
             </div>
@@ -33,7 +33,7 @@
           <div class="col-md-4">
             <div class="jumbotron dashboard-jumbotron text-center">
               <i class="fa fa-group fa-5x"></i>
-              <h4><a class="jumbo-link" href="/group">Groups</a></h4>
+              <h4><a class="jumbo-link" href="/admin/group">Groups</a></h4>
               <hr>
               <p>Manage Groups</p>
             </div>
