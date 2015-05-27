@@ -9,7 +9,7 @@
  */
 class DinklyGroupPermissionCollection extends DinklyDataCollection
 {
-	public static function getPermissionsByGroup($group_id, $db = null)
+	public static function getPermissionsByGroup($db = null, $group_id)
 	{
 		$peer_object = new DinklyGroupPermission();
 		if($db == null) { $db = self::fetchDB(); }

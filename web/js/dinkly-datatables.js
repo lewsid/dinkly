@@ -21,7 +21,7 @@ $(function(){
         // SEARCH - Add the placeholder for Search and Turn this into in-line formcontrol
         var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
         search_input.attr('placeholder', 'Search')
-        search_input.addClass('form-control input-small')
+        search_input.addClass('form-control input-sm')
         search_input.css('width', '250px')
  
         // SEARCH CLEAR - Use an Icon
@@ -31,7 +31,7 @@ $(function(){
  
         // LENGTH - Inline-Form control
         var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
-        length_sel.addClass('form-control input-small')
+        length_sel.addClass('form-control input-sm')
         length_sel.css('width', '75px')
  
         // LENGTH - Info adjust location
