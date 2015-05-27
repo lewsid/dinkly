@@ -17,7 +17,7 @@ class DinklyGroup extends BaseDinklyGroup
 	{
 		if($this->permissions == array())
 		{
-			$this->permissions = DinklyGroupPermissionCollection::getPermissionsByGroup($this->getId());
+			$this->permissions = DinklyGroupPermissionCollection::getPermissionsByGroup($this->db, $this->getId());
 		}
 
 		return $this->permissions;
@@ -27,7 +27,7 @@ class DinklyGroup extends BaseDinklyGroup
 	{
 		if($this->members == array())
 		{
-			$this->members = DinklyUserGroupCollection::getUsersByGroup($this->getId());
+			$this->members = DinklyUserGroupCollection::getUsersByGroup($this->db, $this->getId());
 		}
 
 		return $this->members;

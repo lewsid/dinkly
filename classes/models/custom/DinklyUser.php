@@ -123,7 +123,7 @@ class DinklyUser extends BaseDinklyUser
 	{
 		if($this->groups == array())
 		{
-			$this->groups = DinklyUserGroupCollection::getGroupsByUser($this->getId());
+			$this->groups = DinklyUserGroupCollection::getGroupsByUser($this->db, $this->getId());
 		}
 
 		return $this->groups;

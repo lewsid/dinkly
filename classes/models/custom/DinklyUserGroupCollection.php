@@ -9,7 +9,7 @@
  */
 class DinklyUserGroupCollection extends DinklyDataCollection
 {
-	public static function getGroupsByUser($user_id, $db = null)
+	public static function getGroupsByUser($db = null, $user_id)
 	{
 		$peer_object = new DinklyUserGroup();
 		if($db == null) { $db = self::fetchDB(); }
@@ -37,7 +37,7 @@ class DinklyUserGroupCollection extends DinklyDataCollection
 		return false;
 	}
 
-	public static function getUsersByGroup($group_id, $db = null)
+	public static function getUsersByGroup($db = null, $group_id)
 	{
 		$peer_object = new DinklyUserGroup();
 		if($db == null) { $db = self::fetchDB(); }
