@@ -16,6 +16,7 @@ if(isset($options['h']) || $options == array())
     echo "       -h     Show this help\n";
     echo "       -s     Schema name, in underscore format (required)\n";
     echo "       -p     Plugin name, in underscore format (optional)\n";
+    echo "       -e     Environment, corresponding to a database connection entry in config.yml (defaults to 'dev')\n";
     echo "       -i     Insert SQL (optional)\n";
     echo "\n";
     echo "   Example: php tools/gen_models.php -s=monkey_tail -p=tail_extensions -i\n";
@@ -34,5 +35,7 @@ if(isset($options['p'])) { $plugin_name = $options['p']; }
 
 $insert_sql = false;
 if(isset($options['i'])) { $insert_sql = true; }
+
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
 
 DinklyBuilder::buildAllModels($options['s'], $insert_sql, $plugin_name);

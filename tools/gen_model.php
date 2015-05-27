@@ -2,7 +2,7 @@
 
 require_once('config/bootstrap.php');
     
-$options = getopt("hm:s:ip:");
+$options = getopt("hm:s:ip:e:");
 
 if(isset($options['h']) || $options == array())
 {
@@ -16,6 +16,7 @@ if(isset($options['h']) || $options == array())
     echo "       -m     Model name, in camel-case format (required)\n";
     echo "       -s     Schema name, in underscore format (required)\n";
     echo "       -p     Plugin name, in underscore format (optional)\n";
+    echo "       -e     Environment, corresponding to a database connection entry in config.yml (defaults to 'dev')\n";
     echo "       -i     Insert SQL (optional)\n";
     echo "\n";
     echo "   Example: php tools/gen_model.php -s=monkey_tail -m=FunkyNugget -i\n";  
@@ -37,6 +38,8 @@ if(!isset($options['m']))
 
 $plugin_name = null;
 if(isset($options['p'])) { $plugin_name = $options['p']; }
+
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
 
 if(DinklyBuilder::buildModel($options['s'], $options['m'], $plugin_name))
 {

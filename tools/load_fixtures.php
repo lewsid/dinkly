@@ -17,6 +17,7 @@ if(isset($options['h']) || $options == array())
     echo "       -s     Schema name, in underscore format (required)\n";
     echo "       -m     Model name, in camel-case format (optional)\n";
     echo "       -p     Plugin name, in underscore format (optional)\n";
+    echo "       -e     Environment, corresponding to a database connection entry in config.yml (defaults to 'dev')\n";
     echo "       -t     Truncate table before loading fixture (optional)\n";
     echo "\n";
     echo "   Example: php tools/load_fixtures.php -s=monkey_tail -m=Banana -t\n";
@@ -46,6 +47,8 @@ if(isset($options['p']))
 
 if(isset($options['m']))
 {
+    if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
+    
 	DinklyBuilder::loadFixture($options['s'], $options['m'], $plugin_name, $truncate);
 }
 else
