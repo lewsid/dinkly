@@ -49,13 +49,13 @@ Setup Basic Admin and Authentication
 
 2. Generate the basic user authentication models:
 
-    `php tools/gen_models.php -s=dinkly -i`
+    `php tools/gen_models.php -s dinkly -i`
 
   This command will automatically create a new database called 'admin' if one doesn't already exist. It will also generate the necessary tables.
 
 3. Create an admin user:
 
-    `php tools/load_fixtures.php -s=dinkly`
+    `php tools/load_fixtures.php -s dinkly`
 
     Unless changed, the default admin user created will use 'admin' for the username and 'password' for the password.
 
@@ -65,27 +65,27 @@ Command Line Tools
 
 Generate all Dinkly datamodel files (*will not* overwrite existing custom classes). Use the '-s' option to use the appropriate schema. To insert/update model sql, use the '-i' option:
 
-    php tools/gen_models.php -s=<schema name> [-i]
+    php tools/gen_models.php -s <schema name> [-i]
 
 Generate a single Dinkly datamodel file. Use the '-s' option to use the appropriate schema. To insert model sql, use the '-i' option:
 
-    php tools/gen_model.php -s=<schema name> -m=<model name> [-i]
+    php tools/gen_model.php -s <schema name> -m <model name> [-i]
 
 Load fixtures (preloads tables with data stored in yml files under config/fixtures):
 
-    php tools/load_fixtures.php -s=<schema name>
+    php tools/load_fixtures.php -s <schema name>
 
 Generate a new Dinkly application:
 
-    php tools/gen_app.php -a=<app name>
+    php tools/gen_app.php -a <app name>
 
 Generate a new Dinkly module for a given application:
 
-    php tools/gen_module.php -a=<app name> -m=<module name>
+    php tools/gen_module.php -a <app name> -m <module name>
 
 Test database connection for a given schema (and optionally by environment):
 
-    php tools/test_db.php -s=<schema name> [-e=<environment>]
+    php tools/test_db.php -s <schema name> [-e <environment>]
 
 Run unit tests (assuming you've installed the additional dev packages with composer):
 

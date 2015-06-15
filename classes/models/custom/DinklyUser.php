@@ -235,7 +235,11 @@ class DinklyUser extends BaseDinklyUser
 	 */
 	public function setPassword($password)
 	{
-		$this->Password = password_hash($password, PASSWORD_DEFAULT);
+		if (function_exists('password_hash'))
+			$this->Password = password_hash($password, PASSWORD_DEFAULT);
+		else
+			$this->Password = crypt($password);
+
 		$this->regDirty['password'] = true;
 	}
 
@@ -410,7 +414,12 @@ class DinklyUser extends BaseDinklyUser
 			$user->init($result[0]['id']);
 			$hashed_password = $result[0]['password'];
 
-			if(password_verify($input_password, $hashed_password) == $hashed_password)
+			if (function_exists('password_verify'))
+				$valid_password = password_verify($input_password, $hashed_password) == $hashed_password;
+			else
+				$valid_password = crypt($input_password, $hashed_password) == $hashed_password;
+
+			if($valid_password)
 			{
 				$count = $user->getLoginCount() + 1;
 
