@@ -726,44 +726,47 @@ class BaseDinkly
 				}
 			}
 
-			if(isset($raw_config[$env]))
+			if($env != 'global')
 			{
-				//Override/Merge Apps Config
-				if(isset($raw_config[$env]['apps']))
+				if(isset($raw_config[$env]))
 				{
-					foreach($raw_config[$env]['apps'] as $app_name => $app_config)
+					//Override/Merge Apps Config
+					if(isset($raw_config[$env]['apps']))
 					{
-						foreach($app_config as $config_name => $config_value)
+						foreach($raw_config[$env]['apps'] as $app_name => $app_config)
 						{
-							$config['apps'][$app_name][$config_name] = $config_value;
-						}
-					}
-				}
-
-				//Override/Merge Plugins Config
-				if(isset($raw_config[$env]['plugins']))
-				{
-					foreach($raw_config[$env]['plugins'] as $plugin_name => $plugin_config)
-					{
-						foreach($plugin_config as $app_name => $app_config)
-						{	
 							foreach($app_config as $config_name => $config_value)
 							{
 								$config['apps'][$app_name][$config_name] = $config_value;
-								$config['apps'][$app_name]['plugin_name'] = $plugin_name;
 							}
 						}
 					}
-				}
 
-				//Override/Merge Databases Config
-				if(isset($raw_config[$env]['databases']))
-				{
-					foreach($raw_config[$env]['databases'] as $schema => $db_config)
+					//Override/Merge Plugins Config
+					if(isset($raw_config[$env]['plugins']))
 					{
-						foreach($db_config as $config_name => $config_value)
+						foreach($raw_config[$env]['plugins'] as $plugin_name => $plugin_config)
 						{
-							$config['databases'][$schema][$config_name] = $config_value;
+							foreach($plugin_config as $app_name => $app_config)
+							{	
+								foreach($app_config as $config_name => $config_value)
+								{
+									$config['apps'][$app_name][$config_name] = $config_value;
+									$config['apps'][$app_name]['plugin_name'] = $plugin_name;
+								}
+							}
+						}
+					}
+
+					//Override/Merge Databases Config
+					if(isset($raw_config[$env]['databases']))
+					{
+						foreach($raw_config[$env]['databases'] as $schema => $db_config)
+						{
+							foreach($db_config as $config_name => $config_value)
+							{
+								$config['databases'][$schema][$config_name] = $config_value;
+							}
 						}
 					}
 				}
