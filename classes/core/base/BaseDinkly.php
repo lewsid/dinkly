@@ -222,14 +222,78 @@ class BaseDinkly
 			$this->context = $context;
 		}
 
+		$this->updateContextHistory($this->context);
+
 		return $this->context;
+	}
+
+	/**
+	 * Return previous context
+	 *
+	 * @return array of previous context (will be empty if no previous context can be returned)
+	 */
+	public function getPreviousContext()
+	{
+		$context_history = $this->getContextHistory();
+
+		$previous_position = abs(sizeof($context_history) - 2);
+
+		if(isset($context_history[$previous_position]))
+		{
+			return $context_history[$previous_position];			
+		}
+		
+		return array();
+	}
+
+	/**
+	 * Update the context history stack
+	 *
+	 * @param string $current_context current context array
+	 * @param string $stack_height the max size of the history array to store in session, default is 10
+	 * 
+	 * @return boolean true on success
+	 */
+	public function updateContextHistory($current_context, $stack_height = 10)
+	{
+		if(!isset($_SESSION['dinkly']['context_history']))
+		{
+			$_SESSION['dinkly']['context_history'] = array();
+		}
+
+		if($this->context)
+		{
+			array_push($_SESSION['dinkly']['context_history'], $current_context);
+		}
+
+		if(sizeof($_SESSION['dinkly']['context_history']) > $stack_height)
+		{
+			array_shift($_SESSION['dinkly']['context_history']);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Return the context history stack
+	 * 
+	 * @return array context history
+	 */
+	public function getContextHistory()
+	{
+		if(!isset($_SESSION['dinkly']['context_history']))
+		{
+			$_SESSION['dinkly']['context_history'] = array();
+		}
+
+		return $_SESSION['dinkly']['context_history'];
 	}
 
 	/**
 	 * Load error Page when given a app that doesn't exist in context or 
 	 * load default module if no error file
 	 *
-	 * @param string $$requested_app_name name of app we are trying to load
+	 * @param string $requested_app_name name of app we are trying to load
 	 * @param string $requested_camel_module_name module we are looking for in camel case
 	 * @param string $requested_view_name view we are looking for in camel case
 	 * 
