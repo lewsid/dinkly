@@ -32,7 +32,8 @@ class BaseDinkly
 	 * Initialize dinkly session, Get app root and reset session root if not matching
 	 *
 	 * @param bool $enable_cache default true or enter false to flush session cache
-	 * 
+	 * @param bool $empty_session Wipes the current Dinkly session in favor of a new one, handy when you
+	 *			   switch the environment once you've already intantiated Dinkly using another.
 	 * 
 	 */
 	public function __construct($environment = null, $empty_session = false)

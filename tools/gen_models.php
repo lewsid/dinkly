@@ -2,7 +2,7 @@
 
 require_once('config/bootstrap.php');
     
-$options = getopt("hm:s:ip:");
+$options = getopt("hs:ip:e:");
 
 if(isset($options['h']) || $options == array())
 {

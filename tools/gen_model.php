@@ -39,7 +39,7 @@ if(!isset($options['m']))
 $plugin_name = null;
 if(isset($options['p'])) { $plugin_name = $options['p']; }
 
-if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e'], true); }
 
 if(DinklyBuilder::buildModel($options['s'], $options['m'], $plugin_name))
 {
