@@ -36,6 +36,6 @@ if(isset($options['p'])) { $plugin_name = $options['p']; }
 $insert_sql = false;
 if(isset($options['i'])) { $insert_sql = true; }
 
-if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e'], true); }
 
 DinklyBuilder::buildAllModels($options['s'], $insert_sql, $plugin_name);
