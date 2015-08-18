@@ -23,6 +23,8 @@ class FrontendLandingController extends FrontendController
 	 */
 	public function loadDefault()
 	{
+		$this->loadPreviousModule();
+
 		return true;
 	}
 }

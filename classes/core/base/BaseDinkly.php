@@ -229,15 +229,43 @@ class BaseDinkly
 	}
 
 	/**
+	 * Load previous module
+	 *
+	 * @param string $depth How deep into the context stack you want to go. Default is 1, which returns the module 1
+     *                      previous to the current.	                        
+     * @param bool $redirect default false, make true to redirect to different view
+	 * @param bool $draw_layout default true to get module view
+	 * @param array $parameters Array of parameters that can be used to populate views (defaults to last module's parameters)
+	 *
+	 * @return bool true if app loaded currectly else false and sent to default app
+	 */
+	public function loadPreviousModule($depth = 1, $redirect = false, $draw_layout = true, $parameters = array())
+	{
+		//function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
+		$context = $this->getPreviousContext($depth);
+
+		if($context['parameters'] != array())
+		{
+			$parameters = $context['parameters'];
+		}
+
+		return $this->loadModule($context['current_app_name'], $context['module'], $context['view'], $redirect, $draw_layout, $parameters);
+	}
+
+	/**
 	 * Return previous context
+	 *
+	 * @param string $depth How deep into the stack you want to go. Default is 1, which returns the context 1
+     *                      previous to the current.	                        
 	 *
 	 * @return array of previous context (will be empty if no previous context can be returned)
 	 */
-	public function getPreviousContext()
+	public function getPreviousContext($depth = 1)
 	{
 		$context_history = $this->getContextHistory();
 
-		$previous_position = abs(sizeof($context_history) - 2);
+		$offset = $depth + 1;
+		$previous_position = abs(sizeof($context_history) - $offset);
 
 		if(isset($context_history[$previous_position]))
 		{

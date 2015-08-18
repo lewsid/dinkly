@@ -1,4 +1,4 @@
-Dinkly v2.20
+Dinkly v2.21
 ============
 
 The humblest little MVC Framework
