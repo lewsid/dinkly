@@ -37,7 +37,7 @@ class DinklyDataCollectionTest extends PHPUnit_Framework_TestCase
 	{
 		//Test that collection pulled is correct by param
 		$input_array = array('id' => 1);
-		$this->admin_users = TestUserCollection::getWith($input_array);
+		$this->admin_users = TestUserCollection::getWith(null, $input_array);
 		$this->user = new TestUser();
 		$this->user->init(1);
 		$test_collection[] = $this->user;
