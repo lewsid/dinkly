@@ -37,6 +37,8 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	/**
 	 * Retrieve all objects matching array of passed property/value pairs
 	 *
+	 * @param PDO object $db Optional PDO object for recycling existing connections
+	 *
 	 * @param array $properties Array of class property names and values to filter on
 	 *
 	 * @param array $order Array of class property names to order results by
@@ -53,11 +55,10 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 *					The following would simply return 700 records:
 	 *					array(0 => 700)
 	 *
-	 ** @param PDO object $db Optional PDO object for recycling existing connections
 	 *
 	 * @return Array of matching objects or false if not found
 	 */
-	public static function getWith($properties, $order = array(), $direction = 'asc', $limit = array(), $db = null)
+	public static function getWith($db = null, $properties, $order = array(), $direction = 'asc', $limit = array())
 	{
 		//Dynamically find class name and ensure it exists
 		$peer_class = preg_replace('/Collection$/', '', get_called_class());
