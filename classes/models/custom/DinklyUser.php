@@ -11,6 +11,22 @@ class DinklyUser extends BaseDinklyUser
 {
 	protected $groups = array();
 
+	public function initWithEmail($email)
+	{
+		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
+
+		$query = $this->getSelectQuery() . " where email=" . $this->db->quote($email);
+		$result = $this->db->query($query)->fetchAll();
+				
+		if($result != array())
+		{
+			$this->hydrate($result, true);
+			return true;
+		}
+		
+		return false;
+	}
+
 	protected function convertDate($format = null, $datetime)
 	{
 		if($format)
