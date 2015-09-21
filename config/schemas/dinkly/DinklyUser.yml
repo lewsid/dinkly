@@ -13,3 +13,5 @@ registry:
   - date_format: { type: varchar, length: 24, allow_null: true }
   - time_format: { type: varchar, length: 24, allow_null: true }
   - time_zone: { type: varchar, length: 50, allow_null: true }
+  - auto_login_hash: { type: varchar, length: 255, allow_null: true }
+  - auto_login_expire: { type: datetime, allow_null: true }
