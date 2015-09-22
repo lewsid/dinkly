@@ -1,3 +1,8 @@
+<?php if(DinklyFlash::exists('reset_success')): ?>
+  <div class="alert alert-success">
+    <?php echo DinklyFlash::get('reset_success'); ?>
+  </div>
+<?php endif; ?>
 <div class="row">
   <div class="col-md-6 col-md-offset-3 admin-login" align="center">
     <div class="panel panel-primary" align="center" style="width: 80%;">

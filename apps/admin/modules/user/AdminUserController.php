@@ -52,7 +52,7 @@ class AdminUserController extends AdminController
 
 	public function loadNew($parameters)
 	{
-		$this->user = new DinklyUser();
+		$this->user = new DinklyUser($this->db);
 
 		if(isset($_POST['username']))
 		{
@@ -200,7 +200,7 @@ class AdminUserController extends AdminController
 		{
 			if(isset($_POST['group']))
 			{
-				$user = new DinklyUser();
+				$user = new DinklyUser($this->db);
 				$user->init($parameters['id']);
 				$user->addToGroups($_POST['group']);
 
@@ -217,7 +217,7 @@ class AdminUserController extends AdminController
 	{
 		if(isset($parameters['id']) && isset($parameters['group_id']))
 		{
-			$user = new DinklyUser();
+			$user = new DinklyUser($this->db);
 			$user->init($parameters['id']);
 
 			$user->removeFromGroup($parameters['group_id']);
@@ -237,7 +237,7 @@ class AdminUserController extends AdminController
 
 		if(isset($parameters['id']))
 		{
-			$this->user = new DinklyUser();
+			$this->user = new DinklyUser($this->db);
 			$this->user->init($parameters['id']);
 
 			//Build a collection of groups that the user in not currently in

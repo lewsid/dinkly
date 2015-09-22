@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.22"
+        dinkly_version: "2.24"
         time_format: h:i a
         languages:
             english:
@@ -36,6 +36,7 @@ global:
             app_name: Dinkly Admin
             app_description: Admin for the humblest little MVC
             copyright: Dinkly
+            current_app_url: http://localhost:8888
         api:
             app_name: Dinkly API
             base_href: /api

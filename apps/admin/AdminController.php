@@ -20,6 +20,8 @@ class AdminController extends Dinkly
 		//We use this for the profile modal
 		$this->logged_user = null;
 
+		$this->db = DinklyDataConnector::fetchDB();
+
 		if(DinklyUser::isLoggedIn())
 		{
 			$this->logged_user = new DinklyUser();

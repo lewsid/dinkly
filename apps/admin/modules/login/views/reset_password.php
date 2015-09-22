@@ -21,7 +21,7 @@
 		</div>
 
 		<div class="row">
-			<form class="form-inline" action="" method="post">
+			<form class="form-inline" action="" method="post" style="padding-top: 50px;">
 				<div class="form-group">
 					<input placeholder="Enter new password" id="password" name="password" type="password" class="form-control">
 				</div>

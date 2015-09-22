@@ -11,11 +11,12 @@ class DinklyUser extends BaseDinklyUser
 {
 	protected $groups = array();
 
+	//Assumes email addresses are being used for usernames
 	public function initWithEmail($email)
 	{
 		if(!$this->db) { throw New Exception("Unable to perform init without a database object"); }
 
-		$query = $this->getSelectQuery() . " where email=" . $this->db->quote($email);
+		$query = $this->getSelectQuery() . " where username=" . $this->db->quote($email);
 		$result = $this->db->query($query)->fetchAll();
 				
 		if($result != array())
@@ -261,7 +262,7 @@ class DinklyUser extends BaseDinklyUser
 
 	public function sendSetPasswordEmail()
 	{
-		$link = Dinkly::getConfigValue('current_app_url') . "/login/reset_password/k/" . $this->getAutoLoginHash();
+		$link = Dinkly::getConfigValue('current_app_url', 'admin') . "/admin/login/reset_password/k/" . $this->getAutoLoginHash();
 
 		$to      = $this->getUsername();
 		$subject = "Reset Password";

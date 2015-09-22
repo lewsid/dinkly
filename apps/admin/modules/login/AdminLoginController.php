@@ -55,14 +55,14 @@ class AdminLoginController extends AdminController
 		$user->initWith(array('auto_login_hash' => $parameters['k']));
 		if(!$user->getId())
 		{
-			DinklyFlash::set('reset_error', 'Sorry, the link has expired.');
-			return true;
+			return $this->loadModule('admin', 'login', 'forgot_password', true);
 		}
 
 		if(!strtotime($user->getAutoLoginExpire()) > time())
 		{
 			DinklyFlash::set('reset_error', 'Sorry, the link has expired.');
-			return true;
+			
+			return $this->loadModule('admin', 'login', 'forgot_password', true);
 		}
 
 		if(isset($_POST['password']) && isset($_POST['password-confirm']))
@@ -83,11 +83,9 @@ class AdminLoginController extends AdminController
 				$user->save();
 
 				DinklyFlash::set('reset_success', ' Your password was successfully set. Please login using your new password.');
+
+				return $this->loadModule('admin', 'login', 'default', true);
 			}
-		}
-		else
-		{
-			DinklyFlash::set('reset_error', 'Sorry, something spooky happened. Try again, or contact support.');
 		}
 
 		return true;
