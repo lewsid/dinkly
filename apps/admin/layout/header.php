@@ -12,10 +12,6 @@
     <link href="/css/dinkly.css" rel="stylesheet">
     <link href="/css/datatables-bootstrap.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
-    <style>
-      body { padding-top: 60px; /* 60px to make the container go all the way
-      to the bottom of the topbar */ }
-    </style>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -46,6 +42,6 @@
       </h3>
     <?php endif; ?>
 
-    <div class="container">
+    <div class="container page-wrapper">
 
     <?php include('nav.php'); ?>

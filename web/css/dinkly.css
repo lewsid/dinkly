@@ -1,5 +1,14 @@
+html {
+	position: relative;
+  	min-height: 100%;
+}
+
 body {
-	height: 100%;
+  	margin-bottom: 60px;
+}
+
+.page-wrapper {
+	margin-top: 60px;
 }
 
 .dev-mode-indicator-label {
@@ -39,15 +48,16 @@ body {
 
 #footer {
 	background-color: #1477af;
-	padding-top: 40px;
-	min-height: 100%;
-	margin-top: 100px;
-	color: #FFF;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 	text-align: center;
-	border-top: 1px solid #222222;
-	padding-bottom: 32000px;
-	margin-bottom: -32000px;
-	overflow: hidden;
+	height: 60px;
+}
+
+#footer p {
+	color: #FFF;
+	margin: 20px 0;
 }
 
 .admin-login {
