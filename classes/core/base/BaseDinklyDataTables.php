@@ -422,7 +422,10 @@ class BaseDinklyDataTables
 		if($prop == 'db')
 		{
 			for ( $i=0, $len=count($a) ; $i<$len ; $i++ ) {
-				$out[] = (isset($a[$i]['table']) ? $a[$i]['table']:$primary_table).".`".$a[$i][$prop]."`";
+				if(isset($a[$i]['from']))
+					$out[] = (isset($a[$i]['table']) ? $a[$i]['table']:$primary_table).".`".$a[$i]['from']."` as ".$a[$i][$prop];
+				else
+					$out[] = (isset($a[$i]['table']) ? $a[$i]['table']:$primary_table).".`".$a[$i][$prop]."`";
 			}
 		}
 		else
