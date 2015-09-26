@@ -205,7 +205,7 @@ class BaseDinklyDataTables
 
 				if ( $requestColumn['searchable'] == 'true' ) {
 					$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
-					$globalSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".$column['db']."` LIKE ".$binding;
+					$globalSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".(isset($column['from']) ? $column['from']:$column['db'])."` LIKE ".$binding;
 				}
 			}
 		}
@@ -221,7 +221,7 @@ class BaseDinklyDataTables
 			if ( $requestColumn['searchable'] == 'true' &&
 			 $str != '' ) {
 				$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
-				$columnSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".$column['db']."` LIKE ".$binding;
+				$columnSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".(isset($column['from']) ? $column['from']:$column['db'])."` LIKE ".$binding;
 			}
 		}
 
