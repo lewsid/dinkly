@@ -721,7 +721,7 @@ class BaseDinkly
 		}
 	}
 
-	public function isDevMode()
+	public static function isDevMode()
 	{
 		if(isset($_SESSION['dinkly']['dev_mode']))
 		{
