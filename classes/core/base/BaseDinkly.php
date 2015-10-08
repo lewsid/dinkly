@@ -34,9 +34,11 @@ class BaseDinkly
 	 * @param bool $enable_cache default true or enter false to flush session cache
 	 * @param bool $empty_session Wipes the current Dinkly session in favor of a new one, handy when you
 	 *			   switch the environment once you've already intantiated Dinkly using another.
+	 * @param bool $dev_mode same as naming your environment 'dev' but without that environment being
+	 *			   named 'dev' (errors will be displayed and the session caching is disabled) 
 	 * 
 	 */
-	public function __construct($environment = null, $empty_session = false)
+	public function __construct($environment = null, $empty_session = false, $dev_mode = false)
 	{
 		//If the dinkly session doesn't exist yet, create it
 		if(!isset($_SESSION['dinkly']) || $empty_session) { $_SESSION['dinkly'] = array(); }
@@ -64,9 +66,14 @@ class BaseDinkly
 		}
 
 		//Enable display of errors if we're in dev
+		$_SESSION['dinkly']['dev_mode'] = false;
 		if(isset($_SESSION['dinkly']['environment']))
 		{
-			if($_SESSION['dinkly']['environment'] == 'dev') { ini_set('display_errors', 1); }
+			if($_SESSION['dinkly']['environment'] == 'dev' || $dev_mode == true)
+			{
+				ini_set('display_errors', 1);
+				$_SESSION['dinkly']['dev_mode'] = true;
+			}
 		}
 
 		//If the dinkly setting for the app root doesn't exist, create it
@@ -371,7 +378,7 @@ class BaseDinkly
 			$message = "The requested app (" . $app_name . ") is currently disabled.";
 			error_log($message);
 
-			if(self::getCurrentEnvironment() == 'dev')
+			if(self::isDevMode())
 			{
 				echo $message;	
 			}
@@ -714,6 +721,14 @@ class BaseDinkly
 		}
 	}
 
+	public function isDevMode()
+	{
+		if(isset($_SESSION['dinkly']['dev_mode']))
+		{
+			return $_SESSION['dinkly']['dev_mode'];
+		}
+	}
+
 	/**
 	 * Get current contexts parameters
 	 *
@@ -798,7 +813,7 @@ class BaseDinkly
 		if(isset($_SESSION['dinkly']['environment'])) { $env = $_SESSION['dinkly']['environment']; }
 
 		$config = null;
-		if(!isset($_SESSION['dinkly']['config']) || $env == 'dev')
+		if(!isset($_SESSION['dinkly']['config']) || self::isDevMode())
 		{
 			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
 			$config = $raw_config['global'];
@@ -999,7 +1014,7 @@ class BaseDinkly
 
 		if(!isset($_SESSION['dinkly']['valid_modules'])) { $_SESSION['dinkly']['valid_modules'] = array(); }
 
-		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::getCurrentEnvironment() == 'dev')
+		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::isDevMode())
 		{
 			$valid_modules = array();
 			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
