@@ -461,13 +461,17 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 		//Set
 		if($match && $prefix == "set")
 		{
-			$this->$property = $arguments[0];
-			
-			//Set variable dirty so we know to add it to any queries
-			foreach($this->getRegistry() as $key => $element)
+			if($this->$property != $arguments[0])
 			{
-				if($element == $property) { $this->regDirty[$key] = true; }
+				$this->$property = $arguments[0];
+
+				//Set variable dirty so we know to add it to any queries
+				foreach($this->getRegistry() as $key => $element)
+				{
+					if($element == $property) { $this->regDirty[$key] = true; }
+				}
 			}
+
 			return true;
 		
 		}
