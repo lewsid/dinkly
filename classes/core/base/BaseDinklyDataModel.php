@@ -154,13 +154,28 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 	/**
 	 * Retrieve sql select query with all DB properties returned
 	 *
-	 * 
+	 * @param $append_table_prefix boolean set true to return column names with table appended
+	 *			which is pretty handy for joins
 	 *
 	 * @return String to be used as query on database for object
 	 */
-	public function getSelectQuery()
+	public function getSelectQuery($append_table_prefix = false)
 	{ 
-		return "select " . implode(", ", $this->getColumns()) . " from " . $this->getDBTable();
+		$columns = $this->getColumns();
+
+		if($append_table_prefix)
+		{
+			$temp_columns = array();
+
+			foreach($columns as $col)
+			{
+				$temp_columns[] = $this->getDBTable() . '.' . $col;
+			}
+
+			$columns = $temp_columns;
+		}
+		
+		return "select " . implode(", ", $columns) . " from " . $this->getDBTable();
 	}
 
 	/**
