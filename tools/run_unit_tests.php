@@ -1,9 +1,17 @@
 <?php
+$options = getopt("f::t::");
 
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/Dinkly.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyBuilder.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataCollection.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataConfig.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataConnector.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyDataModel.php');
-system('php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php tools/unit_tests/classes/core/DinklyFlash.php');
+$runAllUnitTests = 'tools/unit_tests';
+
+$unitTestArgs = empty($options['f']) ? $runAllUnitTests : $options['f'];
+
+if(!empty($options['t'])) {
+	if(!empty($options['f'])) {
+		$unitTestArgs = " --filter {$options['t']} " . $unitTestArgs;
+	} else {
+		echo "Need file path to run a single test\n\n";
+		return false;
+	}
+}
+
+system("php vendor/phpunit/phpunit/phpunit --bootstrap  config/bootstrap.php  {$unitTestArgs}");
