@@ -89,7 +89,7 @@ Test database connection for a given schema (and optionally by environment):
 
 Run unit tests (assuming you've installed the additional dev packages with composer). Use the -f option if you want to run unit tests in a specific file. Use the -f and -t option if you want to run a specific test in a specific file:
 
-    php tools/run_unit_tests.php -f=<path to test file> -t=<name of specific test>
+    php tools/run_unit_tests.php [-f <path to test file>] [-t <name of specific test>]
 
 
 License

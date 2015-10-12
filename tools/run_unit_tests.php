@@ -14,4 +14,4 @@ if(!empty($options['t'])) {
 	}
 }
 
-system("php vendor/phpunit/phpunit/phpunit --bootstrap  config/bootstrap.php  {$unitTestArgs}");
+system("php vendor/phpunit/phpunit/phpunit --bootstrap config/bootstrap.php {$unitTestArgs}");
