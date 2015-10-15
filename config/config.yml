@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.29"
+        dinkly_version: "2.30"
         time_format: h:i a
         languages:
             english:
@@ -67,6 +67,7 @@ global:
             pass: root
             name: dinkly_unit_test
 dev:
+    settings:
     apps:
         admin:
             app_name: Dinkly Admin Dev

@@ -839,6 +839,15 @@ class BaseDinkly
 				if(isset($raw_config[$env]))
 				{
 					//Override/Merge Apps Config
+					if(isset($raw_config[$env]['settings']))
+					{
+						foreach($raw_config[$env]['settings'] as $key => $value)
+						{
+							$config['settings'][$key] = $value;
+						}
+					}
+
+					//Override/Merge Apps Config
 					if(isset($raw_config[$env]['apps']))
 					{
 						foreach($raw_config[$env]['apps'] as $app_name => $app_config)
