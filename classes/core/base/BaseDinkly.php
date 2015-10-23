@@ -730,6 +730,18 @@ class BaseDinkly
 	}
 
 	/**
+	 * Determine if a parameter has been set or not
+	 * 
+	 * @return boolean true if parameter exists
+	 */
+	public function hasParameter($parameter_name)
+	{
+		$parameters = $this->getParameters();
+
+		return isset($parameters[$parameter_name]);
+	}
+
+	/**
 	 * Get current contexts parameters
 	 *
 	 * 
