@@ -164,7 +164,7 @@ class BaseDinklyDataTables
 						'ASC' :
 						'DESC';
 
-					$orderBy[] = (isset($column['table']) ? $column['table']:$primary_table).'.`'.$column['db'].'` '.$dir;
+					$orderBy[] = (isset($column['table']) ? $column['table']:$primary_table).'.`'.(isset($column['from']) ? $column['from']:$column['db']).'` '.$dir;
 				}
 			}
 
