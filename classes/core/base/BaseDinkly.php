@@ -88,7 +88,7 @@ class BaseDinkly
 			{
 				$locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']);
 			}
-			else { $locate = 'en_US'; }
+			else { $locale = 'en_US'; }
 		}
 
 		$languages = self::getConfigValue('languages');
