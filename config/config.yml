@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.32"
+        dinkly_version: "2.33"
         time_format: h:i a
         languages:
             english:
@@ -20,6 +20,15 @@ global:
                     base_href: /ticket
                     enabled: true
                     default_module: home
+        image_resizer:
+            apps:
+                image:
+                    app_name: Handler
+                    is_plugin: true
+                    base_href: /image
+                    enabled: true
+                    default_module: handler
+                    files_directory: uploads
 
     apps:
         frontend:

@@ -50,4 +50,9 @@ class DocGettingStartedController extends DocController
 	{
 		return true;
 	}
+
+	public function loadPlugins()
+	{
+		return true;
+	}
 }

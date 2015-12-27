@@ -18,6 +18,12 @@ Basics
 
       5. [Understanding the Architecture](/doc/getting_started/understanding_the_architecture/)
 
+      6. [Plugins](/doc/getting_started/plugins/)
+  
   3. [Learning More](/doc/learning_more/)
 
       1. [Configuration](/doc/learning_more/configuration/)
+  
+  4. [Sample Plugins](/doc/sample_plugins)
+
+      1. [Image Resizer](/doc/sample_plugins/image_resizer/)
