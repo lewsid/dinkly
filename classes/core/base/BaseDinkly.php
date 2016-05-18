@@ -618,9 +618,9 @@ class BaseDinkly
 						include($base_module_footer_path . '.md');
 					}
 					
-					$header = ob_get_contents();
+					$footer = ob_get_contents();
 					ob_end_clean();
-					$this->setModuleHeader($header);
+					$this->setModuleFooter($footer);
 				}
 
 				if($is_plugin)
