@@ -13,58 +13,58 @@ class BaseDinklyFlash
 	public static function exists($key)
 	{
 		if(isset($_SESSION['dinkly']['flash']))
-    	{
-    		if(isset($_SESSION['dinkly']['flash'][$key]))
-	    	{
-	    		return true;
-	    	}
-    	}
-	   
-       return false;
-    }
+		{
+			if(isset($_SESSION['dinkly']['flash'][$key]))
+			{
+				return true;
+			}
+		}
 
-    public static function set($key, $value)
-    {
-    	if(!isset($_SESSION['dinkly']['flash']))
-    	{
-    		$_SESSION['dinkly']['flash'] = array();
-    	}
+		return false;
+	}
 
-    	$_SESSION['dinkly']['flash'][$key] = $value;
-    }
+	public static function set($key, $value)
+	{
+		if(!isset($_SESSION['dinkly']['flash']))
+		{
+			$_SESSION['dinkly']['flash'] = array();
+		}
 
-    public static function get($key, $delete = true)
-    {
-    	if(isset($_SESSION['dinkly']['flash']))
-    	{
-    		if(isset($_SESSION['dinkly']['flash'][$key]))
-	    	{
-	    		$value = $_SESSION['dinkly']['flash'][$key];
+		$_SESSION['dinkly']['flash'][$key] = $value;
+	}
 
-	    		if($delete) { unset($_SESSION['dinkly']['flash'][$key]); }
+	public static function get($key, $delete = true)
+	{
+		if(isset($_SESSION['dinkly']['flash']))
+		{
+			if(isset($_SESSION['dinkly']['flash'][$key]))
+			{
+				$value = $_SESSION['dinkly']['flash'][$key];
 
-	    		return $value;
-	    	}
-    	}
-    }
+				if($delete) { unset($_SESSION['dinkly']['flash'][$key]); }
 
-    public static function getAll($delete = true)
-    {
-    	if(isset($_SESSION['dinkly']['flash']))
-    	{
-    		$values = $_SESSION['dinkly']['flash'];
+				return $value;
+			}
+		}
+	}
 
-    		if($delete) { $_SESSION['dinkly']['flash'] = array(); }
-    	
-            return $values;
-        }
-    }
+	public static function getAll($delete = true)
+	{
+		if(isset($_SESSION['dinkly']['flash']))
+		{
+			$values = $_SESSION['dinkly']['flash'];
 
-    public static function clear()
-    {
-    	if(isset($_SESSION['dinkly']['flash']))
-    	{
-    		$_SESSION['dinkly']['flash'] = array();
-    	}
-    }
+			if($delete) { $_SESSION['dinkly']['flash'] = array(); }
+		
+			return $values;
+		}
+	}
+
+	public static function clear()
+	{
+		if(isset($_SESSION['dinkly']['flash']))
+		{
+			$_SESSION['dinkly']['flash'] = array();
+		}
+	}
 }

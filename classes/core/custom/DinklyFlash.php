@@ -10,5 +10,5 @@
 
 class DinklyFlash extends BaseDinklyFlash
 {
-    //Put your overrides here...
+	//Put your overrides here...
 }
