@@ -50,7 +50,7 @@ global:
             app_name: Dinkly API
             base_href: /api
             enabled: true
-            default_module: api
+            default_module: router
         doc:
             app_name: Dinkly Documentation
             base_href: /doc
