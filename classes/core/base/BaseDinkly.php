@@ -512,7 +512,7 @@ class BaseDinkly
 			//Migrate the scope of the declared variables to be local to the view
 			$vars = get_object_vars($controller);
 			foreach ($vars as $name => $value)
-				$$name = $value;
+				$$name = Dinkly::migrateVariable($value);
 
 			//Draw headers
 			if($draw_layout)
@@ -646,6 +646,14 @@ class BaseDinkly
 
 		return $draw_layout;
 	}
+
+	/**
+	 * Pass variable through here to allow an override function where 
+	 * sanitization could occur
+	 * 
+	 * @return value of migrated variable
+	 */
+	public static function migrateVariable($value) { return $value; }
 
 	/**
 	 * Set module header manually
