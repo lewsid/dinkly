@@ -1,7 +1,7 @@
 Dinkly v2.34
 ============
 
-The humblest little MVC Framework
+The humblest little MVC Framework.
 
 What makes Dinkly special?
 --------------------------
