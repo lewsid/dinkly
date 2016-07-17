@@ -23,6 +23,8 @@ Basics
   3. [Learning More](/doc/learning_more/)
 
       1. [Configuration](/doc/learning_more/configuration/)
+
+      2. [Schema](/doc/learning_more/schema/) 
   
   4. [Sample Plugins](/doc/sample_plugins)
 

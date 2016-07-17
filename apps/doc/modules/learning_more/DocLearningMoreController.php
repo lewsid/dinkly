@@ -36,4 +36,9 @@ class DocLearningMoreController extends DocController
 	{
 		return true;
 	}
+
+	public function loadSchema()
+	{
+		return true;
+	}
 }

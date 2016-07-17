@@ -38,6 +38,11 @@ class BaseDinklyBuilder extends Dinkly
 				$sql .= ' ('.$field_config[$col_name]['length'].')';
 			}
 
+			if(isset($field_config[$col_name]['default']))
+			{
+				$sql .= " default '".$field_config[$col_name]['default']."'";
+			}
+
 			if(!$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
 		}
 		else
@@ -912,6 +917,8 @@ class BaseDinklyBuilder extends Dinkly
 					{
 						self::addMissingModelsToDb($schema, null, true);
 						self::addMissingModelFieldsToDb($schema, null, true);
+						self::addMissingModelForeignKeysToDb($schema, null, true);
+						self::addMissingModelIndexesToDb($schema, null, true);
 					}
 				}
 			}
@@ -934,6 +941,8 @@ class BaseDinklyBuilder extends Dinkly
 					{
 						self::addMissingModelsToDb($schema, $plugin_name, true);
 						self::addMissingModelFieldsToDb($schema, $plugin_name, true);
+						self::addMissingModelForeignKeysToDb($schema, $plugin_name, true);
+						self::addMissingModelIndexesToDb($schema, $plugin_name, true);
 					}
 				}
 			}
@@ -1082,5 +1091,211 @@ class BaseDinklyBuilder extends Dinkly
 		}
 
 		return true;
+	}
+
+	public static function genTableAlterForeignKeyQuery($db, $schema, $table, $field_config, $col_name)
+	{
+		$sql = null;
+
+		if(is_array($field_config))
+		{
+			if(isset($field_config[$col_name]['foreign_table']) && isset($field_config[$col_name]['foreign_field']))
+			{
+				if(!self::doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name))
+				{
+					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD CONSTRAINT " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . " FOREIGN KEY (" . self::sanitize($db, $col_name) . ") REFERENCES " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "(" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . ")";
+
+					if(isset($field_config[$col_name]['foreign_delete']))
+						$sql .= " ON DELETE " . self::sanitize($db, $field_config[$col_name]['foreign_delete']) . " ";
+
+					if(isset($field_config[$col_name]['foreign_update']))
+						$sql .= " ON UPDATE " . self::sanitize($db, $field_config[$col_name]['foreign_update']) . " ";
+				}
+			}
+		}
+
+		return $sql;
+	}
+
+	public static function doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name)
+	{
+		//Check if foreign key already exists
+		$query = "SELECT * FROM information_schema.TABLE_CONSTRAINTS T WHERE CONSTRAINT_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = '" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . "'";
+		$sth = $db->prepare($query);
+		$sth->execute();
+
+		if(!$sth->rowCount() > 0)
+			return false;
+
+		return true;
+	}
+
+	public static function addMissingModelForeignKeysToDb($schema, $plugin_name = null, $verbose_output = true)
+	{
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
+
+		//If no DB exists, create one
+		try { $db = DinklyDataConnector::fetchDB(); }
+		catch(PDOException $e)
+		{
+			if($e->getCode() == 1049)
+			{
+				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$db = DinklyDataConnector::fetchDB();
+			}
+		}
+
+		$model_names = DinklyBuilder::getAllModels($schema);
+
+		//Gather up yaml configs for each model
+		$model_yaml = $table_names = array();
+		foreach($model_names as $model)
+		{
+			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
+			$table_names[$model] = $model_yaml[$model]['table_name'];
+		}
+
+		//Create index for matching tables and columns within the yaml config
+		$yaml_fields = array();
+		foreach($model_yaml as $y)
+		{
+			$yaml_fields[$y['table_name']] = array();
+			foreach($y['registry'] as $field_name)
+			{
+				$name = null;
+				if(is_array($field_name)) { $name = key($field_name); }
+				else { $name = $field_name; }
+
+				$yaml_fields[$y['table_name']][] = $name;
+			}
+		}
+
+		//For each field missing from the database, but present in the yaml, run an alter query
+		foreach($yaml_fields as $table => $field_list)
+		{
+			foreach($field_list as $field)
+			{
+				$registry = $model_yaml[Dinkly::convertToCamelCase($table, true)]['registry'];
+				foreach($registry as $field_config)
+				{
+					$sql = null;
+					if(is_array($field_config))
+					{
+						if(key($field_config) == $field)
+						{
+							if(isset($field_config[$field]['foreign_table']) && isset($field_config[$field]['foreign_field']))
+							{
+								$sql = self::genTableAlterForeignKeyQuery($db, $schema, $table, $field_config, $field);
+							}
+						}
+					}
+
+					if($sql)
+					{
+						if($verbose_output)
+						{
+							echo "Adding foreign key " . $field_config[$field]['foreign_table'] . "." . $field_config[$field]['foreign_field'] . " for " . $field . " field to " . $table . " table...\n";
+						}
+						$db->exec($sql);
+					}
+				}
+			}
+		}
+	}
+
+	public static function genTableAlterIndexQuery($db, $schema, $table, $index_config)
+	{
+		$sql = null;
+		$message = '';
+		if(is_array($index_config))
+		{
+			//call to get sql
+			foreach($index_config as $key => $array)
+			{
+				if(!self::doesIndexAlreadyExist($db, $schema, $table, $key))
+				{
+					$indexes = array();
+
+					foreach($array as $index)
+					{
+						$indexes[] = $index;
+					}
+					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD INDEX " . self::sanitize($db, $key) . " (" . self::sanitize($db, implode(', ', $indexes)) . ")";
+					
+					$message = "Adding index " . $key . " (" . implode(', ', $indexes) . ") on " . $table . " table...\n";
+				}
+			}
+		}
+		else
+		{
+			if(!self::doesIndexAlreadyExist($db, $schema, $table, $index_config))
+			{
+				$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD INDEX " . self::sanitize($db, $index_config) . " (" . self::sanitize($db, $index_config) . ")";
+				$message = "Adding index " . $index_config . " on " . $table . " table...\n";
+			}
+		}
+
+		echo $message;
+
+		return $sql;
+	}
+
+	public static function doesIndexAlreadyExist($db, $schema, $table, $index_name)
+	{
+		//Check if foreign key already exists
+		$query = "SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND INDEX_NAME = '" . self::sanitize($db, $index_name) . "'";
+		$sth = $db->prepare($query);
+		$sth->execute();
+
+		if(!$sth->rowCount() > 0)
+			return false;
+
+		return true;
+	}
+
+	public static function addMissingModelIndexesToDb($schema, $plugin_name = null, $verbose_output = true)
+	{
+		if(!DinklyDataConfig::setActiveConnection($schema)) { return false; }
+
+		//If no DB exists, create one
+		try { $db = DinklyDataConnector::fetchDB(); }
+		catch(PDOException $e)
+		{
+			if($e->getCode() == 1049)
+			{
+				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				$db = DinklyDataConnector::fetchDB();
+			}
+		}
+
+		$model_names = DinklyBuilder::getAllModels($schema);
+
+		//Gather up yaml configs for each model
+		$model_yaml = $table_names = array();
+		foreach($model_names as $model)
+		{
+			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
+			$table_names[$model] = $model_yaml[$model]['table_name'];
+		}
+
+		//Create index for matching tables and columns within the yaml config
+		$yaml_fields = array();
+		foreach($model_yaml as $y)
+		{
+			$yaml_fields[$y['table_name']] = array();
+			if(isset($y['indexes']))
+			{
+				foreach($y['indexes'] as $index_config)
+				{
+					$sql = null;
+					$sql = self::genTableAlterIndexQuery($db, $schema, $y['table_name'], $index_config);
+
+					if($sql)
+					{
+						$db->exec($sql);
+					}
+				}
+			}
+		}
 	}
 }
