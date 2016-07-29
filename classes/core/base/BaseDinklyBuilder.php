@@ -44,6 +44,10 @@ class BaseDinklyBuilder extends Dinkly
 			}
 
 			if(!$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+
+			if(isset($field_config[$col_name]['primary_key']) && $field_config[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
+
+			if(isset($field_config[$col_name]['auto_increment']) && $field_config[$col_name]['auto_increment']) { $sql .= " AUTO_INCREMENT"; }
 		}
 		else
 		{
@@ -759,6 +763,15 @@ class BaseDinklyBuilder extends Dinkly
 
 					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }
 
+					if(isset($column[$col_name]['default']))
+					{
+						$sql .= " default '".$column[$col_name]['default']."'";
+					}
+
+					if(isset($column[$col_name]['primary_key']) && $column[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
+
+					if(isset($column[$col_name]['auto_increment']) && $column[$col_name]['auto_increment']) { $sql .= " AUTO_INCREMENT"; }
+
 					break;
 	  		}
 
@@ -988,50 +1001,59 @@ class BaseDinklyBuilder extends Dinkly
 			echo "Attempting to parse '" . $model_name . "' fixture yaml...";
 		}
 
-		$fixture = Yaml::parse($file_path);
-		$model_name = $collection_name = null;
-
-		if(isset($fixture['table_name']))
+		if(file_exists($file_path))
 		{
-			$model_name = Dinkly::convertToCamelCase($fixture['table_name'], true);
-			if($verbose_output) { echo "success!\n"; }
-		}
-		else return false;
+			$fixture = Yaml::parse($file_path);
+			$model_name = $collection_name = null;
 
-		if(isset($fixture['records']))
-		{
-			if($truncate)
+			if(isset($fixture['table_name']))
 			{
-				if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
-
-				$db->exec("truncate table " . $fixture['table_name']);
-
+				$model_name = Dinkly::convertToCamelCase($fixture['table_name'], true);
 				if($verbose_output) { echo "success!\n"; }
 			}
+			else return false;
 
-			$count = sizeof($fixture['records']);
-
-			if($verbose_output)
+			if(isset($fixture['records']))
 			{
-				echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
-			}
-
-			foreach($fixture['records'] as $pos => $record)
-			{
-				if($verbose_output) { echo "..."; }
-				$model = new $model_name();
-				foreach($record as $col_name => $value)
+				if($truncate)
 				{
-					//Automatically set created date if none was passed
-					if($col_name == 'created_at' && $value == "") { $value = date('Y-m-d G:i:s'); }
-					
-					$set_field = 'set' . Dinkly::convertToCamelCase($col_name, true);
-					$model->$set_field($value);
-				}
-				$model->save();
-			}
+					if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
 
-			if($verbose_output) { echo "success!\n"; }
+					$db->exec("truncate table " . $fixture['table_name']);
+
+					if($verbose_output) { echo "success!\n"; }
+				}
+
+				$count = sizeof($fixture['records']);
+
+				if($verbose_output)
+				{
+					echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
+				}
+
+				foreach($fixture['records'] as $pos => $record)
+				{
+					if($verbose_output) { echo "..."; }
+					$model = new $model_name();
+					foreach($record as $col_name => $value)
+					{
+						//Automatically set created date if none was passed
+						if($col_name == 'created_at' && $value == "") { $value = date('Y-m-d G:i:s'); }
+						
+						$set_field = 'set' . Dinkly::convertToCamelCase($col_name, true);
+						$model->$set_field($value);
+					}
+					$model->save();
+				}
+
+				if($verbose_output) { echo "success!\n"; }
+
+				return true;
+			}
+		}
+		else
+		{
+			if($verbose_output) { echo "no schema found for '" . $model_name . "'!\n"; }
 
 			return true;
 		}

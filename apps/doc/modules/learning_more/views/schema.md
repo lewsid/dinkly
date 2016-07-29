@@ -17,3 +17,18 @@ indexes:
    - created_at
    - updated_at
 ```
+
+A sample with primary key that is not id
+
+```
+table_name: state
+registry:
+  - abbreviation: { type: varchar, length: 2, allow_null: false, primary_key: true }
+  - state_name: { type: varchar, length: 250, allow_null: false }
+```
+
+Note that auto_increment is also an option
+
+```
+auto_increment: true
+```
