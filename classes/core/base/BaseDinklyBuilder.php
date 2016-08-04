@@ -1125,7 +1125,7 @@ class BaseDinklyBuilder extends Dinkly
 			{
 				if(!self::doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name))
 				{
-					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD CONSTRAINT " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . " FOREIGN KEY (" . self::sanitize($db, $col_name) . ") REFERENCES " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "(" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . ")";
+					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD CONSTRAINT " . self::sanitize($db, $table) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $col_name) . " FOREIGN KEY (" . self::sanitize($db, $col_name) . ") REFERENCES " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "(" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . ")";
 
 					if(isset($field_config[$col_name]['foreign_delete']))
 						$sql .= " ON DELETE " . self::sanitize($db, $field_config[$col_name]['foreign_delete']) . " ";
@@ -1142,7 +1142,7 @@ class BaseDinklyBuilder extends Dinkly
 	public static function doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name)
 	{
 		//Check if foreign key already exists
-		$query = "SELECT * FROM information_schema.TABLE_CONSTRAINTS T WHERE CONSTRAINT_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = '" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . "'";
+		$query = "SELECT * FROM information_schema.TABLE_CONSTRAINTS T WHERE CONSTRAINT_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = '" . self::sanitize($db, $table) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $col_name) . "'";
 		$sth = $db->prepare($query);
 		$sth->execute();
 
