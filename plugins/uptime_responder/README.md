@@ -19,9 +19,9 @@ Just hit one of the following links:
 
   - http://example.com/responder (outputs json)
   
-  - http://example.com//responder/response/default/format/xml (outputs xml)
+  - http://example.com/responder/response/default/format/xml (outputs xml)
 
-  - http://example.com//responder/response/default/format/string (outputs simple string)
+  - http://example.com/responder/response/default/format/string (outputs simple string)
 
 
 License
