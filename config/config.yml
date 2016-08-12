@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.37"
+        dinkly_version: "2.38"
         time_format: h:i a
         languages:
             english:
@@ -29,6 +29,14 @@ global:
                     enabled: true
                     default_module: handler
                     files_directory: uploads
+        uptime_responder:
+            apps:
+                responder:
+                    app_name: UptimeResponder
+                    is_plugin: true
+                    base_href: /responder
+                    enabled: true
+                    default_module: response
 
     apps:
         frontend:
@@ -65,6 +73,12 @@ global:
             name: dinkly_app
 
         mini_ticket:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_app
+
+        uptime_responder:
             host: localhost
             user: root
             pass: root
