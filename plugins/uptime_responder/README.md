@@ -11,6 +11,7 @@ Installation
 
   1. If it's not already present in config.yml, add the following lines under the 'plugins' section:
 
+    ```
     uptime_responder:
             apps:
                 responder:
@@ -19,6 +20,7 @@ Installation
                     base_href: /responder
                     enabled: true
                     default_module: response
+    ```
 
   2. Make sure to give it a database to talk to as well. Place these lines under the 'databases' section and tweak as needed.
 
