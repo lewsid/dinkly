@@ -25,7 +25,7 @@
   <body>
   </div>
     <div class="container"><!-- Primary Container -->
-    <?php if(Dinkly::getCurrentEnvironment() == 'dev'): ?>
+    <?php if(Dinkly::isDevMode()): ?>
       <!-- Handy Dev Mode Info Label -->
       <h3 class="dev-mode-indicator-label">
         <span class="label label-warning">
