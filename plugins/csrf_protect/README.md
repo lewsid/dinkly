@@ -11,7 +11,7 @@ Installation
 
   1. If it's not already present in config.yml, add the following lines under the 'plugins' section:
 
-    ```php
+    ```yaml
     csrf_protect:
             apps:
                 csrf_protect:
