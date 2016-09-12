@@ -1,14 +1,14 @@
 <?php
 /**
- * FrontendController
+ * CsrfProtectController
  * 
  *
  * @package    Dinkly
- * @subpackage AppsFrontendController
+ * @subpackage PluginsCsrfProtectController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
 
-class FrontendController extends Dinkly
+class CsrfProtectController extends Dinkly
 {
 	/**
 	 * Default Constructor
@@ -18,8 +18,6 @@ class FrontendController extends Dinkly
 	 */
 	public function __construct()
 	{
-		CsrfProtect::enforce();
-
 		return true;
 	}
 }

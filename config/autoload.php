@@ -46,17 +46,30 @@ function dinkly_autoloader($class_name)
 
 				if(is_dir($class_dir))
 				{
-					$base_plugin_class = $class_dir . '/models/base/' . $class_name . '.php';
-					$custom_plugin_class = $class_dir . '/models/custom/' . $class_name . '.php';
+					$model_base_plugin_class = $class_dir . '/models/base/' . $class_name . '.php';
+					$model_custom_plugin_class = $class_dir . '/models/custom/' . $class_name . '.php';
 
-					if(file_exists($base_plugin_class))
+					$core_base_plugin_class = $class_dir . '/core/base/' . $class_name . '.php';
+					$core_custom_plugin_class = $class_dir . '/core/custom/' . $class_name . '.php';
+
+					if(file_exists($model_base_plugin_class))
 					{
-						require_once $base_plugin_class; 
+						require_once $model_base_plugin_class; 
 						return true; 
 					}
-					else if(file_exists($custom_plugin_class))
+					else if(file_exists($model_custom_plugin_class))
 					{
-						require_once $custom_plugin_class; 
+						require_once $model_custom_plugin_class; 
+						return true; 
+					}
+					else if(file_exists($core_base_plugin_class))
+					{
+						require_once $core_base_plugin_class; 
+						return true; 
+					}
+					else if(file_exists($core_custom_plugin_class))
+					{
+						require_once $core_custom_plugin_class; 
 						return true; 
 					}
 				}

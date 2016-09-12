@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "2.38"
+        dinkly_version: "2.39"
         time_format: h:i a
         languages:
             english:
@@ -37,6 +37,14 @@ global:
                     base_href: /responder
                     enabled: true
                     default_module: response
+        csrf_protect:
+            apps:
+                csrf_protect:
+                    app_name: CsrfProtect
+                    is_plugin: true
+                    base_href: /protect
+                    enabled: true
+                    default_module: tokenizer
 
     apps:
         frontend:
