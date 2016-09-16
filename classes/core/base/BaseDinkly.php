@@ -341,7 +341,7 @@ class BaseDinkly
 	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null, $requested_plugin_name = null)
 	{
 		//Check for base dinkly 404
-		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/http/ErrorHttpController.php";
+		$error_controller = $_SERVER['APPLICATION_ROOT'] . "apps/error/modules/http/ErrorHttpController.php";
 		
 		if(file_exists($error_controller))
 		{
@@ -428,12 +428,12 @@ class BaseDinkly
 		if($is_plugin)
 		{
 			$plugin_name = Dinkly::getConfigValue('plugin_name', $app_name);
-			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 				. $app_name . '/' . $camel_app_controller_name . '.php';
 		}
 		else
 		{
-			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 				. '/' . $camel_app_controller_name . '.php';
 		}
 
@@ -458,12 +458,12 @@ class BaseDinkly
 
 		if($is_plugin)
 		{
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 				. $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 		}
 		else
 		{
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 		}
 
@@ -475,7 +475,7 @@ class BaseDinkly
 		//If the controller file doesn't exist, and we're inside a plugin, let's fall back to another app
 		if(!file_exists($controller_file) && $is_plugin)
 		{
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 		}
 		else if(!file_exists($controller_file)) //If the controller doesn't exist, load 404 error page
@@ -537,12 +537,12 @@ class BaseDinkly
 			{
 				if($is_plugin)
 				{
-					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 						. $app_name . '/modules/' . $module_name . '/views/header';
 				}
 				else
 				{
-					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 						. '/modules/' . $module_name . "/views/header";
 				}
 
@@ -572,12 +572,12 @@ class BaseDinkly
 
 				if($is_plugin)
 				{
-					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/layout/header.php';
 				}
 				else
 				{
-					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php';
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/header.php';
 				}
 
 				if(file_exists($app_header_path))
@@ -589,12 +589,12 @@ class BaseDinkly
 			//Draw view
 			if($is_plugin)
 			{
-				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name; 
 			}
 			else
 			{
-				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/' 
 					. $module_name . '/views/' . $view_name; 
 			}
 			
@@ -614,12 +614,12 @@ class BaseDinkly
 			{
 				if($is_plugin)
 				{
-					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/modules/' . $module_name . "/views/footer";
 				}
 				else
 				{
-					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/' 
 						. $module_name . "/views/footer";
 				}
 
@@ -643,11 +643,11 @@ class BaseDinkly
 
 				if($is_plugin)
 				{
-					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/footer.php';
 				}
 				else
 				{
-					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/footer.php';
 				}
 
 				if(file_exists($app_footer_path))
@@ -1009,7 +1009,7 @@ class BaseDinkly
 			$valid_apps = array();
 
 			//Load standard apps
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/'))
 			{ 
 				/* loop through directory. */ 
 				while (false !== ($dir = readdir($handle)))
@@ -1020,14 +1020,14 @@ class BaseDinkly
 			}
 
 			//Load plugins as valid apps
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
 			{
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
 					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
@@ -1065,9 +1065,9 @@ class BaseDinkly
 
 			$valid_controllers[] = self::convertToCamelCase($app_name, true) . "Controller";
 
-			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 			{
-				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 				{ 
 					//loop through modules directory
 					while (false !== ($dir = readdir($handle)))
@@ -1084,14 +1084,14 @@ class BaseDinkly
 			}
 			
 			//Find plugin controllers
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
 			{
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
 					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
@@ -1100,7 +1100,7 @@ class BaseDinkly
 								{ 
 									$valid_controllers[] = self::convertToCamelCase($plugin_dir, true) . "Controller";
 
-									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
 									if(is_dir($plugin_modules_dir))
 									{
 										if($h = opendir($plugin_modules_dir))
@@ -1147,9 +1147,9 @@ class BaseDinkly
 		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::isDevMode())
 		{
 			$valid_modules = array();
-			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 			{
-				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 				{ 
 					//loop through modules directory
 					while (false !== ($dir = readdir($handle)))
@@ -1163,21 +1163,21 @@ class BaseDinkly
 			}
 			
 			//Load plugins as valid modules
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
 			{
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
 					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
 							{ 
 								if($plugin_dir != '.' && $plugin_dir != '..')
 								{ 
-									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
 									if(is_dir($plugin_modules_dir))
 									{
 										if($h = opendir($plugin_modules_dir))
