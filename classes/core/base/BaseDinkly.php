@@ -437,6 +437,13 @@ class BaseDinkly
 				. '/' . $camel_app_controller_name . '.php';
 		}
 
+		//Validate the existance of the app controller
+		if(!in_array($camel_app_controller_name, Dinkly::getValidControllers($app_name)))
+		{
+			throw new Exception('Controller "' . $camel_app_controller_name . '" cannot be loaded.');
+			return false;
+		}
+
 		$has_app_controller = false;
 		if(file_exists($app_controller_file))
 		{
@@ -485,6 +492,12 @@ class BaseDinkly
 				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
+		}
+
+		if(!in_array($camel_module_name, Dinkly::getValidControllers($app_name)))
+		{
+			throw new Exception('Module "' . $module_name . '" cannot be loaded.');
+			return false;
 		}
 
 		//Instantiate controller object
@@ -990,7 +1003,7 @@ class BaseDinkly
 	{
 		$valid_apps = null;
 
-		if(!isset($_SESSION['dinkly']['valid_apps']))
+		if(!isset($_SESSION['dinkly']['valid_apps']) || self::isDevMode())
 		{ 
 			$_SESSION['dinkly']['valid_apps'] = array();
 			$valid_apps = array();
@@ -1019,7 +1032,7 @@ class BaseDinkly
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
 							{ 
-								if($plugin_dir != '.' && $plugin_dir != '..')
+								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store')
 								{ 
 									if(!in_array($plugin_dir, $valid_apps))
 									{
@@ -1038,6 +1051,85 @@ class BaseDinkly
 		}
 
 		return $_SESSION['dinkly']['valid_apps'];
+	}
+
+	public static function getValidControllers($app_name)
+	{
+		$valid_controllers = null;
+
+		if(!isset($_SESSION['dinkly']['valid_controllers'])) { $_SESSION['dinkly']['valid_controllers'] = array(); }
+
+		if(!isset($_SESSION['dinkly']['valid_controllers'][$app_name]) || self::isDevMode())
+		{
+			$valid_controllers = array();
+
+			$valid_controllers[] = self::convertToCamelCase($app_name, true) . "Controller";
+
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+			{
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+				{ 
+					//loop through modules directory
+					while (false !== ($dir = readdir($handle)))
+					{ 
+						if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
+						{ 
+							$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($dir, true) . "Controller";
+						}
+					} 
+					closedir($handle);
+					
+					$_SESSION['dinkly']['valid_controllers'][$app_name] = $valid_controllers;
+				}
+			}
+			
+			//Find plugin controllers
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			{
+				//loop through plugins directory
+				while (false !== ($dir = readdir($handle)))
+				{ 
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
+					{
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						{
+							//loop through plugin apps directory
+							while (false !== ($plugin_dir = readdir($plugin_handle)))
+							{ 
+								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store')
+								{ 
+									$valid_controllers[] = self::convertToCamelCase($plugin_dir, true) . "Controller";
+
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									if(is_dir($plugin_modules_dir))
+									{
+										if($h = opendir($plugin_modules_dir))
+										{ 
+											//loop through modules directory
+											while (false !== ($d = readdir($h)))
+											{ 
+												if($d != '.' && $d != '..' && $d != '.DS_Store')
+												{ 
+													$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($d, true) . "Controller";
+												}
+											} 
+											closedir($h);
+											
+											$_SESSION['dinkly']['valid_controllers'][$app_name] = $valid_controllers;
+										}
+									}
+								}
+							} 
+							closedir($plugin_handle);
+						}
+					}
+				} 
+				closedir($handle);
+			}
+		}
+		else { $valid_controllers = $_SESSION['dinkly']['valid_controllers'][$app_name]; }
+
+		return $valid_controllers;
 	}
 
 	/**
