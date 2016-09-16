@@ -1,6 +1,10 @@
 <div class="jumbotron">
 	<h2>404 - Page Not Found</h2>
 	
+	<?php if($requested_plugin): ?>
+		<h4>Requested Plugin: <span style="font-weight: normal"><?php echo $requested_plugin; ?></span></h4>
+	<?php endif; ?>
+
 	<?php if($requested_app): ?>
 		<h4>Requested App: <span style="font-weight: normal"><?php echo $requested_app; ?></span></h4>
 	<?php endif; ?>

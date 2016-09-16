@@ -7,24 +7,24 @@ class DinklyDataCollectionTest extends PHPUnit_Framework_TestCase
 		date_default_timezone_set("Europe/Paris");
 		
 		//Prepulate database and load with test users
-		DinklyDataConfig::setActiveConnection('unit_test');
-		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);
-		DinklyBuilder::loadAllFixtures('unit_test', false);
+		DinklyDataConfig::setActiveConnection('demo');
+		DinklyBuilder::buildTable('demo', 'DemoUser', null, false);
+		DinklyBuilder::loadAllFixtures('demo', false, true);
 	}
 
 	public function testGetAll()
 	{
 		//Test that collection of users matches that of custom built array
-		$this->test_users = TestUserCollection::getAll();
-		$this->user = new TestUser();
+		$this->test_users = DemoUserCollection::getAll();
+		$this->user = new DemoUser();
 		$this->user->init(1);
 		$test_collection[] = $this->user;
 
-		$this->another_user = new TestUser();
+		$this->another_user = new DemoUser();
 		$this->another_user->init(2);
 		$test_collection[] = $this->another_user;
 
-		$this->another_user = new TestUser();
+		$this->another_user = new DemoUser();
 		$this->another_user->init(3);
 		$test_collection[] = $this->another_user;
 		
@@ -37,8 +37,8 @@ class DinklyDataCollectionTest extends PHPUnit_Framework_TestCase
 	{
 		//Test that collection pulled is correct by param
 		$input_array = array('id' => 1);
-		$this->admin_users = TestUserCollection::getWith(null, $input_array);
-		$this->user = new TestUser();
+		$this->admin_users = DemoUserCollection::getWith(null, $input_array);
+		$this->user = new DemoUser();
 		$this->user->init(1);
 		$test_collection[] = $this->user;
 		
@@ -47,11 +47,11 @@ class DinklyDataCollectionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(count($this->admin_users), 1);
 		
 		//Test that collection is not same using different param
-		$this->user_collection = TestUserCollection::getWith(array('id' => 2));
+		$this->user_collection = DemoUserCollection::getWith(null, array('id' => 2));
 		$this->assertNotEquals($this->user_collection, $this->admin_users);
 		
 		//Test that collection is correct using different param
-		$this->collection = TestUserCollection::getWith(array('FirstName' => 'Boba', 'LastName' => 'Fett'));
+		$this->collection = DemoUserCollection::getWith(null, array('FirstName' => 'Boba', 'LastName' => 'Fett'));
 
 		$this->assertEquals($this->collection, $test_collection);
 		$this->assertEquals(count($this->collection), 1);

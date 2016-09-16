@@ -338,14 +338,14 @@ class BaseDinkly
 	 * @param string $requested_view_name view we are looking for in camel case
 	 * 
 	 */
-	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null)
+	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null, $requested_plugin_name = null)
 	{
 		//Check for base dinkly 404
 		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/http/ErrorHttpController.php";
 		
 		if(file_exists($error_controller))
 		{
-			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
+			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name, 'requested_plugin' => $requested_plugin_name));
 		}
 	}
 
@@ -415,11 +415,11 @@ class BaseDinkly
 			die();
 		}
 
-		//Switch out paths later based on whether this is a plugin or not
-		$is_plugin = false;
-		if(Dinkly::getConfigValue('is_plugin', $app_name))
-		{
-			$is_plugin = true;
+		$is_plugin = false; $plugin_name = null;
+		if(self::isPlugin($app_name))
+		{ 
+			$plugin_name = $app_name;
+			$is_plugin = self::isPlugin($app_name);
 		}
 		
 		//Load the app controller, if one exists
@@ -465,19 +465,24 @@ class BaseDinkly
 		$this->module = $module_name;
 		$this->parameters = $parameters;
 
-		//If the controller doesn't exist, load 404 error page
-		if(!file_exists($controller_file))
+		//If the controller file doesn't exist, and we're inside a plugin, let's fall back to another app
+		if(!file_exists($controller_file) && $is_plugin)
+		{
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+		}
+		else if(!file_exists($controller_file)) //If the controller doesn't exist, load 404 error page
 		{
 			//If there's an app controller, we instantiate that, in case it has overrides
 			if($has_app_controller)
 			{
 				$app_controller = new $camel_app_controller_name();
-				$this->loadError($app_name, $camel_module_name, $view_name);
+				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
 			else
 			{
-				$this->loadError($app_name, $camel_module_name, $view_name);
+				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
 		}
@@ -996,7 +1001,7 @@ class BaseDinkly
 				/* loop through directory. */ 
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..') { $valid_apps[] = $dir; }
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store') { $valid_apps[] = $dir; }
 				} 
 				closedir($handle);
 			}
@@ -1007,7 +1012,7 @@ class BaseDinkly
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..')
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
 						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
 						{
@@ -1057,7 +1062,7 @@ class BaseDinkly
 					//loop through modules directory
 					while (false !== ($dir = readdir($handle)))
 					{ 
-						if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
+						if($dir != '.' && $dir != '..' && $dir != '.DS_Store') { $valid_modules[] = $dir; }
 					} 
 					closedir($handle);
 					
@@ -1071,7 +1076,7 @@ class BaseDinkly
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..')
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
 						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
 						{
@@ -1110,6 +1115,40 @@ class BaseDinkly
 	}
 
 	/**
+	 * Determine if the passed app is a plugin or not
+	 *
+	 * @param string $app_name
+	 *
+	 * @return bool
+	 */
+	public static function isPlugin($app_name)
+	{
+		$config = self::getConfig();
+
+		if(isset($config['plugins']))
+		{
+			if($config['plugins'] != array())
+			{
+				foreach($config['plugins'] as $plugin_apps)
+				{
+					if($plugin_apps['apps'] != array())
+					{
+						foreach($plugin_apps['apps'] as $plugin_app_name => $app_settings)
+						{
+							if($plugin_app_name == $app_name)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Determine if the passed app is enabled or not
 	 *
 	 * @param string $app_name
@@ -1123,6 +1162,10 @@ class BaseDinkly
 		if(isset($config['apps'][$app_name]['enabled']))
 		{
 			if($config['apps'][$app_name]['enabled'] == false) { return false; }
+		}
+		else if(isset($config['plugins']['apps'][$app_name]['enabled']))
+		{
+			if($config['plugins']['apps'][$app_name]['enabled'] == false) { return false; }
 		}
 
 		return true;
