@@ -1,0 +1,12 @@
+table_name: test_user
+registry:
+  - id
+  - created_at
+  - updated_at
+  - username: { type: varchar, length: 64, allow_null: false }
+  - password: { type: varchar, length: 1024, allow_null: false }
+  - first_name: { type: varchar, length: 24, allow_null: true }
+  - last_name: { type: varchar, length: 24, allow_null: true }
+  - title: { type: varchar, length: 128, allow_null: true }
+  - last_login_at: { type: datetime, allow_null: true }
+  - login_count: { type: int, allow_null: false }

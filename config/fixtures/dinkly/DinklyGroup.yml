@@ -1,0 +1,12 @@
+table_name: dinkly_group
+records:
+    -   
+        id: 1
+        name: Administrators
+        description: "Administrators have access to all admin features."
+        abbreviation: admin
+    -   
+        id: 2
+        name: Clients
+        description: "Just your everyday user."
+        abbreviation: client

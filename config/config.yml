@@ -1,0 +1,104 @@
+global:
+    settings:
+        dinkly_version: "2.39"
+        time_format: h:i a
+        languages:
+            english:
+                - en
+                - en_US
+            french: 
+                - fr
+                - fr_FR
+                - fr_CA
+
+    plugins:
+        mini_ticket:
+            apps:
+                mini_ticket_admin:
+                    app_name: MiniTicketAdmin
+                    is_plugin: true
+                    base_href: /ticket
+                    enabled: true
+                    default_module: home
+        image_resizer:
+            apps:
+                image:
+                    app_name: Handler
+                    is_plugin: true
+                    base_href: /image
+                    enabled: true
+                    default_module: handler
+                    files_directory: uploads
+        uptime_responder:
+            apps:
+                responder:
+                    app_name: UptimeResponder
+                    is_plugin: true
+                    base_href: /responder
+                    enabled: true
+                    default_module: response
+        csrf_protect:
+            apps:
+                csrf_protect:
+                    app_name: CsrfProtect
+                    is_plugin: true
+                    base_href: /protect
+                    enabled: true
+                    default_module: tokenizer
+
+    apps:
+        frontend:
+            default_app: true
+            default_module: landing
+            enabled: true
+            base_href: /
+            app_name: Dinkly Frontend
+            app_description: The humblest little MVC Framework
+        admin:
+            default_module: home
+            base_href: /admin
+            enabled: true
+            app_name: Dinkly Admin
+            app_description: Admin for the humblest little MVC
+            copyright: Dinkly
+            current_app_url: http://localhost:8888
+        api:
+            app_name: Dinkly API
+            base_href: /api
+            enabled: true
+            default_module: router
+        doc:
+            app_name: Dinkly Documentation
+            base_href: /doc
+            default_module: home
+            enabled: true
+
+    databases:
+        dinkly:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_app
+
+        mini_ticket:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_app
+
+        uptime_responder:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_app
+
+        unit_test:
+            host: localhost
+            user: root
+            pass: root
+            name: dinkly_unit_test
+dev:
+    settings:
+    apps:
+        admin:
+            app_name: Dinkly Admin Dev

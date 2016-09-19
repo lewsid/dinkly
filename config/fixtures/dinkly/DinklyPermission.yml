@@ -1,0 +1,6 @@
+table_name: dinkly_permission
+records:
+    -   
+        id: 1
+        name: access_admin
+        description: "Access to the administrative interface."

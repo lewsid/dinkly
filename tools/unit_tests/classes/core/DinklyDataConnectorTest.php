@@ -17,9 +17,9 @@ class DinklyDataConnectorTest extends PHPUnit_Framework_TestCase
 		$this->password = 'root';
 
 		//Prepulate database and load with test users
-		DinklyDataConfig::setActiveConnection('demo');
-		DinklyBuilder::buildTable('demo', 'DemoUser', null, false);
-		DinklyBuilder::loadAllFixtures('demo', false, true);
+		DinklyDataConfig::setActiveConnection('unit_test');
+		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);
+		DinklyBuilder::loadAllFixtures('unit_test', false);
 	}
 
 	public function testFetchDB()

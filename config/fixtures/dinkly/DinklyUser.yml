@@ -1,0 +1,12 @@
+table_name: dinkly_user
+records:
+    -   
+        id: 1
+        created_at:     
+        updated_at:
+        username:   boba@fett.com
+        password:   password
+        first_name: Boba
+        last_name:  Fett
+        title: "Professional Space Bounty Hunter"
+        date_format: 'Y-m-d'

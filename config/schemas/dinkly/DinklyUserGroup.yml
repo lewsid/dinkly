@@ -1,0 +1,5 @@
+table_name: dinkly_user_group
+registry:
+  - id
+  - dinkly_user_id: { type: int, allow_null: false }
+  - dinkly_group_id: { type: int, allow_null: false }
