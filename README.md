@@ -80,17 +80,15 @@ Command Line Tools
 Upgrading a Dinkly project from 2.x to 3.x (Using git)
 ======================================================
 
-1. If you've used any of the following built-in apps (`frontend`, `admin`, `api`, `doc` or `error`), rename the folders temporarily. For example,  `frontend` would become `frontend-bak`. You can skip the apps you've never customized.
+1. Back up your project.
 
-2. Do the same for any plugins you've customized under the `plugins` directory.
-
-3. Rename your `config/config.yml` file in similar fashion (`config-bak.yml`).
-
-4. Add and commit these changes to your repo: `git add .` followed by `git commit -m 'dinkly upgrade'`.
+2. If Dinkly isn't currently configured as a remote, run this command at the project root to do so: `git remote add dinkly https://github.com/lewsid/dinkly.git`.
  
-5. If Dinkly isn't currently configured as a remote, run this command at the project root to do so: `git remote add dinkly https://github.com/lewsid/dinkly.git`.
- 
-6. Pull down the most recent version of Dinkly: `git pull dinkly master`.
+3. Pull down the most recent version of Dinkly: `git pull dinkly master`.
+
+4. Run `git status` and pay special attention to files that are listed as `both modified`. Inspect these files and clean up any conflicts.
+
+5. Add and then commit your changes to your repo.
 
 
 License
