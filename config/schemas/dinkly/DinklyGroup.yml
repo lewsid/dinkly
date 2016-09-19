@@ -1,0 +1,6 @@
+table_name: dinkly_group
+registry:
+  - id
+  - name: { type: varchar, length: 100, allow_null: false }
+  - description: { type: text, allow_null: true }
+  - abbreviation: { type: text, length: 25, allow_null: false }

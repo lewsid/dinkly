@@ -12,14 +12,34 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 					"dinkly_version" => Dinkly::getConfigValue('dinkly_version', 'global')
 				),
 				"apps" => array(
-					"demo" => array(
+					"frontend" => array(
 						"default_app" => true,
             			"default_module" => "landing",
             			"base_href" => "/",
             			"enabled" => true,
-            			"app_name" => "Dinkly Demo",
-            			"app_description" => "The biggest little MVC Framework",
-            		)
+            			"app_name" => "Dinkly Frontend",
+            			"app_description" => "The humblest little MVC Framework",
+            		),
+					"admin" => array(
+						"default_module" => "home",
+						"base_href" => "/admin",
+						"enabled" => true,
+						"app_name" => "Dinkly Admin",
+						"app_description" => "Admin for the humblest little MVC",
+						"copyright" => "Dinkly"
+					),
+					"api" => array(
+						"base_href" => "/api", 
+						"enabled" => true,
+						"default_module" => "api",
+						"app_name" => "Dinkly API"
+					),
+					"doc" => array(
+						"app_name" => "Dinkly Documentation",
+						"base_href" => "/doc",
+						"default_module"=> "home",
+						"enabled"=>true
+					)
 				)
 			);
 		$this->bad_config = 
@@ -36,7 +56,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 		$context = null;
 
 		$this->valid_context = 
-			array('current_app_name' => 'demo', 'module' => 'landing', 'view' => 'default', 'parameters'=>array('id'=>1));
+			array('current_app_name' => 'admin', 'module' => 'home', 'view' => 'default', 'parameters'=>array('id'=>1));
 	}
 
 	public function testRoute()
@@ -52,7 +72,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	public function testGetContext()
 	{
 		$this->base= new BaseDinkly();
-		$example_uri = "/landing/default/id/1";
+		$example_uri = "/admin/home/default/id/1";
 		$this->context = $this->base->getContext($example_uri);
 		$test_context = $this->valid_context;
 		//test to make sure context is formatted correctly against example context
@@ -90,7 +110,7 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	public function testGetCurrentView()
 	{
 		$this->base= new BaseDinkly();
-		$_SERVER['REQUEST_URI']="/landing/default/id/1";
+		$_SERVER['REQUEST_URI']="/home/default/id/1";
 		//make sure current view is set correctly based on URI
 		$this->assertEquals($this->base->getCurrentView(),'default');
 	}
@@ -98,15 +118,15 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	public function testGetCurrentModule()
 	{
 		$this->base= new BaseDinkly();
-		$_SERVER['REQUEST_URI']="/landing/default/id/1";
+		$_SERVER['REQUEST_URI']="/home/default/id/1";
 		//make sure current module is set correctly based on URI
-		$this->assertEquals($this->base->getCurrentModule(),'landing');
+		$this->assertEquals($this->base->getCurrentModule(),'home');
 	}
 
 	public function testGetParameters()
 	{
 	  	$this->base= new BaseDinkly();
-		$example_uri = "/landing/default/id/200";
+		$example_uri = "/home/default/id/200";
 		$this->context =$this->base->getContext($example_uri);
 		$parameters=$this->base->getParameters();
 		//test stored parameters agains sample context that is set
@@ -117,9 +137,9 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	{
 		//Test setting config values and getting default
 		$_SESSION['dinkly']['config'] = $this->valid_config;
-		$this->assertEquals(BaseDinkly::getDefaultApp(true), "demo");
+		$this->assertEquals(BaseDinkly::getDefaultApp(true), "frontend");
 		$config = BaseDinkly::getDefaultApp();
-		$this->assertEquals($this->valid_config['apps']['demo'], $config);
+		$this->assertEquals($this->valid_config['apps']['frontend'], $config);
 	}
 
 	public function testGetValidModules()
@@ -144,9 +164,9 @@ class DinklyBaseTest extends PHPUnit_Framework_TestCase
 	{
 		//Test getting value by manually setting config
 		$_SESSION['dinkly']['config'] = $this->valid_config;
-		$app_name = 'demo';
-		$key = "app_name";
-		$this->assertEquals(BaseDinkly::getConfigValue($key,$app_name), "Dinkly Demo");
+		$app_name = 'admin';
+		$key = "copyright";
+		$this->assertEquals(BaseDinkly::getConfigValue($key,$app_name), "Dinkly");
 		
 		//Test invalid key
 		$dirty_key = "bad";

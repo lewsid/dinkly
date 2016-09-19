@@ -1,0 +1,12 @@
+table_name: ticket_comment
+registry:
+  - id
+  - created_at
+  - ticket_id: { type: int, length: 11, allow_null: false }
+  - associated_id: { type: int, length: 11, allow_null: false }
+  - user_id: { type: int, length: 11, allow_null: false }
+  - first_name: { type: varchar, length: 100, allow_null: false }
+  - last_name: { type: varchar, length: 100, allow_null: false }
+  - email: { type: varchar, length: 100, allow_null: false }
+  - comment: { type: text, allow_null: false }
+  - is_deleted: { type: tinyint, length: 1, allow_null: false }

@@ -1,0 +1,11 @@
+table_name: ticket
+records:
+    -   
+        created_at:     
+        updated_at:
+        user_id: 1
+        first_name: Boba
+        last_name: Fett
+        email: bountyhunter@deathstar.com
+        subject: Bounties
+        message: RSVP ASAP

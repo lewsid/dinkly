@@ -1,0 +1,29 @@
+table_name: test_user
+records:
+    -   
+        created_at:     
+        updated_at:
+        username:   bfett
+        password:   password
+        first_name: Boba
+        last_name:  Fett
+        title:  |
+            Professional Space Bounty Hunter
+    -   
+        created_at:     
+        updated_at:
+        username:   lskywalker
+        password:   password
+        first_name: Luke
+        last_name:  Skywalker
+        title:  |
+            Jedi Knight
+    -   
+        created_at:     
+        updated_at:
+        username:   dvader
+        password:   password
+        first_name: Darth
+        last_name:  Vader
+        title:  |
+            Sith Lord

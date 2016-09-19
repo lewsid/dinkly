@@ -16,16 +16,16 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	{
 		date_default_timezone_set("Europe/Paris");
 
-		$this->dsn = 'mysql:dbname=dinkly_app;host=localhost;port=3306';
+		$this->dsn = 'mysql:dbname=dinkly_unit_test;host=localhost;port=3306';
 		$this->username = 'root';
 		$this->password = 'root';
 
 		//Prepulate database and load with test users
-		DinklyDataConfig::setActiveConnection('demo');
-		DinklyBuilder::buildTable('demo', 'DemoUser', null, false);
-		DinklyBuilder::loadAllFixtures('demo', false, true);
+		DinklyDataConfig::setActiveConnection('unit_test');
+		DinklyBuilder::buildTable('unit_test', 'TestUser', null, false);
+		DinklyBuilder::loadAllFixtures('unit_test', false);
 
-		$this->user = new  DemoUser();
+		$this->user = new TestUser();
 		$this->user->init(1);
 		$this->valid_array = 
 			array(
@@ -37,7 +37,8 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 				'first_name' 	=> $this->user->getFirstName(),
 				'last_name' 	=> $this->user->getLastName(),
 				'title' 		=> $this->user->getTitle(),
-				'last_login_at' => $this->user->getLastLoginAt()
+				'last_login_at' => $this->user->getLastLoginAt(),
+				'login_count' 	=> $this->user->getLoginCount() 
 			);
 	}
 	
@@ -84,15 +85,15 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	public function testInit()
 	{
 		//Create two users and make sure they both have the same output
-		$this->new_user1 = new  DemoUser();
-		$this->new_user2 = new  DemoUser();
+		$this->new_user1 = new TestUser();
+		$this->new_user2 = new TestUser();
 		$this->assertEquals($this->new_user1, $this->new_user2);
 	}
 
 	public function testInitWith()
 	{
 		//Test init for user that already exists
-		$this->new_user= new  DemoUser();
+		$this->new_user= new TestUser();
 		$this->new_user->initWith(array('id' => 1));
 		$this->assertEquals($this->new_user, $this->user);
 	}
@@ -109,7 +110,8 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 				'first_name',
 				'last_name',
 				'title',
-				'last_login_at'
+				'last_login_at',
+				'login_count'
 			);
 
 		$testSelect = "select ";
@@ -117,13 +119,13 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 		
 		foreach($testRegistry as $pos => $col)
 		{
-			if($pos != 8)
+			if($pos != 9)
 				$columns .= $col . ", ";
 			else
 				$columns .= $col;
 		}
 		
-		$testSelect .= $columns. " from " . "demo_user";
+		$testSelect .= $columns. " from " . "test_user";
 													
 		$this->assertEquals($testSelect, $this->user->getSelectQuery());
 	}
@@ -131,7 +133,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 	public function testDelete()
 	{
 		//Test delete when user doesn't exist
-		$this->test_user = new  DemoUser();
+		$this->test_user = new TestUser();
 		$this->test_user->init(-1);
 		$this->assertEquals(0, $this->test_user->delete());
 	}
@@ -148,7 +150,8 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 				'first_name' => 'FirstName',
 				'last_name' => 'LastName',
 				'title' => 'Title',
-				'last_login_at' => 'LastLoginAt'
+				'last_login_at' => 'LastLoginAt',
+				'login_count' => 'LoginCount',
 			);
 		
 		$this->assertEquals($testRegistry, $this->user->getRegistry());
@@ -163,7 +166,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 
 		//Reset our user object and reinitialize
 		$this->user = null;
-		$this->user = new  DemoUser();
+		$this->user = new TestUser();
 		$this->user->init(1);
 
 		//Confirm that we get the original title even after setting the property directly
@@ -176,7 +179,7 @@ class DinklyDataModelTest extends PHPUnit_Framework_TestCase
 
 		//Now reset our user object and reinitialize to confirm the new value was set
 		$this->user = null;
-		$this->user = new  DemoUser();
+		$this->user = new TestUser();
 		$this->user->init(1);
 
 		$this->assertEquals('MonkeyTest', $this->user->getTitle());
