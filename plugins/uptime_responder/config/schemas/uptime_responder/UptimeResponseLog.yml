@@ -1,7 +1,0 @@
-table_name: uptime_response_log
-registry:
-  - id
-  - created_at
-  - source_ip_address: { type: varchar, length: 30, allow_null: false }
-  - status: { type: varchar, length: 20, allow_null: false }
-  - hash: { type: varchar, length: 24, allow_null: false }
