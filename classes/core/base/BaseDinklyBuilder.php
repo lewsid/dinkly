@@ -546,7 +546,7 @@ class BaseDinklyBuilder extends Dinkly
 			$custom_file = null;
 			if($plugin_name)
 			{
-				$custom_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . ".php";	
+				$custom_file = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . ".php";	
 			}
 			else
 			{
@@ -556,7 +556,7 @@ class BaseDinklyBuilder extends Dinkly
 			$custom_collection_file = null;
 			if($plugin_name)
 			{
-				$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "/plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . "Collection.php";
+				$custom_collection_file = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/classes/models/custom/" . $model_name . "Collection.php";
 			}
 			else
 			{
@@ -855,7 +855,7 @@ class BaseDinklyBuilder extends Dinkly
 
 			foreach($plugins as $plugin)
 			{
-				if($plugin != '.' && $plugin != '..')
+				if($plugin != '.' && $plugin != '..' && $plugin != '.DS_Store')
 				$plugin_names[] = $plugin;
 			}
 		}
@@ -874,6 +874,7 @@ class BaseDinklyBuilder extends Dinkly
 				foreach($plugin_folders as $f)
 				{
 					//Keep track of the plugin name and its schemas
+					if($plugin != '.' && $plugin != '..' && $plugin != '.DS_Store')
 					$plugin_schemas[$p] = $f;
 				}
 			}
