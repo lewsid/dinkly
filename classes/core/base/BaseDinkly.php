@@ -1089,14 +1089,14 @@ class BaseDinkly
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
 					{
 						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
 							{ 
-								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store')
+								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
 								{ 
 									$valid_controllers[] = self::convertToCamelCase($plugin_dir, true) . "Controller";
 
