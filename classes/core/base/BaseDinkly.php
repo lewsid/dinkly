@@ -338,14 +338,14 @@ class BaseDinkly
 	 * @param string $requested_view_name view we are looking for in camel case
 	 * 
 	 */
-	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null)
+	public function loadError($requested_app_name, $requested_camel_module_name, $requested_view_name = null, $requested_plugin_name = null)
 	{
 		//Check for base dinkly 404
-		$error_controller = $_SERVER['APPLICATION_ROOT'] . "/apps/error/modules/http/ErrorHttpController.php";
+		$error_controller = $_SERVER['APPLICATION_ROOT'] . "apps/error/modules/http/ErrorHttpController.php";
 		
 		if(file_exists($error_controller))
 		{
-			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name));
+			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name, 'requested_plugin' => $requested_plugin_name));
 		}
 	}
 
@@ -415,11 +415,11 @@ class BaseDinkly
 			die();
 		}
 
-		//Switch out paths later based on whether this is a plugin or not
-		$is_plugin = false;
-		if(Dinkly::getConfigValue('is_plugin', $app_name))
-		{
-			$is_plugin = true;
+		$is_plugin = false; $plugin_name = null;
+		if(self::isPlugin($app_name))
+		{ 
+			$plugin_name = $app_name;
+			$is_plugin = self::isPlugin($app_name);
 		}
 		
 		//Load the app controller, if one exists
@@ -428,13 +428,20 @@ class BaseDinkly
 		if($is_plugin)
 		{
 			$plugin_name = Dinkly::getConfigValue('plugin_name', $app_name);
-			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 				. $app_name . '/' . $camel_app_controller_name . '.php';
 		}
 		else
 		{
-			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+			$app_controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 				. '/' . $camel_app_controller_name . '.php';
+		}
+
+		//Validate the existance of the app controller
+		if(!in_array($camel_app_controller_name, Dinkly::getValidControllers($app_name)))
+		{
+			throw new Exception('Controller "' . $camel_app_controller_name . '" cannot be loaded.');
+			return false;
 		}
 
 		$has_app_controller = false;
@@ -451,12 +458,12 @@ class BaseDinkly
 
 		if($is_plugin)
 		{
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 				. $app_name . '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 		}
 		else
 		{
-			$controller_file = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
 		}
 
@@ -465,21 +472,32 @@ class BaseDinkly
 		$this->module = $module_name;
 		$this->parameters = $parameters;
 
-		//If the controller doesn't exist, load 404 error page
-		if(!file_exists($controller_file))
+		//If the controller file doesn't exist, and we're inside a plugin, let's fall back to another app
+		if(!file_exists($controller_file) && $is_plugin)
+		{
+			$controller_file = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
+				. '/modules/' . $module_name . '/' . $camel_module_name . '.php';
+		}
+		else if(!file_exists($controller_file)) //If the controller doesn't exist, load 404 error page
 		{
 			//If there's an app controller, we instantiate that, in case it has overrides
 			if($has_app_controller)
 			{
 				$app_controller = new $camel_app_controller_name();
-				$this->loadError($app_name, $camel_module_name, $view_name);
+				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
 			else
 			{
-				$this->loadError($app_name, $camel_module_name, $view_name);
+				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
+		}
+
+		if(!in_array($camel_module_name, Dinkly::getValidControllers($app_name)))
+		{
+			throw new Exception('Module "' . $module_name . '" cannot be loaded.');
+			return false;
 		}
 
 		//Instantiate controller object
@@ -519,12 +537,12 @@ class BaseDinkly
 			{
 				if($is_plugin)
 				{
-					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name . '/apps/' 
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name . '/apps/' 
 						. $app_name . '/modules/' . $module_name . '/views/header';
 				}
 				else
 				{
-					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name 
+					$base_module_header_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name 
 						. '/modules/' . $module_name . "/views/header";
 				}
 
@@ -554,12 +572,12 @@ class BaseDinkly
 
 				if($is_plugin)
 				{
-					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/layout/header.php';
 				}
 				else
 				{
-					$app_header_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/header.php';
+					$app_header_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/header.php';
 				}
 
 				if(file_exists($app_header_path))
@@ -571,12 +589,12 @@ class BaseDinkly
 			//Draw view
 			if($is_plugin)
 			{
-				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/modules/' . $module_name . '/views/' . $view_name; 
 			}
 			else
 			{
-				$base_view_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+				$base_view_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/' 
 					. $module_name . '/views/' . $view_name; 
 			}
 			
@@ -596,12 +614,12 @@ class BaseDinkly
 			{
 				if($is_plugin)
 				{
-					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $plugin_name 
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
 						. '/apps/' . $app_name . '/modules/' . $module_name . "/views/footer";
 				}
 				else
 				{
-					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/' 
+					$base_module_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/' 
 						. $module_name . "/views/footer";
 				}
 
@@ -625,11 +643,11 @@ class BaseDinkly
 
 				if($is_plugin)
 				{
-					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/footer.php';
 				}
 				else
 				{
-					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/layout/footer.php';
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/footer.php';
 				}
 
 				if(file_exists($app_footer_path))
@@ -985,36 +1003,36 @@ class BaseDinkly
 	{
 		$valid_apps = null;
 
-		if(!isset($_SESSION['dinkly']['valid_apps']))
+		if(!isset($_SESSION['dinkly']['valid_apps']) || self::isDevMode())
 		{ 
 			$_SESSION['dinkly']['valid_apps'] = array();
 			$valid_apps = array();
 
 			//Load standard apps
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/'))
 			{ 
 				/* loop through directory. */ 
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..') { $valid_apps[] = $dir; }
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store') { $valid_apps[] = $dir; }
 				} 
 				closedir($handle);
 			}
 
 			//Load plugins as valid apps
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
 			{
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..')
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
 							{ 
-								if($plugin_dir != '.' && $plugin_dir != '..')
+								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store')
 								{ 
 									if(!in_array($plugin_dir, $valid_apps))
 									{
@@ -1035,6 +1053,85 @@ class BaseDinkly
 		return $_SESSION['dinkly']['valid_apps'];
 	}
 
+	public static function getValidControllers($app_name)
+	{
+		$valid_controllers = null;
+
+		if(!isset($_SESSION['dinkly']['valid_controllers'])) { $_SESSION['dinkly']['valid_controllers'] = array(); }
+
+		if(!isset($_SESSION['dinkly']['valid_controllers'][$app_name]) || self::isDevMode())
+		{
+			$valid_controllers = array();
+
+			$valid_controllers[] = self::convertToCamelCase($app_name, true) . "Controller";
+
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
+			{
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
+				{ 
+					//loop through modules directory
+					while (false !== ($dir = readdir($handle)))
+					{ 
+						if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
+						{ 
+							$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($dir, true) . "Controller";
+						}
+					} 
+					closedir($handle);
+					
+					$_SESSION['dinkly']['valid_controllers'][$app_name] = $valid_controllers;
+				}
+			}
+			
+			//Find plugin controllers
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
+			{
+				//loop through plugins directory
+				while (false !== ($dir = readdir($handle)))
+				{ 
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
+					{
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
+						{
+							//loop through plugin apps directory
+							while (false !== ($plugin_dir = readdir($plugin_handle)))
+							{ 
+								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store')
+								{ 
+									$valid_controllers[] = self::convertToCamelCase($plugin_dir, true) . "Controller";
+
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									if(is_dir($plugin_modules_dir))
+									{
+										if($h = opendir($plugin_modules_dir))
+										{ 
+											//loop through modules directory
+											while (false !== ($d = readdir($h)))
+											{ 
+												if($d != '.' && $d != '..' && $d != '.DS_Store')
+												{ 
+													$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($d, true) . "Controller";
+												}
+											} 
+											closedir($h);
+											
+											$_SESSION['dinkly']['valid_controllers'][$app_name] = $valid_controllers;
+										}
+									}
+								}
+							} 
+							closedir($plugin_handle);
+						}
+					}
+				} 
+				closedir($handle);
+			}
+		}
+		else { $valid_controllers = $_SESSION['dinkly']['valid_controllers'][$app_name]; }
+
+		return $valid_controllers;
+	}
+
 	/**
 	 * Get existing modules
 	 * @param string $app_name String name of app from which you want modules
@@ -1050,14 +1147,14 @@ class BaseDinkly
 		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::isDevMode())
 		{
 			$valid_modules = array();
-			if(is_dir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 			{
-				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/apps/' . $app_name . '/modules/'))
+				if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 				{ 
 					//loop through modules directory
 					while (false !== ($dir = readdir($handle)))
 					{ 
-						if($dir != '.' && $dir != '..') { $valid_modules[] = $dir; }
+						if($dir != '.' && $dir != '..' && $dir != '.DS_Store') { $valid_modules[] = $dir; }
 					} 
 					closedir($handle);
 					
@@ -1066,21 +1163,21 @@ class BaseDinkly
 			}
 			
 			//Load plugins as valid modules
-			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/'))
+			if($handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/'))
 			{
 				//loop through plugins directory
 				while (false !== ($dir = readdir($handle)))
 				{ 
-					if($dir != '.' && $dir != '..')
+					if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/'))
+						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
 							//loop through plugin apps directory
 							while (false !== ($plugin_dir = readdir($plugin_handle)))
 							{ 
 								if($plugin_dir != '.' && $plugin_dir != '..')
 								{ 
-									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . '/plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
 									if(is_dir($plugin_modules_dir))
 									{
 										if($h = opendir($plugin_modules_dir))
@@ -1110,6 +1207,40 @@ class BaseDinkly
 	}
 
 	/**
+	 * Determine if the passed app is a plugin or not
+	 *
+	 * @param string $app_name
+	 *
+	 * @return bool
+	 */
+	public static function isPlugin($app_name)
+	{
+		$config = self::getConfig();
+
+		if(isset($config['plugins']))
+		{
+			if($config['plugins'] != array())
+			{
+				foreach($config['plugins'] as $plugin_apps)
+				{
+					if($plugin_apps['apps'] != array())
+					{
+						foreach($plugin_apps['apps'] as $plugin_app_name => $app_settings)
+						{
+							if($plugin_app_name == $app_name)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Determine if the passed app is enabled or not
 	 *
 	 * @param string $app_name
@@ -1123,6 +1254,10 @@ class BaseDinkly
 		if(isset($config['apps'][$app_name]['enabled']))
 		{
 			if($config['apps'][$app_name]['enabled'] == false) { return false; }
+		}
+		else if(isset($config['plugins']['apps'][$app_name]['enabled']))
+		{
+			if($config['plugins']['apps'][$app_name]['enabled'] == false) { return false; }
 		}
 
 		return true;

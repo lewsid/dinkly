@@ -208,7 +208,7 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 		{
 			if(isset($reg[$key]))
 			{
-				$this->$reg[$key] = $record;
+				$this->{$reg[$key]} = $record;
 			}
 		}
 
@@ -259,12 +259,12 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 			{
 				if($i < sizeof($this->regDirty))
 				{
-					$query .= $col . "=" . $this->db->quote($this->$reg[$col]) . ", ";
+					$query .= $col . "=" . $this->db->quote($this->{$reg[$col]}) . ", ";
 					$is_valid = true;
 				}
 				else if(sizeof($this->regDirty) == 1 || $i == sizeof($this->regDirty))
 				{
-					$query .= $col . "=" . $this->db->quote($this->$reg[$col]);
+					$query .= $col . "=" . $this->db->quote($this->{$reg[$col]});
 					$is_valid = true;
 				}
 				$i++;
@@ -321,20 +321,20 @@ abstract class BaseDinklyDataModel extends DinklyDataConnector
 			{
 				if(sizeof($this->regDirty) == 1)
 				{
-					$query .= $col . ") values (" . $this->db->quote($this->$reg[$col]) . ")";
+					$query .= $col . ") values (" . $this->db->quote($this->{$reg[$col]}) . ")";
 					$values = "";
 					$is_valid = true;
 				}
 				else if($i < sizeof($this->regDirty))
 				{
 					$query .= $col . ", ";
-					$values .= $this->db->quote($this->$reg[$col]) . ", ";
+					$values .= $this->db->quote($this->{$reg[$col]}) . ", ";
 					$is_valid = true;
 				}
 				else
 				{
 					$query .= $col . ") ";
-					$values .= $this->db->quote($this->$reg[$col]) . ") ";
+					$values .= $this->db->quote($this->{$reg[$col]}) . ") ";
 				}
 				$i++;
 			}

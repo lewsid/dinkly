@@ -1,5 +1,0 @@
-table_name: dinkly_permission
-registry:
-  - id
-  - name: { type: varchar, length: 100, allow_null: false }
-  - description: { type: text, allow_null: true }
