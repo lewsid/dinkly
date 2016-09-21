@@ -25,9 +25,6 @@ class BaseDinkly
 
 	protected $parameters;
 
-	//***************************************************************************** NONSTATIC FUNCTIONS
-
-
 	/**
 	 * Initialize dinkly session, Get app root and reset session root if not matching
 	 *
@@ -530,7 +527,9 @@ class BaseDinkly
 			//Migrate the scope of the declared variables to be local to the view
 			$vars = get_object_vars($controller);
 			foreach ($vars as $name => $value)
-				$$name = Dinkly::migrateVariable($value);
+			{
+				$$name = $this->filterVariable($name, $value);
+			}
 
 			//Draw headers
 			if($draw_layout)
@@ -667,11 +666,14 @@ class BaseDinkly
 
 	/**
 	 * Pass variable through here to allow an override function where 
-	 * sanitization could occur
+	 * output sanitization could occur
+	 * 
+	 * @param $key String variable name in controller
+	 * @param $value String variable value in controller
 	 * 
 	 * @return value of migrated variable
 	 */
-	public static function migrateVariable($value) { return $value; }
+	public function filterVariable($key, $value) { return $value; }
 
 	/**
 	 * Set module header manually

@@ -1,4 +1,4 @@
-Dinkly v3.00
+Dinkly v3.01
 ============
 
 The biggest little PHP framework
@@ -86,9 +86,20 @@ Upgrading a Dinkly project from 2.x to 3.x (Using git)
  
 3. Pull down the most recent version of Dinkly: `git pull dinkly master`.
 
-4. Run `git status` and pay special attention to files that are listed as `both modified`. Inspect these files and clean up any conflicts.
+4. Run `git status` and pay special attention to files that are listed as `both modified`. Things will probably look pretty messy. It's okay.
 
-5. Add and then commit your changes to your repo.
+5. Copy and paste (and replace) the following folders from your backup into your project:
+
+  - `apps/admin`
+  - `apps/frontend`
+  - `apps/api`
+  - `apps/error`
+  - `classes/models/custom`
+  - `config/fixtures`
+  - `config/schemas`
+  - `plugins/*` (only if you use or have overriden anything prior to the upgrade)
+
+5. Add and then commit your changes to your project's repository.
 
 
 License
