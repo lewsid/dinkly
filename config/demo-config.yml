@@ -1,6 +1,6 @@
 global:
     settings:
-        dinkly_version: "3.03"
+        dinkly_version: "3.04"
         time_format: h:i a
         languages:
             english:
