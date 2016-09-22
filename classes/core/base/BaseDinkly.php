@@ -1029,20 +1029,23 @@ class BaseDinkly
 				{ 
 					if($dir != '.' && $dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
+						if(is_dir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
-							//loop through plugin apps directory
-							while (false !== ($plugin_dir = readdir($plugin_handle)))
-							{ 
-								if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
+							if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
+							{
+								//loop through plugin apps directory
+								while (false !== ($plugin_dir = readdir($plugin_handle)))
 								{ 
-									if(!in_array($plugin_dir, $valid_apps))
-									{
-										$valid_apps[] = $plugin_dir;
+									if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
+									{ 
+										if(!in_array($plugin_dir, $valid_apps))
+										{
+											$valid_apps[] = $plugin_dir;
+										}
 									}
-								}
-							} 
-							closedir($plugin_handle);
+								} 
+								closedir($plugin_handle);
+							}
 						}
 					}
 				} 
@@ -1175,31 +1178,34 @@ class BaseDinkly
 				{ 
 					if($dir != '.' && $dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
 					{
-						if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
+						if(is_dir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
 						{
-							//loop through plugin apps directory
-							while (false !== ($plugin_dir = readdir($plugin_handle)))
-							{ 
-								if($plugin_dir != '.' && $plugin_dir != '..')
+							if($plugin_handle = opendir($_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/'))
+							{
+								//loop through plugin apps directory
+								while (false !== ($plugin_dir = readdir($plugin_handle)))
 								{ 
-									$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
-									if(is_dir($plugin_modules_dir))
-									{
-										if($h = opendir($plugin_modules_dir))
-										{ 
-											//loop through modules directory
-											while (false !== ($d = readdir($h)))
+									if($plugin_dir != '.' && $plugin_dir != '..')
+									{ 
+										$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
+										if(is_dir($plugin_modules_dir))
+										{
+											if($h = opendir($plugin_modules_dir))
 											{ 
-												if($d != '.' && $d != '..' && $dir != '.DS_Store' && $dir != '.keep') { $valid_modules[] = $d; }
-											} 
-											closedir($h);
-											
-											$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
+												//loop through modules directory
+												while (false !== ($d = readdir($h)))
+												{ 
+													if($d != '.' && $d != '..' && $dir != '.DS_Store' && $dir != '.keep') { $valid_modules[] = $d; }
+												} 
+												closedir($h);
+												
+												$_SESSION['dinkly']['valid_modules'][$app_name] = $valid_modules;
+											}
 										}
 									}
-								}
-							} 
-							closedir($plugin_handle);
+								} 
+								closedir($plugin_handle);
+							}
 						}
 					}
 				} 
