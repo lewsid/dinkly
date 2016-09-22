@@ -30,7 +30,7 @@ class BaseDinkly
 	 *
 	 * @param bool $enable_cache default true or enter false to flush session cache
 	 * @param bool $empty_session Wipes the current Dinkly session in favor of a new one, handy when you
-	 *			   switch the environment once you've already intantiated Dinkly using another.
+	 *			   switch the environment once you've already instantiated Dinkly using another.
 	 * @param bool $dev_mode same as naming your environment 'dev' but without that environment being
 	 *			   named 'dev' (errors will be displayed and the session caching is disabled) 
 	 * 

@@ -2,7 +2,7 @@
 
 require_once('config/bootstrap.php');
 
-$options = getopt("s:m:e:p:t");
+$options = getopt("s:m:p:e:t");
 
 if(isset($options['h']) || $options == array())
 {
@@ -45,7 +45,7 @@ if(isset($options['p']))
     $plugin_name = $options['p'];
 }
 
-if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e'], true); }
 
 if(isset($options['m']))
 {
