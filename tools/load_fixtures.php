@@ -2,7 +2,7 @@
 
 require_once('config/bootstrap.php');
 
-$options = getopt("s:m:p:t");
+$options = getopt("s:m:e:p:t");
 
 if(isset($options['h']) || $options == array())
 {
@@ -28,30 +28,30 @@ if(isset($options['h']) || $options == array())
 
 if(!isset($options['s']))
 {
-	echo "\nPlease use the -s flag to indicate which fixture set to use.\nExample: php tools/load_fixtures.php -s=dinkly\n\n";
-	echo "You may optionally use the -m flag to indicate a single fixture to load.\nExample: php php tools/load_fixtures.php -s=dinkly -m=fubar\n\n";
-	die();
+    echo "\nPlease use the -s flag to indicate which fixture set to use.\nExample: php tools/load_fixtures.php -s=dinkly\n\n";
+    echo "You may optionally use the -m flag to indicate a single fixture to load.\nExample: php php tools/load_fixtures.php -s=dinkly -m=fubar\n\n";
+    die();
 }
 
 $truncate = false;
 if(isset($options['t']))
 {
-	$truncate = true;
+    $truncate = true;
 }
 
 $plugin_name = false;
 if(isset($options['p']))
 {
-	$plugin_name = $options['p'];
+    $plugin_name = $options['p'];
 }
+
+if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
 
 if(isset($options['m']))
 {
-    if(isset($options['e'])) { $Dinkly = new Dinkly($options['e']); }
-    
-	DinklyBuilder::loadFixture($options['s'], $options['m'], $plugin_name, $truncate);
+    DinklyBuilder::loadFixture($options['s'], $options['m'], $plugin_name, $truncate);
 }
 else
 {
-	DinklyBuilder::loadAllFixtures($options['s'], $plugin_name, $truncate);
+    DinklyBuilder::loadAllFixtures($options['s'], $plugin_name, $truncate);
 }
