@@ -869,13 +869,17 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			foreach($plugin_names as $p)
 			{
-				$plugin_folders = scandir("plugins/" . $p . "/config/schemas/");
-
-				foreach($plugin_folders as $f)
+				$path = "plugins/" . $p . "/config/schemas/";
+				if(file_exists($path))
 				{
-					//Keep track of the plugin name and its schemas
-					if($plugin != '.' && $plugin != '..' && $plugin != '.DS_Store')
-					$plugin_schemas[$p] = $f;
+					$plugin_folders = scandir($path);
+
+					foreach($plugin_folders as $f)
+					{
+						//Keep track of the plugin name and its schemas
+						if($plugin != '.' && $plugin != '..' && $plugin != '.DS_Store')
+						$plugin_schemas[$p] = $f;
+					}
 				}
 			}
 		}
