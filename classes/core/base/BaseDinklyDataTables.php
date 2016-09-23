@@ -149,7 +149,7 @@ class BaseDinklyDataTables
 
 		if ( isset($request['order']) && count($request['order']) ) {
 			$orderBy = array();
-			$dtColumns = self::pluck( $columns, 'dt', $primary_table );
+			$dtColumns = static::pluck( $columns, 'dt', $primary_table );
 
 			for ( $i=0, $ien=count($request['order']) ; $i<$ien ; $i++ ) {
 				// Convert the column index into the column data property
@@ -193,7 +193,7 @@ class BaseDinklyDataTables
 	{
 		$globalSearch = array();
 		$columnSearch = array();
-		$dtColumns = self::pluck( $columns, 'dt', $primary_table );
+		$dtColumns = static::pluck( $columns, 'dt', $primary_table );
 
 		if ( isset($request['search']) && $request['search']['value'] != '' ) {
 			$str = $request['search']['value'];
@@ -204,7 +204,7 @@ class BaseDinklyDataTables
 				$column = $columns[ $columnIdx ];
 
 				if ( $requestColumn['searchable'] == 'true' ) {
-					$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+					$binding = static::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
 					$globalSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".(isset($column['from']) ? $column['from']:$column['db'])."` LIKE ".$binding;
 				}
 			}
@@ -220,7 +220,7 @@ class BaseDinklyDataTables
 
 			if ( $requestColumn['searchable'] == 'true' &&
 			 $str != '' ) {
-				$binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+				$binding = static::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
 				$columnSearch[] = (isset($column['table']) ? $column['table']:$primary_table).".`".(isset($column['from']) ? $column['from']:$column['db'])."` LIKE ".$binding;
 			}
 		}
@@ -279,19 +279,19 @@ class BaseDinklyDataTables
 				}
 			}
 		}
-		$select = implode(", ", self::pluck($columns, 'db', $primary_table));
+		$select = implode(", ", static::pluck($columns, 'db', $primary_table));
 
 		// Build the SQL query string from the request
-		$limit = self::limit( $request, $columns );
-		$order = self::order( $request, $columns, $primary_table );
-		$where = self::filter( $request, $columns, $bindings, $primary_table );
+		$limit = static::limit( $request, $columns );
+		$order = static::order( $request, $columns, $primary_table );
+		$where = static::filter( $request, $columns, $bindings, $primary_table );
 		if ( $where == '' && $additional_where)
 			$where = 'WHERE ' . $additional_where;
 		elseif ( $where !== '' && $additional_where)
 			$where = $where . ' AND ' . $additional_where;
 
 		// Main query to actually get the data
-		$data = self::sql_exec( $db, $bindings,
+		$data = static::sql_exec( $db, $bindings,
 			"SELECT SQL_CALC_FOUND_ROWS $select
 			 FROM `$primary_table` $join 
 			 $where
@@ -300,13 +300,13 @@ class BaseDinklyDataTables
 		);
 
 		// Data set length after filtering
-		$resFilterLength = self::sql_exec( $db,
+		$resFilterLength = static::sql_exec( $db,
 			"SELECT FOUND_ROWS()"
 		);
 		$recordsFiltered = $resFilterLength[0][0];
 
 		// Total data set length
-		$resTotalLength = self::sql_exec( $db,
+		$resTotalLength = static::sql_exec( $db,
 			"SELECT COUNT(`{$primaryKey}`)
 			 FROM   `$primary_table`"
 		);
@@ -320,7 +320,7 @@ class BaseDinklyDataTables
 			"draw"            => intval( $request['draw'] ),
 			"recordsTotal"    => intval( $recordsTotal ),
 			"recordsFiltered" => intval( $recordsFiltered ),
-			"data"            => self::data_output( $columns, $data )
+			"data"            => static::data_output( $columns, $data )
 		);
 	}
 
@@ -356,7 +356,7 @@ class BaseDinklyDataTables
 			$stmt->execute();
 		}
 		catch (PDOException $e) {
-			self::fatal( "An SQL error occurred: ".$e->getMessage() );
+			static::fatal( "An SQL error occurred: ".$e->getMessage() );
 		}
 
 		// Return all

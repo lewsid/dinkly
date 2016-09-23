@@ -24,13 +24,13 @@ class BaseDinklyBuilder extends Dinkly
 	 */
 	public static function genTableAlterQuery($db, $table, $field_config)
 	{
-		$sql = "alter table " . self::sanitize($db, $table) . " add ";
+		$sql = "alter table " . static::sanitize($db, $table) . " add ";
 
 		if(is_array($field_config))
 		{
 			$col_name = key($field_config);
-			$sanitized_col_name = self::sanitize($db, $col_name);
-			$sanitized_col_type = self::sanitize($db, $field_config[$col_name]['type']);
+			$sanitized_col_name = static::sanitize($db, $col_name);
+			$sanitized_col_type = static::sanitize($db, $field_config[$col_name]['type']);
 			$sql .= $sanitized_col_name . ' ' . $sanitized_col_type;
 
 			if(isset($field_config[$col_name]['length']))
@@ -89,7 +89,7 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			if($e->getCode() == 1049)
 			{
-				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				static::createDb($schema, DinklyDataConfig::getDBCreds());
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -100,7 +100,7 @@ class BaseDinklyBuilder extends Dinkly
 		$model_yaml = $table_names = array();
 		foreach($model_names as $model)
 		{
-			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
+			$model_yaml[$model] = static::parseModelYaml($schema, $model, $plugin_name, false);
 			$table_names[$model] = $model_yaml[$model]['table_name'];
 		}
 
@@ -160,14 +160,14 @@ class BaseDinklyBuilder extends Dinkly
 					{
 						if(key($field_config) == $field)
 						{
-							$sql = self::genTableAlterQuery($db, $table, $field_config);
+							$sql = static::genTableAlterQuery($db, $table, $field_config);
 						}
 					}
 					else
 					{
 						if($field == $field_config)
 						{
-							$sql = self::genTableAlterQuery($db, $table, $field_config);
+							$sql = static::genTableAlterQuery($db, $table, $field_config);
 						}
 					}
 
@@ -203,7 +203,7 @@ class BaseDinklyBuilder extends Dinkly
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		//Sanitize the db name
-		$name = self::sanitize($db, $name);
+		$name = static::sanitize($db, $name);
 
 		//Create database if we need to
 		$db->exec("CREATE DATABASE IF NOT EXISTS " . $name);
@@ -228,7 +228,7 @@ class BaseDinklyBuilder extends Dinkly
 			if($e->getCode() == 1049)
 			{
 				$creds = DinklyDataConfig::getDBCreds();
-				self::createDb($creds['name'], $creds);
+				static::createDb($creds['name'], $creds);
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -236,11 +236,11 @@ class BaseDinklyBuilder extends Dinkly
 		$model_names = array();
 		if($plugin_name)
 		{
-			$model_names = self::getAllPluginModels($plugin_name, $schema);
+			$model_names = static::getAllPluginModels($plugin_name, $schema);
 		}
 		else
 		{
-			$model_names = self::getAllModels($schema);
+			$model_names = static::getAllModels($schema);
 		}
 
 		if($model_names != array())
@@ -249,7 +249,7 @@ class BaseDinklyBuilder extends Dinkly
 			$yaml_table_names = array();
 			foreach($model_names as $model)
 			{
-				$model_yaml = self::parseModelYaml($schema, $model, $plugin_name, false);
+				$model_yaml = static::parseModelYaml($schema, $model, $plugin_name, false);
 				$yaml_table_names[] = $model_yaml['table_name'];
 			}
 
@@ -276,7 +276,7 @@ class BaseDinklyBuilder extends Dinkly
 				{
 					echo "Creating table " . $table . "...\n";
 				}
-				self::buildTable($schema, Dinkly::convertToCamelCase($table, true), $plugin_name, null, $verbose_output, null);
+				static::buildTable($schema, Dinkly::convertToCamelCase($table, true), $plugin_name, null, $verbose_output, null);
 			}
 		}
 	}
@@ -474,7 +474,7 @@ class BaseDinklyBuilder extends Dinkly
 	 */
 	public static function buildModel($schema, $model_name, $plugin_name = null)
 	{
-		$raw_model = self::parseModelYaml($schema, $model_name, $plugin_name);
+		$raw_model = static::parseModelYaml($schema, $model_name, $plugin_name);
 		if(!$raw_model) { return false; }
 
 		$table_name = $raw_model['table_name'];
@@ -666,10 +666,10 @@ class BaseDinklyBuilder extends Dinkly
 
 		//Connect to the target db
 		$creds['name'] = $name;
-		$db = self::fetchDB($creds);
+		$db = static::fetchDB($creds);
 
 		//Craft the sql
-		$table_name = self::sanitize($db, Dinkly::convertFromCamelCase($model_name));
+		$table_name = static::sanitize($db, Dinkly::convertFromCamelCase($model_name));
 		$sql = "DROP TABLE IF EXISTS " . $table_name;
 
 		//Drop the table
@@ -694,7 +694,7 @@ class BaseDinklyBuilder extends Dinkly
 	{
 		if(!$model_yaml)
 		{
-			$model_yaml = self::parseModelYaml($schema, $model_name, $plugin_name, $verbose_output);
+			$model_yaml = static::parseModelYaml($schema, $model_name, $plugin_name, $verbose_output);
 		}
 
 		if(!$model_yaml) { return false; }
@@ -708,11 +708,11 @@ class BaseDinklyBuilder extends Dinkly
 		if($override_database_name) { $name = $override_database_name; }
 
 		//Create database if it doesn't exist
-		self::createDb($name, $creds);
+		static::createDb($name, $creds);
 
 		//Connect to the target DB
 		$creds['name'] = $name;
-		$db = self::fetchDB($creds);
+		$db = static::fetchDB($creds);
 
 		if($verbose_output)
 		{
@@ -720,7 +720,7 @@ class BaseDinklyBuilder extends Dinkly
 		}
 
 		//Now let's craft the query to build the table
-		$table_name = self::sanitize($db, $model_yaml['table_name']);
+		$table_name = static::sanitize($db, $model_yaml['table_name']);
 		$sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (";
 
 		$has_id = false; $pos = 0;
@@ -748,8 +748,8 @@ class BaseDinklyBuilder extends Dinkly
 					break;
 
 				default:
-					$sanitized_col_name = self::sanitize($db, $col_name);
-					$sanitized_col_type = self::sanitize($db, $column[$col_name]['type']);
+					$sanitized_col_name = static::sanitize($db, $col_name);
+					$sanitized_col_type = static::sanitize($db, $column[$col_name]['type']);
 					$sql .= '`' . $sanitized_col_name . '` ' . $sanitized_col_type;
 
 					if(isset($column[$col_name]['length']))
@@ -898,7 +898,7 @@ class BaseDinklyBuilder extends Dinkly
 	public static function buildAllModels($schema = null, $insert_sql = false, $plugin_name = false)
 	{
 		$schema_names = array();
-		$plugin_schemas = self::findPluginSchemas($plugin_name);
+		$plugin_schemas = static::findPluginSchemas($plugin_name);
 		$is_plugin_schema = false;
 
 		//No schema passed, search everywhere, build everything
@@ -922,21 +922,21 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			foreach($schema_names as $schema)
 			{
-				$model_names = self::getAllModels($schema);
+				$model_names = static::getAllModels($schema);
 
 				if($model_names != array())
 				{
 					foreach($model_names as $model)
 					{
-						self::buildModel($schema, $model);
+						static::buildModel($schema, $model);
 					}
 
 					if($insert_sql)
 					{
-						self::addMissingModelsToDb($schema, null, true);
-						self::addMissingModelFieldsToDb($schema, null, true);
-						self::addMissingModelForeignKeysToDb($schema, null, true);
-						self::addMissingModelIndexesToDb($schema, null, true);
+						static::addMissingModelsToDb($schema, null, true);
+						static::addMissingModelFieldsToDb($schema, null, true);
+						static::addMissingModelForeignKeysToDb($schema, null, true);
+						static::addMissingModelIndexesToDb($schema, null, true);
 					}
 				}
 			}
@@ -948,19 +948,19 @@ class BaseDinklyBuilder extends Dinkly
 			{
 				if($plugin_name == $plugin_name)
 				{
-					$model_names = self::getAllPluginModels($plugin_name, $plugin_schema);
+					$model_names = static::getAllPluginModels($plugin_name, $plugin_schema);
 
 					foreach($model_names as $model)
 					{
-						self::buildModel($schema, $model, $plugin_name);
+						static::buildModel($schema, $model, $plugin_name);
 					}
 
 					if($insert_sql)
 					{
-						self::addMissingModelsToDb($schema, $plugin_name, true);
-						self::addMissingModelFieldsToDb($schema, $plugin_name, true);
-						self::addMissingModelForeignKeysToDb($schema, $plugin_name, true);
-						self::addMissingModelIndexesToDb($schema, $plugin_name, true);
+						static::addMissingModelsToDb($schema, $plugin_name, true);
+						static::addMissingModelFieldsToDb($schema, $plugin_name, true);
+						static::addMissingModelForeignKeysToDb($schema, $plugin_name, true);
+						static::addMissingModelIndexesToDb($schema, $plugin_name, true);
 					}
 				}
 			}
@@ -989,7 +989,7 @@ class BaseDinklyBuilder extends Dinkly
 		}
 
 		//Create database if it doesn't exist
-		$db = self::fetchDB($creds);
+		$db = static::fetchDB($creds);
 
 		$file_path = null;
 		if($plugin_name)
@@ -1114,7 +1114,7 @@ class BaseDinklyBuilder extends Dinkly
 
 		foreach($model_names as $model)
 		{
-			self::loadFixture($set, $model, $plugin_name, $truncate, $verbose);
+			static::loadFixture($set, $model, $plugin_name, $truncate, $verbose);
 		}
 
 		return true;
@@ -1128,15 +1128,15 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			if(isset($field_config[$col_name]['foreign_table']) && isset($field_config[$col_name]['foreign_field']))
 			{
-				if(!self::doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name))
+				if(!static::doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name))
 				{
-					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD CONSTRAINT " . self::sanitize($db, $table) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $col_name) . " FOREIGN KEY (" . self::sanitize($db, $col_name) . ") REFERENCES " . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "(" . self::sanitize($db, $field_config[$col_name]['foreign_field']) . ")";
+					$sql = "ALTER TABLE " . static::sanitize($db, $table) . " ADD CONSTRAINT " . static::sanitize($db, $table) . "_" . static::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . static::sanitize($db, $col_name) . " FOREIGN KEY (" . static::sanitize($db, $col_name) . ") REFERENCES " . static::sanitize($db, $field_config[$col_name]['foreign_table']) . "(" . static::sanitize($db, $field_config[$col_name]['foreign_field']) . ")";
 
 					if(isset($field_config[$col_name]['foreign_delete']))
-						$sql .= " ON DELETE " . self::sanitize($db, $field_config[$col_name]['foreign_delete']) . " ";
+						$sql .= " ON DELETE " . static::sanitize($db, $field_config[$col_name]['foreign_delete']) . " ";
 
 					if(isset($field_config[$col_name]['foreign_update']))
-						$sql .= " ON UPDATE " . self::sanitize($db, $field_config[$col_name]['foreign_update']) . " ";
+						$sql .= " ON UPDATE " . static::sanitize($db, $field_config[$col_name]['foreign_update']) . " ";
 				}
 			}
 		}
@@ -1147,7 +1147,7 @@ class BaseDinklyBuilder extends Dinkly
 	public static function doesForeignKeyAlreadyExist($db, $schema, $table, $field_config, $col_name)
 	{
 		//Check if foreign key already exists
-		$query = "SELECT * FROM information_schema.TABLE_CONSTRAINTS T WHERE CONSTRAINT_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = '" . self::sanitize($db, $table) . "_" . self::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . self::sanitize($db, $col_name) . "'";
+		$query = "SELECT * FROM information_schema.TABLE_CONSTRAINTS T WHERE CONSTRAINT_SCHEMA = '" . static::sanitize($db, $schema) . "' AND TABLE_NAME = '" . static::sanitize($db, $table) . "' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = '" . static::sanitize($db, $table) . "_" . static::sanitize($db, $field_config[$col_name]['foreign_table']) . "_" . static::sanitize($db, $col_name) . "'";
 		$sth = $db->prepare($query);
 		$sth->execute();
 
@@ -1167,7 +1167,7 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			if($e->getCode() == 1049)
 			{
-				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				static::createDb($schema, DinklyDataConfig::getDBCreds());
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -1178,7 +1178,7 @@ class BaseDinklyBuilder extends Dinkly
 		$model_yaml = $table_names = array();
 		foreach($model_names as $model)
 		{
-			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
+			$model_yaml[$model] = static::parseModelYaml($schema, $model, $plugin_name, false);
 			$table_names[$model] = $model_yaml[$model]['table_name'];
 		}
 
@@ -1212,7 +1212,7 @@ class BaseDinklyBuilder extends Dinkly
 						{
 							if(isset($field_config[$field]['foreign_table']) && isset($field_config[$field]['foreign_field']))
 							{
-								$sql = self::genTableAlterForeignKeyQuery($db, $schema, $table, $field_config, $field);
+								$sql = static::genTableAlterForeignKeyQuery($db, $schema, $table, $field_config, $field);
 							}
 						}
 					}
@@ -1239,7 +1239,7 @@ class BaseDinklyBuilder extends Dinkly
 			//call to get sql
 			foreach($index_config as $key => $array)
 			{
-				if(!self::doesIndexAlreadyExist($db, $schema, $table, $key))
+				if(!static::doesIndexAlreadyExist($db, $schema, $table, $key))
 				{
 					$indexes = array();
 
@@ -1247,7 +1247,7 @@ class BaseDinklyBuilder extends Dinkly
 					{
 						$indexes[] = $index;
 					}
-					$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD INDEX " . self::sanitize($db, $key) . " (" . self::sanitize($db, implode(', ', $indexes)) . ")";
+					$sql = "ALTER TABLE " . static::sanitize($db, $table) . " ADD INDEX " . static::sanitize($db, $key) . " (" . static::sanitize($db, implode(', ', $indexes)) . ")";
 					
 					$message = "Adding index " . $key . " (" . implode(', ', $indexes) . ") on " . $table . " table...\n";
 				}
@@ -1255,9 +1255,9 @@ class BaseDinklyBuilder extends Dinkly
 		}
 		else
 		{
-			if(!self::doesIndexAlreadyExist($db, $schema, $table, $index_config))
+			if(!static::doesIndexAlreadyExist($db, $schema, $table, $index_config))
 			{
-				$sql = "ALTER TABLE " . self::sanitize($db, $table) . " ADD INDEX " . self::sanitize($db, $index_config) . " (" . self::sanitize($db, $index_config) . ")";
+				$sql = "ALTER TABLE " . static::sanitize($db, $table) . " ADD INDEX " . static::sanitize($db, $index_config) . " (" . static::sanitize($db, $index_config) . ")";
 				$message = "Adding index " . $index_config . " on " . $table . " table...\n";
 			}
 		}
@@ -1270,7 +1270,7 @@ class BaseDinklyBuilder extends Dinkly
 	public static function doesIndexAlreadyExist($db, $schema, $table, $index_name)
 	{
 		//Check if foreign key already exists
-		$query = "SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '" . self::sanitize($db, $schema) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND INDEX_NAME = '" . self::sanitize($db, $index_name) . "'";
+		$query = "SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '" . static::sanitize($db, $schema) . "' AND TABLE_NAME = '" . static::sanitize($db, $table) . "' AND INDEX_NAME = '" . static::sanitize($db, $index_name) . "'";
 		$sth = $db->prepare($query);
 		$sth->execute();
 
@@ -1290,7 +1290,7 @@ class BaseDinklyBuilder extends Dinkly
 		{
 			if($e->getCode() == 1049)
 			{
-				self::createDb($schema, DinklyDataConfig::getDBCreds());
+				static::createDb($schema, DinklyDataConfig::getDBCreds());
 				$db = DinklyDataConnector::fetchDB();
 			}
 		}
@@ -1301,7 +1301,7 @@ class BaseDinklyBuilder extends Dinkly
 		$model_yaml = $table_names = array();
 		foreach($model_names as $model)
 		{
-			$model_yaml[$model] = self::parseModelYaml($schema, $model, $plugin_name, false);
+			$model_yaml[$model] = static::parseModelYaml($schema, $model, $plugin_name, false);
 			$table_names[$model] = $model_yaml[$model]['table_name'];
 		}
 
@@ -1315,7 +1315,7 @@ class BaseDinklyBuilder extends Dinkly
 				foreach($y['indexes'] as $index_config)
 				{
 					$sql = null;
-					$sql = self::genTableAlterIndexQuery($db, $schema, $y['table_name'], $index_config);
+					$sql = static::genTableAlterIndexQuery($db, $schema, $y['table_name'], $index_config);
 
 					if($sql)
 					{

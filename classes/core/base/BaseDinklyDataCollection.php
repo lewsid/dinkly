@@ -25,11 +25,11 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 		{
 			$peer_object = new $peer_class();
 
-			if($db == null) { $db = self::fetchDB(); }
+			if($db == null) { $db = static::fetchDB(); }
 
 			$query = $peer_object->getSelectQuery();
 
-			return self::getCollection($peer_object, $query, $db);
+			return static::getCollection($peer_object, $query, $db);
 		}
 		return false;
 	}
@@ -67,7 +67,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 			//Build the basic select query
 			$peer_object = new $peer_class();
 
-			if($db == null) { $db = self::fetchDB(); }
+			if($db == null) { $db = static::fetchDB(); }
 
 			$cols = array();
 			foreach($properties as $property => $value)
@@ -150,7 +150,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 				if($is_valid) { $where .= $chunk; }
 			}
 
-			return self::getCollection($peer_object, $peer_object->getSelectQuery() . $where, $db);
+			return static::getCollection($peer_object, $peer_object->getSelectQuery() . $where, $db);
 		}
 	}
 
@@ -165,7 +165,7 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	 */
 	protected static function getCollection($peer_object, $query, $db = null)
 	{
-		if($db == null) { $db = self::fetchDB(); }
+		if($db == null) { $db = static::fetchDB(); }
 
 		$results = $db->query($query)->fetchAll();
 

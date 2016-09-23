@@ -60,7 +60,7 @@ class BaseDinklyDataConnector
 				}
 			}
 
-			if(self::fetchDB()) return true;
+			if(static::fetchDB()) return true;
 		}
 		catch (PDOException $e)
 		{

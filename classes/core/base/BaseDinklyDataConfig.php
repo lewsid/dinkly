@@ -28,7 +28,7 @@ class BaseDinklyDataConfig
 			$db_creds = $config['databases'];
 			$_SESSION['dinkly']['db_creds'] = $db_creds;
 			$first_connection = key($db_creds);
-			self::setActiveConnection($first_connection);
+			static::setActiveConnection($first_connection);
 		}
 	}
 
@@ -70,7 +70,7 @@ class BaseDinklyDataConfig
 		}
 		else
 		{
-			if(self::hasConnection($connection))
+			if(static::hasConnection($connection))
 			{
 				$_SESSION['dinkly']['db_creds']['active_db'] = $connection;
 				return true;

@@ -88,7 +88,7 @@ class BaseDinkly
 			else { $locale = 'en_US'; }
 		}
 
-		$languages = self::getConfigValue('languages');
+		$languages = static::getConfigValue('languages');
 
 		if($languages != array())
 		{
@@ -160,8 +160,8 @@ class BaseDinkly
 			$current_app_name = $module = $view = null;
 			$context = $parameters = array();
 
-			$default_app_name = self::getDefaultApp(true);
-			$config = self::getConfig();
+			$default_app_name = static::getDefaultApp(true);
+			$config = static::getConfig();
 
 			$uri_parts = array_filter(explode("/", $uri));
 
@@ -379,7 +379,7 @@ class BaseDinkly
 			$message = "The requested app (" . $app_name . ") is currently disabled.";
 			error_log($message);
 
-			if(self::isDevMode())
+			if(static::isDevMode())
 			{
 				echo $message;	
 			}
@@ -413,14 +413,14 @@ class BaseDinkly
 		}
 
 		$is_plugin = false; $plugin_name = null;
-		if(self::isPlugin($app_name))
+		if(static::isPlugin($app_name))
 		{ 
 			$plugin_name = $app_name;
-			$is_plugin = self::isPlugin($app_name);
+			$is_plugin = static::isPlugin($app_name);
 		}
 		
 		//Load the app controller, if one exists
-		$camel_app_controller_name = self::convertToCamelCase($app_name, true) . "Controller";
+		$camel_app_controller_name = static::convertToCamelCase($app_name, true) . "Controller";
 
 		if($is_plugin)
 		{
@@ -451,7 +451,7 @@ class BaseDinkly
 		}
 
 		//Get module controller
-		$camel_module_name = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($module_name, true) . "Controller";
+		$camel_module_name = static::convertToCamelCase($app_name, true) . static::convertToCamelCase($module_name, true) . "Controller";
 
 		if($is_plugin)
 		{
@@ -506,7 +506,7 @@ class BaseDinkly
 		foreach ($vars as $name => $value) { $controller->$name = $value; }
 
 		//Get this view's function
-		$view_controller_name = self::convertToCamelCase($view_name, true);
+		$view_controller_name = static::convertToCamelCase($view_name, true);
 		$view_function = "load" . $view_controller_name;
 
 		if(method_exists($controller, $view_function))
@@ -564,7 +564,7 @@ class BaseDinkly
 				}
 				
 				//Set the powered-by header if the version number is in the config
-				if($version = self::getConfigValue('dinkly_version', 'global'))
+				if($version = static::getConfigValue('dinkly_version', 'global'))
 				{
 					header('X-Powered-By: DINKLY/' . $version);
 				}
@@ -865,7 +865,7 @@ class BaseDinkly
 		if(isset($_SESSION['dinkly']['environment'])) { $env = $_SESSION['dinkly']['environment']; }
 
 		$config = null;
-		if(!isset($_SESSION['dinkly']['config']) || self::isDevMode())
+		if(!isset($_SESSION['dinkly']['config']) || static::isDevMode())
 		{
 			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
 			$config = $raw_config['global'];
@@ -941,7 +941,7 @@ class BaseDinkly
 				}
 			}
 
-			if(self::validateConfig($config)) { $_SESSION['dinkly']['config'] = $config; }
+			if(static::validateConfig($config)) { $_SESSION['dinkly']['config'] = $config; }
 			
 		}
 		else { $config = $_SESSION['dinkly']['config']; }
@@ -958,9 +958,9 @@ class BaseDinkly
 	 */
 	public static function getConfigValue($key, $app_name = null)
 	{
-		if(!$app_name) { $app_name = self::getDefaultApp(true); }
+		if(!$app_name) { $app_name = static::getDefaultApp(true); }
 
-		$config = self::getConfig();
+		$config = static::getConfig();
 
 		if(isset($config['settings'][$key])) { return $config['settings'][$key]; } 
 		else if(isset($config['apps'][$app_name]))
@@ -1013,7 +1013,7 @@ class BaseDinkly
 	{
 		$valid_apps = null;
 
-		if(!isset($_SESSION['dinkly']['valid_apps']) || self::isDevMode())
+		if(!isset($_SESSION['dinkly']['valid_apps']) || static::isDevMode())
 		{ 
 			$_SESSION['dinkly']['valid_apps'] = array();
 			$valid_apps = array();
@@ -1072,11 +1072,11 @@ class BaseDinkly
 
 		if(!isset($_SESSION['dinkly']['valid_controllers'])) { $_SESSION['dinkly']['valid_controllers'] = array(); }
 
-		if(!isset($_SESSION['dinkly']['valid_controllers'][$app_name]) || self::isDevMode())
+		if(!isset($_SESSION['dinkly']['valid_controllers'][$app_name]) || static::isDevMode())
 		{
 			$valid_controllers = array();
 
-			$valid_controllers[] = self::convertToCamelCase($app_name, true) . "Controller";
+			$valid_controllers[] = static::convertToCamelCase($app_name, true) . "Controller";
 
 			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
 			{
@@ -1087,7 +1087,7 @@ class BaseDinkly
 					{ 
 						if($dir != '.' && $dir != '..' && $dir != '.DS_Store')
 						{ 
-							$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($dir, true) . "Controller";
+							$valid_controllers[] = static::convertToCamelCase($app_name, true) . static::convertToCamelCase($dir, true) . "Controller";
 						}
 					} 
 					closedir($handle);
@@ -1113,7 +1113,7 @@ class BaseDinkly
 								{ 
 									if($plugin_dir != '.' && $plugin_dir != '..' && $dir != '.DS_Store' && $dir != '.keep')
 									{ 
-										$valid_controllers[] = self::convertToCamelCase($plugin_dir, true) . "Controller";
+										$valid_controllers[] = static::convertToCamelCase($plugin_dir, true) . "Controller";
 
 										$plugin_modules_dir = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $dir . '/apps/' . $plugin_dir . '/modules/';
 										if(is_dir($plugin_modules_dir))
@@ -1125,7 +1125,7 @@ class BaseDinkly
 												{ 
 													if($d != '.' && $d != '..' && $d != '.DS_Store')
 													{ 
-														$valid_controllers[] = self::convertToCamelCase($app_name, true) . self::convertToCamelCase($d, true) . "Controller";
+														$valid_controllers[] = static::convertToCamelCase($app_name, true) . static::convertToCamelCase($d, true) . "Controller";
 													}
 												} 
 												closedir($h);
@@ -1160,7 +1160,7 @@ class BaseDinkly
 
 		if(!isset($_SESSION['dinkly']['valid_modules'])) { $_SESSION['dinkly']['valid_modules'] = array(); }
 
-		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || self::isDevMode())
+		if(!isset($_SESSION['dinkly']['valid_modules'][$app_name]) || static::isDevMode())
 		{
 			$valid_modules = array();
 			if(is_dir($_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/modules/'))
@@ -1234,7 +1234,7 @@ class BaseDinkly
 	 */
 	public static function isPlugin($app_name)
 	{
-		$config = self::getConfig();
+		$config = static::getConfig();
 
 		if(isset($config['plugins']))
 		{
@@ -1268,7 +1268,7 @@ class BaseDinkly
 	 */
 	public static function isAppEnabled($app_name)
 	{
-		$config = self::getConfig();
+		$config = static::getConfig();
 
 		if(isset($config['apps'][$app_name]['enabled']))
 		{
@@ -1291,7 +1291,7 @@ class BaseDinkly
 	 */
 	public static function getDefaultApp($return_name = false)
 	{
-		$config = self::getConfig();
+		$config = static::getConfig();
 
 		foreach($config['apps'] as $app => $values)
 		{
