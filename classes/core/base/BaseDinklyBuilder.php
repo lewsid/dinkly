@@ -877,7 +877,7 @@ class BaseDinklyBuilder extends Dinkly
 					foreach($plugin_folders as $f)
 					{
 						//Keep track of the plugin name and its schemas
-						if($plugin != '.' && $plugin != '..' && $plugin != '.DS_Store')
+						if($f != '.' && $f != '..' && $f != '.DS_Store')
 						$plugin_schemas[$p] = $f;
 					}
 				}
