@@ -824,7 +824,15 @@ class BaseDinkly
 		$has_default_app = false;
 		foreach($config['apps'] as $app_name => $app_config)
 		{
-			if(isset($app_config['default_app'])) { $has_default_app = true; }
+			if(isset($app_config['default_app']))
+			{ 
+				if($app_config['default_app'] == true && $app_config['base_href'] != '/')
+				{
+					throw new Exception('Invalid value for base_href for \'' . $app_name . '\' in config.yml - Default apps must by use \'/\'');
+				}
+
+				$has_default_app = true;
+			}
 
 			if(!isset($app_config['default_module']))
 			{
