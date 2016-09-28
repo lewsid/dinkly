@@ -867,6 +867,11 @@ class BaseDinkly
 		$config = null;
 		if(!isset($_SESSION['dinkly']['config']) || static::isDevMode())
 		{
+			if(!file_exists($_SERVER['APPLICATION_ROOT'] . "config/config.yml"))
+			{
+				throw new Exception('Missing config file: config/config.yml');
+			}
+
 			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
 			$config = $raw_config['global'];
 
