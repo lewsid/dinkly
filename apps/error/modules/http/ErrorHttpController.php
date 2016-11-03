@@ -6,7 +6,7 @@
  * @subpackage AppsErrorErrorController
  * @author     Christopher Lewis <lewsid@lewsid.com>
  */
-class ErrorHttpController extends Dinkly 
+class ErrorHttpController extends ErrorController 
 {
 	/**
 	 * Handle any URL errors when page is not found
