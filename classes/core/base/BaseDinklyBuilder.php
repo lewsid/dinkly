@@ -106,53 +106,56 @@ class BaseDinklyBuilder extends Dinkly
 
 		//Create index for matching tables and columns within the yaml config
 		$yaml_fields = array();
-		foreach($model_yaml as $y)
+		foreach($model_yaml as $model_name => $y)
 		{
-			$yaml_fields[$y['table_name']] = array();
+			// Keep track of model name throughout: it may differ from the table name
+			$yaml_fields[$model_name] = array();
 			foreach($y['registry'] as $field_name)
 			{
 				$name = null;
 				if(is_array($field_name)) { $name = key($field_name); }
 				else { $name = $field_name; }
 
-				$yaml_fields[$y['table_name']][] = $name;
+				$yaml_fields[$model_name][] = $name;
 			}
 		}
 
 		//Create a very similar index, for matching tables and columns within the existing database
 		$db_table_fields = array();
-		foreach($table_names as $table_name)
+		foreach($model_yaml as $model_name => $y)
 		{
-			$query = "show columns from " . $table_name;
+			$query = "show columns from " . $y['table_name'];
 			$results = $db->query($query)->fetchAll();
 
-			$db_table_fields[$table_name] = array();
+			$db_table_fields[$model_name] = array();
 			foreach($results as $k => $v)
 			{
-				$db_table_fields[$table_name][] = $v['Field'];
+				$db_table_fields[$model_name][] = $v['Field'];
 			}
 		}
 
 		//Find any fields that are in the yaml, but are not in the database currently
 		$fields_to_add = array();
-		foreach($yaml_fields as $table_name => $yaml_field_list)
+		foreach($yaml_fields as $model_name => $yaml_field_list)
 		{
 			foreach($yaml_field_list as $field_name)
 			{
-				if(!in_array($field_name, $db_table_fields[$table_name]))
+				if(!in_array($field_name, $db_table_fields[$model_name]))
 				{
-					if(!isset($fields_to_add[$table_name])) { $fields_to_add[$table_name] = array(); }
-					$fields_to_add[$table_name][] = $field_name;
+					if(!isset($fields_to_add[$model_name])) { $fields_to_add[$model_name] = array(); }
+					$fields_to_add[$model_name][] = $field_name;
 				}
 			}
 		}
 
 		//For each field missing from the database, but present in the yaml, run an alter query
-		foreach($fields_to_add as $table => $field_list)
+		foreach($fields_to_add as $model_name => $field_list)
 		{
 			foreach($field_list as $field)
 			{
-				$registry = $model_yaml[Dinkly::convertToCamelCase($table, true)]['registry'];
+				// Fetch table name from the YAML
+				$table = $model_yaml[$model_name]['table_name'];
+				$registry = $model_yaml[$model_name]['registry'];
 				foreach($registry as $field_config)
 				{
 					$sql = null;
@@ -250,7 +253,7 @@ class BaseDinklyBuilder extends Dinkly
 			foreach($model_names as $model)
 			{
 				$model_yaml = static::parseModelYaml($schema, $model, $plugin_name, false);
-				$yaml_table_names[] = $model_yaml['table_name'];
+				$yaml_table_names[$model] = $model_yaml['table_name'];
 			}
 
 			//Gather up the table names for those in the database currently
@@ -261,22 +264,22 @@ class BaseDinklyBuilder extends Dinkly
 
 			//Find out which tables are missing from the db, but defined in the yaml
 			$missing_tables = array();
-			foreach($yaml_table_names as $yaml_table_name)
+			foreach($yaml_table_names as $model_name => $yaml_table_name)
 			{
 				if(!in_array($yaml_table_name, $db_table_names))
 				{
-					$missing_tables[] = $yaml_table_name;
+					$missing_tables[$model_name] = $yaml_table_name;
 				}
 			}
 
 			//Create our missing tables in the database
-			foreach($missing_tables as $table)
+			foreach($missing_tables as $model_name => $table)
 			{
 				if($verbose_output)
 				{
 					echo "Creating table " . $table . "...\n";
 				}
-				static::buildTable($schema, Dinkly::convertToCamelCase($table, true), $plugin_name, null, $verbose_output, null);
+				static::buildTable($schema, $model_name, $plugin_name, null, $verbose_output, null);
 			}
 		}
 	}
@@ -1184,25 +1187,26 @@ class BaseDinklyBuilder extends Dinkly
 
 		//Create index for matching tables and columns within the yaml config
 		$yaml_fields = array();
-		foreach($model_yaml as $y)
+		foreach($model_yaml as $model_name => $y)
 		{
-			$yaml_fields[$y['table_name']] = array();
+			$yaml_fields[$model_name] = array();
 			foreach($y['registry'] as $field_name)
 			{
 				$name = null;
 				if(is_array($field_name)) { $name = key($field_name); }
 				else { $name = $field_name; }
 
-				$yaml_fields[$y['table_name']][] = $name;
+				$yaml_fields[$model_name][] = $name;
 			}
 		}
 
-		//For each field missing from the database, but present in the yaml, run an alter query
-		foreach($yaml_fields as $table => $field_list)
+		// For each field, if it's identified as a foreign key, run alter query
+		foreach($yaml_fields as $model_name => $field_list)
 		{
 			foreach($field_list as $field)
 			{
-				$registry = $model_yaml[Dinkly::convertToCamelCase($table, true)]['registry'];
+				$table = $model_yaml[$model_name]['table_name'];
+				$registry = $model_yaml[$model_name]['registry'];
 				foreach($registry as $field_config)
 				{
 					$sql = null;
