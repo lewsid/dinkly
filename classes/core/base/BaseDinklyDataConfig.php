@@ -60,7 +60,7 @@ class BaseDinklyDataConfig
 		//If connection is array, we can override the loaded configurations
 		if(is_array($connection))
 		{
-			$active_db = $connection['DB_NAME'];
+			$active_db = $connection['name'];
 
 			$_SESSION['dinkly']['db_creds'][$active_db] = $connection;
 
