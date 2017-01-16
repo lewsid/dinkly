@@ -40,10 +40,10 @@ class BaseDinklyBuilder extends Dinkly
 
 			if(isset($field_config[$col_name]['default']))
 			{
-				$sql .= " default '".$field_config[$col_name]['default']."'";
+				$sql .= " DEFAULT '".$field_config[$col_name]['default']."'";
 			}
 
-			if(!$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+			if(isset($field_config[$col_name]['allow_null']) && !$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
 
 			if(isset($field_config[$col_name]['primary_key']) && $field_config[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
 
@@ -764,12 +764,12 @@ class BaseDinklyBuilder extends Dinkly
 						throw new Exception($table_name . ' - ' . $sanitized_col_name . ' - length required.');
 					}
 
-					if(!isset($column[$col_name]['allow_null'])) { $sql .= " NULL"; }
-
 					if(isset($column[$col_name]['default']))
 					{
-						$sql .= " default '".$column[$col_name]['default']."'";
+						$sql .= " DEFAULT '".$column[$col_name]['default']."'";
 					}
+
+					if(isset($field_config[$col_name]['allow_null']) && !$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
 
 					if(isset($column[$col_name]['primary_key']) && $column[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
 
