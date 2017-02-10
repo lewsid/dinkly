@@ -1274,7 +1274,8 @@ class BaseDinklyBuilder extends Dinkly
 	public static function doesIndexAlreadyExist($db, $schema, $table, $index_name)
 	{
 		//Check if foreign key already exists
-		$query = "SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '" . static::sanitize($db, $schema) . "' AND TABLE_NAME = '" . static::sanitize($db, $table) . "' AND INDEX_NAME = '" . static::sanitize($db, $index_name) . "'";
+		$database_name = $db->query('select database()')->fetchColumn();
+		$query = "SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '" . self::sanitize($db, $database_name) . "' AND TABLE_NAME = '" . self::sanitize($db, $table) . "' AND INDEX_NAME = '" . self::sanitize($db, $index_name) . "'";
 		$sth = $db->prepare($query);
 		$sth->execute();
 
