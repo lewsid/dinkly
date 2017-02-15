@@ -347,6 +347,22 @@ class BaseDinkly
 	}
 
 	/**
+	 * Load desired component
+	 * 
+	 *
+	 * @param string $app_name name of app we are trying to load
+	 * @param string $module_name string of desired module to load
+	 * @param string $view string if passed goes to specified view otherwise default
+	 * @param array $parameters Array of parameters that can be used to populate views
+	 *
+	 * @return bool true if component loaded currectly else false and sent to default app
+	 */
+	public function loadComponent($app_name, $module_name = null, $view_name = 'default', $parameters = null)
+	{
+		return $this->loadModule($app_name, $module_name, $view_name, false, false, $parameters, true);
+	}
+
+	/**
 	 * Load desired module and redirect if necessary
 	 * 
 	 *
@@ -354,15 +370,16 @@ class BaseDinkly
 	 * @param string $module_name string of desired module to load
 	 * @param string $view string if passed goes to specified view otherwise default
 	 * @param bool $redirect default false, make true to redirect to different view
-	 * @param bool $draw_layout default true to get module view
+	 * @param bool $draw_layout default true to get module view (overrides return value in controller)
 	 * @param array $parameters Array of parameters that can be used to populate views
+	 * @param boolean #load_as_component Disregards whether headers were sent, allowing for nested calls to loadModule
 	 *
 	 * @return bool true if app loaded currectly else false and sent to default app
 	 */
-	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
+	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null, $load_as_component = false)
 	{
 		//If nested, prevent output from doubling
-		if(headers_sent()) { return false; }
+		if(headers_sent() && !$load_as_component) { return false; }
 
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
@@ -511,12 +528,16 @@ class BaseDinkly
 
 		if(method_exists($controller, $view_function))
 		{
-			//If controller function returns false, don't draw layout wrapper
-			if($controller->$view_function($parameters))
+			//If draw layout is false, refer to the return value of the load function in the controller
+			if(!$draw_layout)
 			{
-				$draw_layout = true;
+				//If controller function returns false, don't draw layout wrapper
+				if($controller->$view_function($parameters))
+				{
+					$draw_layout = true;
+				}
+				else { $draw_layout = false; }
 			}
-			else { $draw_layout = false; }
 
 			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 			{
