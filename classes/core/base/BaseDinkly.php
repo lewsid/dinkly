@@ -528,15 +528,12 @@ class BaseDinkly
 
 		if(method_exists($controller, $view_function))
 		{
+			$return_value = $controller->$view_function($parameters);
+
 			//If draw layout is false, refer to the return value of the load function in the controller
 			if(!$draw_layout)
 			{
-				//If controller function returns false, don't draw layout wrapper
-				if($controller->$view_function($parameters))
-				{
-					$draw_layout = true;
-				}
-				else { $draw_layout = false; }
+				$draw_layout = $return_value;
 			}
 
 			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
