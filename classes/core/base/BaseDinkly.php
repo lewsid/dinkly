@@ -142,7 +142,7 @@ class BaseDinkly
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
-		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, true, $context['parameters']);
+		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['parameters']);
 	}
 
 	/**
@@ -242,14 +242,12 @@ class BaseDinkly
 	 * @param string $depth How deep into the context stack you want to go. Default is 1, which returns the module 1
      *                      previous to the current.	                        
      * @param bool $redirect default false, make true to redirect to different view
-	 * @param bool $draw_layout default true to get module view
 	 * @param array $parameters Array of parameters that can be used to populate views (defaults to last module's parameters)
 	 *
 	 * @return bool true if app loaded currectly else false and sent to default app
 	 */
-	public function loadPreviousModule($depth = 1, $redirect = false, $draw_layout = true, $parameters = array())
+	public function loadPreviousModule($depth = 1, $redirect = false, $parameters = array())
 	{
-		//function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null)
 		$context = $this->getPreviousContext($depth);
 
 		if($context['parameters'] != array())
@@ -257,7 +255,7 @@ class BaseDinkly
 			$parameters = $context['parameters'];
 		}
 
-		return $this->loadModule($context['current_app_name'], $context['module'], $context['view'], $redirect, $draw_layout, $parameters);
+		return $this->loadModule($context['current_app_name'], $context['module'], $context['view'], $redirect, $parameters);
 	}
 
 	/**
@@ -342,7 +340,7 @@ class BaseDinkly
 		
 		if(file_exists($error_controller))
 		{
-			return $this->loadModule('error', 'http', '404', false, true, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name, 'requested_plugin' => $requested_plugin_name));
+			return $this->loadModule('error', 'http', '404', false, $parameters = array('requested_app' => $requested_app_name, 'requested_module' => $requested_camel_module_name, 'requested_view' => $requested_view_name, 'requested_plugin' => $requested_plugin_name));
 		}
 	}
 
@@ -359,7 +357,7 @@ class BaseDinkly
 	 */
 	public function loadComponent($app_name, $module_name = null, $view_name = 'default', $parameters = null)
 	{
-		return $this->loadModule($app_name, $module_name, $view_name, false, false, $parameters, true);
+		return $this->loadModule($app_name, $module_name, $view_name, false, $parameters, true);
 	}
 
 	/**
@@ -370,13 +368,12 @@ class BaseDinkly
 	 * @param string $module_name string of desired module to load
 	 * @param string $view string if passed goes to specified view otherwise default
 	 * @param bool $redirect default false, make true to redirect to different view
-	 * @param bool $draw_layout default true to get module view (overrides return value in controller)
 	 * @param array $parameters Array of parameters that can be used to populate views
 	 * @param boolean #load_as_component Disregards whether headers were sent, allowing for nested calls to loadModule
 	 *
 	 * @return bool true if app loaded currectly else false and sent to default app
 	 */
-	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $draw_layout = true, $parameters = null, $load_as_component = false)
+	public function loadModule($app_name, $module_name = null, $view_name = 'default', $redirect = false, $parameters = null, $load_as_component = false)
 	{
 		//If nested, prevent output from doubling
 		if(headers_sent() && !$load_as_component) { return false; }
@@ -528,13 +525,7 @@ class BaseDinkly
 
 		if(method_exists($controller, $view_function))
 		{
-			$return_value = $controller->$view_function($parameters);
-
-			//If draw layout is false, refer to the return value of the load function in the controller
-			if(!$draw_layout)
-			{
-				$draw_layout = $return_value;
-			}
+			$draw_layout = $controller->$view_function($parameters);
 
 			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 			{
