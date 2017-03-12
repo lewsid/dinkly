@@ -154,7 +154,7 @@ class DinklyBuilder extends BaseDinklyBuilder
 					break;
 
 				case 'updated_at':
-					$sql .= "updated_at timestamp NOT NULL";
+					$sql .= "updated_at datetime NOT NULL";
 					break;
 
 				default:
@@ -176,7 +176,8 @@ class DinklyBuilder extends BaseDinklyBuilder
 						$sql .= " DEFAULT '".$column[$col_name]['default']."'";
 					}
 
-					if(isset($column[$col_name]['allow_null']) && !$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+					if(isset($column[$col_name]['allow_null']) && !$column[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+					else{ $sql .= " NULL"; }
 
 					if(isset($column[$col_name]['primary_key']) && $column[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
 
@@ -261,7 +262,7 @@ class DinklyBuilder extends BaseDinklyBuilder
 			$db_table_fields[$model_name] = array();
 			foreach($results as $k => $v)
 			{
-				$db_table_fields[$model_name][] = $v['Field'];
+				$db_table_fields[$model_name][] = $v['COLUMN_NAME'];
 			}
 		}
 
@@ -315,6 +316,92 @@ class DinklyBuilder extends BaseDinklyBuilder
 					}
 				}
 			}
+		}
+	}
+
+	public static function loadFixture($set, $model_name, $plugin_name = null, $truncate = true, $verbose_output = true, $override_database_name = null)
+	{
+		//Use the proper DB credentials, or apply a passed-in override
+		$creds = DinklyDataConfig::getDBCreds();
+		if($override_database_name)
+		{
+			$creds['name'] = $override_database_name;
+			DinklyDataConfig::setActiveConnection($creds);
+		}
+
+		//Create database if it doesn't exist
+		$db = DinklyDataConnector::fetchDB($creds);
+
+		$file_path = null;
+		if($plugin_name)
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "plugins/" . $plugin_name . "/config/fixtures/" . $set . "/" . $model_name . ".yml";
+		}
+		else
+		{
+			$file_path = $_SERVER['APPLICATION_ROOT'] . "config/fixtures/" . $set . "/" . $model_name . ".yml";
+		}
+
+		if($verbose_output)
+		{
+			echo "Attempting to parse '" . $model_name . "' fixture yaml...";
+		}
+
+		if(file_exists($file_path))
+		{
+			$fixture = Yaml::parse($file_path);
+			$model_name = $collection_name = null;
+
+			if(isset($fixture['table_name']))
+			{
+				$model_name = Dinkly::convertToCamelCase($fixture['table_name'], true);
+				if($verbose_output) { echo "success!\n"; }
+			}
+			else return false;
+
+			if(isset($fixture['records']))
+			{
+				if($truncate)
+				{
+					if($verbose_output) { echo "Truncating '" . $fixture['table_name']. "'..."; }
+
+					$db->exec("truncate table " . $fixture['table_name']);
+
+					if($verbose_output) { echo "success!\n"; }
+				}
+
+				$count = sizeof($fixture['records']);
+
+				if($verbose_output)
+				{
+					echo "Inserting " . $count . " record(s) into table '" . $fixture['table_name'] . "'";
+				}
+
+				foreach($fixture['records'] as $pos => $record)
+				{
+					if($verbose_output) { echo "..."; }
+					$model = new $model_name();
+					foreach($record as $col_name => $value)
+					{
+						//Automatically set created date if none was passed
+						if($col_name == 'created_at' && $value == "") { $value = date('Y-m-d G:i:s'); }
+						
+						$set_field = 'set' . Dinkly::convertToCamelCase($col_name, true);
+						$model->$set_field($value);
+					}
+					$model->save();
+				}
+
+				if($verbose_output) { echo "success!\n"; }
+
+				return true;
+			}
+		}
+		else
+		{
+			if($verbose_output) { echo "no schema found for '" . $model_name . "'!\n"; }
+
+			return true;
 		}
 	}
 }

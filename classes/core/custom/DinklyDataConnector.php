@@ -26,7 +26,7 @@ class DinklyDataConnector extends BaseDinklyDataConnector
 				$creds['pass']
 		);
 
-		$db->setAttribute(PDO::ATTR_ERRMODE, $pdo_err_mode);
+		//$db->setAttribute(PDO::ATTR_ERRMODE, $pdo_err_mode);
 
 		return $db;
 	}
