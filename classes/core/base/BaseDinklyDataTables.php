@@ -300,8 +300,6 @@ class BaseDinklyDataTables
 
 		$select = implode(", ", self::pluck($columns, 'db', $primary_table));
 
-		error_log($select);
-
 		// Build the SQL query string from the request
 		$limit = self::constructLimitClause($request);
 		$order = self::constructOrderClause($request, $columns, $primary_table);
