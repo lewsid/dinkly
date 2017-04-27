@@ -391,8 +391,6 @@ class BaseDinklyDataTables
 			}
 		}
 
-		error_log($sql);
-
 		// Execute
 		try 
 		{
