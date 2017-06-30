@@ -128,21 +128,7 @@ class BaseDinkly
 	 */
 	public function route($uri = null)
 	{
-		$parameters = array();
-
-		if(stristr($uri, '?'))
-		{
-			$orig = $uri;
-			$pos = strpos($uri, '?');
-			$uri = substr($uri, 0, $pos);
-			$query_string = substr($orig, $pos + 1);
-			parse_str($query_string, $parameters);
-		}
-
-		$module = $view = null;
-
 		$context = $this->getContext($uri);
-		$context['get_params'] = array_merge($context['get_params'], $parameters);
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
@@ -166,6 +152,17 @@ class BaseDinkly
 
 			$default_app_name = static::getDefaultApp(true);
 			$config = static::getConfig();
+
+			//Parse query string in the old style if they're present
+			$unfriendly_parameters = array();
+			if(stristr($uri, '?'))
+			{
+				$orig = $uri;
+				$pos = strpos($uri, '?');
+				$uri = substr($uri, 0, $pos);
+				$query_string = substr($orig, $pos + 1);
+				parse_str($query_string, $unfriendly_parameters);
+			}
 
 			$uri_parts = array_filter(explode("/", $uri));
 
@@ -230,7 +227,7 @@ class BaseDinkly
 			if(!isset($context['module'])) { $context['module'] = Dinkly::getConfigValue('default_module', $context['current_app_name']); }
 			if(!isset($context['view'])) { $context['view'] = 'default'; }
 
-			$context['get_params'] = $parameters;
+			$context['get_params'] = array_merge($unfriendly_parameters, $parameters);
 
 			if(isset($_POST))
 			{
