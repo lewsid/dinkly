@@ -23,7 +23,11 @@ class BaseDinkly
 
 	protected $module;
 
-	protected $parameters;
+	protected $module_params;
+
+	protected $get_params;
+
+	protected $post_params;
 
 	/**
 	 * Initialize dinkly session, Get app root and reset session root if not matching
@@ -138,11 +142,11 @@ class BaseDinkly
 		$module = $view = null;
 
 		$context = $this->getContext($uri);
-		$context['parameters'] = array_merge($context['parameters'], $parameters);
+		$context['get_params'] = array_merge($context['get_params'], $parameters);
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
-		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['parameters']);
+		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['get_params']);
 	}
 
 	/**
@@ -226,7 +230,12 @@ class BaseDinkly
 			if(!isset($context['module'])) { $context['module'] = Dinkly::getConfigValue('default_module', $context['current_app_name']); }
 			if(!isset($context['view'])) { $context['view'] = 'default'; }
 
-			$context['parameters'] = $parameters;
+			$context['get_params'] = $parameters;
+
+			if(isset($_POST))
+			{
+				$context['post_params'] = $_POST;
+			}
 
 			$this->context = $context;
 		}
@@ -250,9 +259,9 @@ class BaseDinkly
 	{
 		$context = $this->getPreviousContext($depth);
 
-		if($context['parameters'] != array())
+		if($context['get_params'] != array())
 		{
-			$parameters = $context['parameters'];
+			$parameters = $context['get_params'];
 		}
 
 		return $this->loadModule($context['current_app_name'], $context['module'], $context['view'], $redirect, $parameters);
@@ -481,7 +490,7 @@ class BaseDinkly
 		//Save these on the object so they can be retrieved as needed in controllers or views
 		$this->view = $view_name;
 		$this->module = $module_name;
-		$this->parameters = $parameters;
+		$this->module_params = $this->filterModuleParameters($parameters);
 
 		//If the controller file doesn't exist, and we're inside a plugin, let's fall back to another app
 		if(!file_exists($controller_file) && $is_plugin)
@@ -494,7 +503,7 @@ class BaseDinkly
 			//If there's an app controller, we instantiate that, in case it has overrides
 			if($has_app_controller)
 			{
-				$app_controller = new $camel_app_controller_name();
+				$app_controller = new $camel_app_controller_name($this->module_params);
 				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
@@ -513,7 +522,7 @@ class BaseDinkly
 
 		//Instantiate controller object
 		require_once $controller_file;
-		$controller = new $camel_module_name();
+		$controller = new $camel_module_name($this->module_params);
 
 		//Migrate current dinkly variables over to our new controller
 		$vars = get_object_vars($this);
@@ -525,7 +534,7 @@ class BaseDinkly
 
 		if(method_exists($controller, $view_function))
 		{
-			$draw_layout = $controller->$view_function($parameters);
+			$draw_layout = $controller->$view_function($this->module_params);
 
 			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 			{
@@ -674,7 +683,34 @@ class BaseDinkly
 	}
 
 	/**
-	 * Pass variable through here to allow an override function where 
+	 * Pass module variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of module parameters
+	 * 
+	 * @return value of array of filtered parameters
+	 */
+	public function filterModuleParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass get variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of get parameters
+	 * 
+	 * @return value of array of filtered parameters
+	 */
+	public function filterGetParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass post variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of post variables
+	 * 
+	 * @return value of array of filtered post
+	 */
+	public function filterPostParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass class variables through here to allow an override function where 
 	 * output sanitization could occur
 	 * 
 	 * @param $key String variable name in controller
@@ -783,19 +819,46 @@ class BaseDinkly
 	}
 
 	/**
-	 * Get current contexts parameters
-	 *
+	 * Get current context's GET parameters
+	 * DEPRECATED
 	 * 
 	 * @return parameters of current context
 	 */
 	public function getParameters()
 	{
-		if(!$this->parameters)
+		return $this->fetchGetParams();
+	}
+
+	/**
+	 * Get current context's POST parameters
+	 *
+	 * 
+	 * @return parameters of current context
+	 */
+	public function fetchPostParams()
+	{
+		if(!$this->post_params)
 		{
 			$context = $this->getContext();
-			$this->parameters = $context['parameters'];
+			$this->post_params = $this->filterPostParameters($context['post_params']);
 		}
-		return $this->parameters;
+		return $this->post_params;
+	}
+
+	/**
+	 * Alias for getParameters()
+	 *
+	 * 
+	 * @return parameters of current context
+	 */
+	public function fetchGetParams()
+	{
+		if(!$this->get_params)
+		{
+			$context = $this->getContext();
+			$this->get_params = $this->filterGetParameters($context['get_params']);
+		}
+		return $this->get_params;
 	}
 
 	/**

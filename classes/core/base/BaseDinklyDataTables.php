@@ -272,7 +272,7 @@ class BaseDinklyDataTables
 	 *					$joins[] = array('left', 'dinkly_user', 'user_affiliation', 'id', 'user_id');
 	 *					$joins[] = array('left', 'user_affiliation', 'congressional_district', 'congressional_district_id', 'id');
 	 *	@param  string optional group by clause
-	 *  @return array $additional_where additional where clause
+	 *  @return string $additional_where additional where clause
 	 */
 	static function doQuery($db, $request, $primary_table_info, $columns, $joins = array(), $group_by = null, $additional_where = null)
 	{

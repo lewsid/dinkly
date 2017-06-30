@@ -1,6 +1,8 @@
+#It's recommended that you copy this file into a new file named 'config.yml' to work with as a template
+
 global:
     settings:
-        dinkly_version: "3.14"
+        dinkly_version: "3.15"
         time_format: h:i a
         languages:
             english:

@@ -1,4 +1,4 @@
-Dinkly v3.14
+Dinkly v3.15
 ============
 
 The biggest little PHP framework
@@ -75,6 +75,14 @@ Command Line Tools
   - Run unit tests (assuming you've installed the additional dev packages with composer). Use the -f option if you want to run unit tests in a specific file. Use the -f and -t option if you want to run a specific test in a specific file:
 
     `php tools/run_unit_tests.php [-f <path to test file>] [-t <name of specific test>]`
+
+
+Fetching GET and POST parameters
+================================
+
+In any controller class function, you may use `$this->fetchGetParams()` to grab GET parameters, and `$this->fetchPostParams()` to grab POST parameters.
+
+You may overload `filterGetParameters()` and `filterPostParameters()` as needed in the Dinkly class to do post-processing of these arrays.
 
 
 Upgrading a Dinkly project from 2.x to 3.x (Using git)
