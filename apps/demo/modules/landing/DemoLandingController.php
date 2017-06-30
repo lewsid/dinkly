@@ -21,7 +21,7 @@ class DemoLandingController extends DemoController
 	 * @return bool: always returns true on successful construction of view
 	 *
 	 */
-	public function loadDefault($parameters = array())
+	public function loadDefault()
 	{
 		return true;
 	}
