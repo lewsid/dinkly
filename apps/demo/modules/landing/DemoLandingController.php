@@ -25,4 +25,18 @@ class DemoLandingController extends DemoController
 	{
 		return true;
 	}
+
+	public function loadComponentTest()
+	{
+		$this->params = $this->fetchGetParams();
+
+		return true;
+	}
+
+	public function loadNestedTest()
+	{
+		$this->params = $this->fetchGetParams();
+
+		return true;
+	}
 }

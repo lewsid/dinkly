@@ -136,6 +136,17 @@ class BaseDinkly
 	}
 
 	/**
+	 * Dump and refresh the current context
+	 * 
+	 * @return Array refreshed context
+	 */
+	public function resetContext()
+	{
+		$this->context = null;
+		return $this->getContext();
+	}
+
+	/**
 	 * Fetch the current context of the application based on URL
 	 * 
 	 * @param string $uri default null to be parsed to get correct context
@@ -145,6 +156,8 @@ class BaseDinkly
 	{
 		if(!$this->context)
 		{
+			$this->context['in_component'] = false;
+
 			if(!$uri) { $uri = $_SERVER['REQUEST_URI']; }
 
 			$current_app_name = $module = $view = null;
@@ -384,6 +397,13 @@ class BaseDinkly
 		//If nested, prevent output from doubling
 		if(headers_sent() && !$load_as_component) { return false; }
 
+		if($load_as_component)
+		{
+			$this->resetContext();
+
+			$this->context['get_params'] = array_replace($this->context['get_params'], $parameters);
+		}
+
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 
@@ -579,7 +599,7 @@ class BaseDinkly
 				}
 				
 				//Set the powered-by header if the version number is in the config
-				if($version = static::getConfigValue('dinkly_version', 'global'))
+				if(($version = static::getConfigValue('dinkly_version', 'global') && !$load_as_component))
 				{
 					header('X-Powered-By: DINKLY/' . $version);
 				}
