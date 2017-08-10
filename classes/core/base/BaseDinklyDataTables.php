@@ -82,7 +82,11 @@ class BaseDinklyDataTables
 				{
 					$row[$column['dt']] = $column['formatter']($data[$i][$column['db']], $data[$i]);
 				}
-				else if(isset($column['count']))
+				else if(isset($column['count']) && isset($column['label']))
+				{
+					$row[$column['dt']] = $data[$i][$columns[$j]['label']];
+				}
+				else if(isset($column['label']))
 				{
 					$row[$column['dt']] = $data[$i][$columns[$j]['label']];
 				}
@@ -274,7 +278,7 @@ class BaseDinklyDataTables
 	 *	@param  string optional group by clause
 	 *  @return string $additional_where additional where clause
 	 */
-	static function doQuery($db, $request, $primary_table_info, $columns, $joins = array(), $group_by = null, $additional_where = null)
+	static function doQuery($db, $request, $primary_table_info, $columns, $joins = array(), $group_by = null, $additional_where = null, $order = null)
 	{
 		$primary_table = $primary_table_info['table_name'];
 		$primary_key = $primary_table_info['primary_key'];
@@ -326,6 +330,8 @@ class BaseDinklyDataTables
 					$group
 					$order
 					$limit";
+
+		error_log($query);
 
 		// Main query to actually get the data
 		$data = self::executeSql($db, $bindings, $query);
@@ -451,6 +457,11 @@ class BaseDinklyDataTables
 				{
 					$out[] = 'count(' . $a[$i]['table'] . '.`' . $a[$i][$prop] . '`) as ' . $a[$i]['label'];
 				}
+				else if(isset($a[$i]['label']))
+				{
+					$out[] = (isset($a[$i]['table']) ? $a[$i]['table']:$primary_table) 
+						. '.`' . $a[$i][$prop] . '` as ' . $a[$i]['label'];
+				}
 				else if(isset($a[$i]['from']))
 				{
 					$out[] = (isset($a[$i]['table']) ? $a[$i]['table']:$primary_table)
@@ -474,3 +485,4 @@ class BaseDinklyDataTables
 		return $out;
 	}
 }
+
