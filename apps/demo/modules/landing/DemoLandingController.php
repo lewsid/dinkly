@@ -23,6 +23,6 @@ class DemoLandingController extends DemoController
 	 */
 	public function loadDefault()
 	{
-		return false;
+		return true;
 	}
 }
