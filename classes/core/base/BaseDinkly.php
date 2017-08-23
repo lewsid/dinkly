@@ -731,7 +731,7 @@ class BaseDinkly
 	 * 
 	 * @return Array value of array of filtered files
 	 */
-	public function filterFiles($files) { return $files; }
+	public function filterFiles($files) { return $_FILES; }
 
 	/**
 	 * Pass class variables through here to allow an override function where 
