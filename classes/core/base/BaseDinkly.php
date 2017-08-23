@@ -824,7 +824,8 @@ class BaseDinkly
 	}
 
 	/**
-	 * Determine if a parameter has been set or not
+	 * Determine if a GET parameter has been set or not
+	 * DEPRECATED - USE hasGetParam()
 	 * 
 	 * @return boolean true if parameter exists
 	 */
@@ -836,8 +837,32 @@ class BaseDinkly
 	}
 
 	/**
+	 * Determine if a GET parameter has been set or not
+	 * 
+	 * @return boolean true if parameter exists
+	 */
+	public function hasGetParam($parameter_name)
+	{
+		$parameters = $this->fetchGetParams();
+
+		return isset($parameters[$parameter_name]);
+	}
+
+	/**
+	 * Determine if a POST parameter has been set or not
+	 * 
+	 * @return boolean true if parameter exists
+	 */
+	public function hasPostParam($parameter_name)
+	{
+		$parameters = $this->fetchPostParams();
+
+		return isset($parameters[$parameter_name]);
+	}
+
+	/**
 	 * Get current context's GET parameters
-	 * DEPRECATED
+	 * DEPRECATED - USE fetchGetParams()
 	 * 
 	 * @return parameters of current context
 	 */
