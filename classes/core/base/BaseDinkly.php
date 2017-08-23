@@ -702,7 +702,7 @@ class BaseDinkly
 	 * 
 	 * @param $parameters Array array of module parameters
 	 * 
-	 * @return value of array of filtered parameters
+	 * @return Array value of array of filtered parameters
 	 */
 	public function filterModuleParameters($parameters) { return $parameters; }
 
@@ -711,7 +711,7 @@ class BaseDinkly
 	 * 
 	 * @param $parameters Array array of get parameters
 	 * 
-	 * @return value of array of filtered parameters
+	 * @return Array value of array of filtered get parameters
 	 */
 	public function filterGetParameters($parameters) { return $parameters; }
 
@@ -720,9 +720,18 @@ class BaseDinkly
 	 * 
 	 * @param $parameters Array array of post variables
 	 * 
-	 * @return value of array of filtered post
+	 * @return Array value of array of filtered post
 	 */
 	public function filterPostParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass file variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $files Array array of uploaded files indexed by input name
+	 * 
+	 * @return Array value of array of filtered files
+	 */
+	public function filterFiles($files) { return $files; }
 
 	/**
 	 * Pass class variables through here to allow an override function where 
@@ -731,14 +740,14 @@ class BaseDinkly
 	 * @param $key String variable name in controller
 	 * @param $value String variable value in controller
 	 * 
-	 * @return value of migrated variable
+	 * @return string value of migrated variable
 	 */
 	public function filterVariable($key, $value) { return $value; }
 
 	/**
 	 * Set module header manually
 	 *
-	 * @param header $header String containing contents of header.php file
+	 * @param string header $header String containing contents of header.php file
 	 * 
 	 */
 	public function setModuleHeader($header) { $this->module_header = $header; }
@@ -746,7 +755,7 @@ class BaseDinkly
 	/**
 	 * Set module footer manually
 	 *
-	 * @param footer $footer String containing contents of footer.php file
+	 * @param string footer $footer String containing contents of footer.php file
 	 * 
 	 */
 	public function setModuleFooter($footer) { $this->module_footer = $footer; }
@@ -755,7 +764,7 @@ class BaseDinkly
 	 * Get contents of module header
 	 *
 	 * 
-	 * @return header contents of header.php file of a given module
+	 * @return string header contents of header.php file of a given module
 	 */
 	public function getModuleHeader() { return $this->module_header; }
 
@@ -763,7 +772,7 @@ class BaseDinkly
 	 * Get contents of footer header
 	 *
 	 * 
-	 * @return footer contents of footer.php file of a given module
+	 * @return string footer contents of footer.php file of a given module
 	 */
 	public function getModuleFooter() { return $this->module_footer; }
 
@@ -771,7 +780,7 @@ class BaseDinkly
 	 * Get current contexts view
 	 *
 	 * 
-	 * @return view of current context
+	 * @return string view of current context
 	 */
 	public function getCurrentView()
 	{
@@ -787,7 +796,7 @@ class BaseDinkly
 	 * Get current contexts module
 	 *
 	 * 
-	 * @return module of current context
+	 * @return string module of current context
 	 */
 	public function getCurrentModule()
 	{
@@ -813,6 +822,12 @@ class BaseDinkly
 		}
 	}
 
+	/**
+	 * Returns true if app is currently in dev mode
+	 *
+	 * 
+	 * @return boolean
+	 */
 	public static function isDevMode()
 	{
 		if(isset($_SESSION['dinkly']['dev_mode']))
@@ -859,10 +874,22 @@ class BaseDinkly
 	}
 
 	/**
+	 * Determine if a matching file has been uploaded (determined by input field name)
+	 * 
+	 * @return boolean true if file exists
+	 */
+	public function hasFile($input_name)
+	{
+		$files = $this->fetchFiles();
+
+		return isset($files[$input_name]);
+	}
+
+	/**
 	 * Get current context's GET parameters
 	 * DEPRECATED - USE fetchGetParams()
 	 * 
-	 * @return GET parameters of current context
+	 * @return Array GET parameters of current context
 	 */
 	public function getParameters()
 	{
@@ -873,7 +900,7 @@ class BaseDinkly
 	 * Get current context's POST parameters
 	 *
 	 * 
-	 * @return POST parameters of current context
+	 * @return Array POST parameters of current context
 	 */
 	public function fetchPostParams()
 	{
@@ -886,10 +913,10 @@ class BaseDinkly
 	}
 
 	/**
-	 * Alias for getParameters()
+	 * Get current context's GET parameters
 	 *
 	 * 
-	 * @return GET parameters of current context
+	 * @return Array GET parameters of current context
 	 */
 	public function fetchGetParams()
 	{
@@ -902,10 +929,44 @@ class BaseDinkly
 	}
 
 	/**
+	 * Get array of uploaded files
+	 *
+	 * 
+	 * @return Array of uploaded files, indexed by input field name
+	 */
+	public function fetchFiles()
+	{
+		if(!$this->uploaded_files)
+		{
+			$this->uploaded_files = $this->filterFiles();
+		}
+		return $this->uploaded_files;
+	}
+
+	/**
+	 * Get array of uploaded files
+	 *
+	 * 
+	 * @return Array matching file
+	 */
+	public function fetchFile($input_name)
+	{
+		if(!$this->uploaded_files)
+		{
+			$this->uploaded_files = $this->filterFiles();
+		}
+
+		if($this->hasFile($input_name))
+		{
+			return $this->uploaded_files[$input_name];
+		}
+	}
+
+	/**
 	 * Return matching POST parameter
 	 *
 	 * 
-	 * @return Matching POST parameter, if exists
+	 * @return String Matching POST parameter, if exists
 	 */
 	public function fetchPostParam($parameter_key)
 	{

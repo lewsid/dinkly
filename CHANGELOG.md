@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+08.23.17 (v3.20): Added filterFiles(), hasFile(), fetchFiles(), and fetchFile(). 
+
 08.23.17 (v3.19): Marked hasParameter() as deprecated. Added hasGetParam(), hasPostParam(), fetchGetParam(), fetchPostParam().
 
 08.14.17 (v3.18): Cleaned up some left-over debug code. Fixed an issue that was preventing dinkly from handling unfulfilled favicon.ico requests properly, causing some unfortunate repercussions to database connections.
