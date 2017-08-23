@@ -156,8 +156,6 @@ class BaseDinkly
 	{
 		if(!$this->context)
 		{
-			$this->context['in_component'] = false;
-
 			if(!$uri) { $uri = $_SERVER['REQUEST_URI']; }
 
 			$current_app_name = $module = $view = null;
