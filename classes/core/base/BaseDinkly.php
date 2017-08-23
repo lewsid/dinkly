@@ -862,7 +862,7 @@ class BaseDinkly
 	 * Get current context's GET parameters
 	 * DEPRECATED - USE fetchGetParams()
 	 * 
-	 * @return parameters of current context
+	 * @return GET parameters of current context
 	 */
 	public function getParameters()
 	{
@@ -873,7 +873,7 @@ class BaseDinkly
 	 * Get current context's POST parameters
 	 *
 	 * 
-	 * @return parameters of current context
+	 * @return POST parameters of current context
 	 */
 	public function fetchPostParams()
 	{
@@ -889,7 +889,7 @@ class BaseDinkly
 	 * Alias for getParameters()
 	 *
 	 * 
-	 * @return parameters of current context
+	 * @return GET parameters of current context
 	 */
 	public function fetchGetParams()
 	{
@@ -899,6 +899,38 @@ class BaseDinkly
 			$this->get_params = $this->filterGetParameters($context['get_params']);
 		}
 		return $this->get_params;
+	}
+
+	/**
+	 * Return matching POST parameter
+	 *
+	 * 
+	 * @return Matching POST parameter, if exists
+	 */
+	public function fetchPostParam($parameter_key)
+	{
+		if($this->hasPostParam($parameter_key))
+		{
+			$params = $this->fetchPostParams();
+			return $params[$parameter_key];
+		}
+		return false;
+	}
+
+	/**
+	 * Return matching GET parameter
+	 *
+	 * 
+	 * @return Matching GET parameter, if exists
+	 */
+	public function fetchGetParam($parameter_key)
+	{
+		if($this->hasGetParam($parameter_key))
+		{
+			$params = $this->fetchGetParams();
+			return $params[$parameter_key];
+		}
+		return false;
 	}
 
 	/**
