@@ -29,6 +29,8 @@ class BaseDinkly
 
 	protected $post_params;
 
+	protected $uploaded_files;
+
 	/**
 	 * Initialize dinkly session, Get app root and reset session root if not matching
 	 *
