@@ -333,7 +333,7 @@ class BaseDinklyBuilder extends Dinkly
 				"\t *".PHP_EOL . 
 				"\t * @return bool: always returns true on successful construction of view".PHP_EOL .
 				"\t *".PHP_EOL .
-				"\t */".PHP_EOL . "\tpublic function loadDefault(\$parameters = array())" . PHP_EOL . "\t{" . PHP_EOL);
+				"\t */".PHP_EOL . "\tpublic function loadDefault()" . PHP_EOL . "\t{" . PHP_EOL);
 				fwrite($fp, "\t\treturn true;" . PHP_EOL . "\t}" . PHP_EOL . "}" . PHP_EOL);
 				fclose($fp);
 			}

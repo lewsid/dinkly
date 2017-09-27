@@ -23,7 +23,13 @@ class BaseDinkly
 
 	protected $module;
 
-	protected $parameters;
+	protected $module_params;
+
+	protected $get_params;
+
+	protected $post_params;
+
+	protected $uploaded_files;
 
 	/**
 	 * Initialize dinkly session, Get app root and reset session root if not matching
@@ -124,25 +130,22 @@ class BaseDinkly
 	 */
 	public function route($uri = null)
 	{
-		$parameters = array();
-
-		if(stristr($uri, '?'))
-		{
-			$orig = $uri;
-			$pos = strpos($uri, '?');
-			$uri = substr($uri, 0, $pos);
-			$query_string = substr($orig, $pos + 1);
-			parse_str($query_string, $parameters);
-		}
-
-		$module = $view = null;
-
 		$context = $this->getContext($uri);
-		$context['parameters'] = array_merge($context['parameters'], $parameters);
 
 		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
 
-		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['parameters']);
+		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['get_params']);
+	}
+
+	/**
+	 * Dump and refresh the current context
+	 * 
+	 * @return Array refreshed context
+	 */
+	public function resetContext()
+	{
+		$this->context = null;
+		return $this->getContext();
 	}
 
 	/**
@@ -162,6 +165,17 @@ class BaseDinkly
 
 			$default_app_name = static::getDefaultApp(true);
 			$config = static::getConfig();
+
+			//Parse query string in the old style if they're present
+			$unfriendly_parameters = array();
+			if(stristr($uri, '?'))
+			{
+				$orig = $uri;
+				$pos = strpos($uri, '?');
+				$uri = substr($uri, 0, $pos);
+				$query_string = substr($orig, $pos + 1);
+				parse_str($query_string, $unfriendly_parameters);
+			}
 
 			$uri_parts = array_filter(explode("/", $uri));
 
@@ -226,7 +240,12 @@ class BaseDinkly
 			if(!isset($context['module'])) { $context['module'] = Dinkly::getConfigValue('default_module', $context['current_app_name']); }
 			if(!isset($context['view'])) { $context['view'] = 'default'; }
 
-			$context['parameters'] = $parameters;
+			$context['get_params'] = array_merge($unfriendly_parameters, $parameters);
+
+			if(isset($_POST))
+			{
+				$context['post_params'] = $_POST;
+			}
 
 			$this->context = $context;
 		}
@@ -250,9 +269,9 @@ class BaseDinkly
 	{
 		$context = $this->getPreviousContext($depth);
 
-		if($context['parameters'] != array())
+		if($context['get_params'] != array())
 		{
-			$parameters = $context['parameters'];
+			$parameters = $context['get_params'];
 		}
 
 		return $this->loadModule($context['current_app_name'], $context['module'], $context['view'], $redirect, $parameters);
@@ -378,6 +397,16 @@ class BaseDinkly
 		//If nested, prevent output from doubling
 		if(headers_sent() && !$load_as_component) { return false; }
 
+		if($load_as_component)
+		{
+			$this->resetContext();
+
+			if($parameters)
+			{
+				$this->context['get_params'] = array_replace($this->context['get_params'], $parameters);
+			}
+		}
+
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
 		if(!$app_name) $app_name = Dinkly::getDefaultApp(true);
 
@@ -481,7 +510,7 @@ class BaseDinkly
 		//Save these on the object so they can be retrieved as needed in controllers or views
 		$this->view = $view_name;
 		$this->module = $module_name;
-		$this->parameters = $parameters;
+		$this->module_params = $this->filterModuleParameters($parameters);
 
 		//If the controller file doesn't exist, and we're inside a plugin, let's fall back to another app
 		if(!file_exists($controller_file) && $is_plugin)
@@ -494,7 +523,7 @@ class BaseDinkly
 			//If there's an app controller, we instantiate that, in case it has overrides
 			if($has_app_controller)
 			{
-				$app_controller = new $camel_app_controller_name();
+				$app_controller = new $camel_app_controller_name($this->module_params);
 				$this->loadError($app_name, $camel_module_name, $view_name, $plugin_name);
 				return false;
 			}
@@ -513,7 +542,7 @@ class BaseDinkly
 
 		//Instantiate controller object
 		require_once $controller_file;
-		$controller = new $camel_module_name();
+		$controller = new $camel_module_name($this->module_params);
 
 		//Migrate current dinkly variables over to our new controller
 		$vars = get_object_vars($this);
@@ -525,7 +554,7 @@ class BaseDinkly
 
 		if(method_exists($controller, $view_function))
 		{
-			$draw_layout = $controller->$view_function($parameters);
+			$draw_layout = $controller->$view_function($this->module_params);
 
 			if(!in_array($module_name, Dinkly::getValidModules($app_name)))
 			{
@@ -573,7 +602,7 @@ class BaseDinkly
 				}
 				
 				//Set the powered-by header if the version number is in the config
-				if($version = static::getConfigValue('dinkly_version', 'global'))
+				if(($version = static::getConfigValue('dinkly_version', 'global') && !$load_as_component))
 				{
 					header('X-Powered-By: DINKLY/' . $version);
 				}
@@ -674,20 +703,56 @@ class BaseDinkly
 	}
 
 	/**
-	 * Pass variable through here to allow an override function where 
+	 * Pass module variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of module parameters
+	 * 
+	 * @return Array value of array of filtered parameters
+	 */
+	public function filterModuleParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass get variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of get parameters
+	 * 
+	 * @return Array value of array of filtered get parameters
+	 */
+	public function filterGetParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass post variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $parameters Array array of post variables
+	 * 
+	 * @return Array value of array of filtered post
+	 */
+	public function filterPostParameters($parameters) { return $parameters; }
+
+	/**
+	 * Pass file variables through here, to be overloaded and filtered as needed
+	 * 
+	 * @param $files Array array of uploaded files indexed by input name
+	 * 
+	 * @return Array value of array of filtered files
+	 */
+	public function filterFiles($files) { return $_FILES; }
+
+	/**
+	 * Pass class variables through here to allow an override function where 
 	 * output sanitization could occur
 	 * 
 	 * @param $key String variable name in controller
 	 * @param $value String variable value in controller
 	 * 
-	 * @return value of migrated variable
+	 * @return string value of migrated variable
 	 */
 	public function filterVariable($key, $value) { return $value; }
 
 	/**
 	 * Set module header manually
 	 *
-	 * @param header $header String containing contents of header.php file
+	 * @param string header $header String containing contents of header.php file
 	 * 
 	 */
 	public function setModuleHeader($header) { $this->module_header = $header; }
@@ -695,7 +760,7 @@ class BaseDinkly
 	/**
 	 * Set module footer manually
 	 *
-	 * @param footer $footer String containing contents of footer.php file
+	 * @param string footer $footer String containing contents of footer.php file
 	 * 
 	 */
 	public function setModuleFooter($footer) { $this->module_footer = $footer; }
@@ -704,7 +769,7 @@ class BaseDinkly
 	 * Get contents of module header
 	 *
 	 * 
-	 * @return header contents of header.php file of a given module
+	 * @return string header contents of header.php file of a given module
 	 */
 	public function getModuleHeader() { return $this->module_header; }
 
@@ -712,7 +777,7 @@ class BaseDinkly
 	 * Get contents of footer header
 	 *
 	 * 
-	 * @return footer contents of footer.php file of a given module
+	 * @return string footer contents of footer.php file of a given module
 	 */
 	public function getModuleFooter() { return $this->module_footer; }
 
@@ -720,7 +785,7 @@ class BaseDinkly
 	 * Get current contexts view
 	 *
 	 * 
-	 * @return view of current context
+	 * @return string view of current context
 	 */
 	public function getCurrentView()
 	{
@@ -736,7 +801,7 @@ class BaseDinkly
 	 * Get current contexts module
 	 *
 	 * 
-	 * @return module of current context
+	 * @return string module of current context
 	 */
 	public function getCurrentModule()
 	{
@@ -762,6 +827,12 @@ class BaseDinkly
 		}
 	}
 
+	/**
+	 * Returns true if app is currently in dev mode
+	 *
+	 * 
+	 * @return boolean
+	 */
 	public static function isDevMode()
 	{
 		if(isset($_SESSION['dinkly']['dev_mode']))
@@ -771,7 +842,8 @@ class BaseDinkly
 	}
 
 	/**
-	 * Determine if a parameter has been set or not
+	 * Determine if a GET parameter has been set or not
+	 * DEPRECATED - USE hasGetParam()
 	 * 
 	 * @return boolean true if parameter exists
 	 */
@@ -783,19 +855,148 @@ class BaseDinkly
 	}
 
 	/**
-	 * Get current contexts parameters
-	 *
+	 * Determine if a GET parameter has been set or not
 	 * 
-	 * @return parameters of current context
+	 * @return boolean true if parameter exists
+	 */
+	public function hasGetParam($parameter_name)
+	{
+		$parameters = $this->fetchGetParams();
+
+		return isset($parameters[$parameter_name]);
+	}
+
+	/**
+	 * Determine if a POST parameter has been set or not
+	 * 
+	 * @return boolean true if parameter exists
+	 */
+	public function hasPostParam($parameter_name)
+	{
+		$parameters = $this->fetchPostParams();
+
+		return isset($parameters[$parameter_name]);
+	}
+
+	/**
+	 * Determine if a matching file has been uploaded (determined by input field name)
+	 * 
+	 * @return boolean true if file exists
+	 */
+	public function hasFile($input_name)
+	{
+		$files = $this->fetchFiles();
+
+		return isset($files[$input_name]);
+	}
+
+	/**
+	 * Get current context's GET parameters
+	 * DEPRECATED - USE fetchGetParams()
+	 * 
+	 * @return Array GET parameters of current context
 	 */
 	public function getParameters()
 	{
-		if(!$this->parameters)
+		return $this->fetchGetParams();
+	}
+
+	/**
+	 * Get current context's POST parameters
+	 *
+	 * 
+	 * @return Array POST parameters of current context
+	 */
+	public function fetchPostParams()
+	{
+		if(!$this->post_params)
 		{
 			$context = $this->getContext();
-			$this->parameters = $context['parameters'];
+			$this->post_params = $this->filterPostParameters($context['post_params']);
 		}
-		return $this->parameters;
+		return $this->post_params;
+	}
+
+	/**
+	 * Get current context's GET parameters
+	 *
+	 * 
+	 * @return Array GET parameters of current context
+	 */
+	public function fetchGetParams()
+	{
+		if(!$this->get_params)
+		{
+			$context = $this->getContext();
+			$this->get_params = $this->filterGetParameters($context['get_params']);
+		}
+		return $this->get_params;
+	}
+
+	/**
+	 * Get array of uploaded files
+	 *
+	 * 
+	 * @return Array of uploaded files, indexed by input field name
+	 */
+	public function fetchFiles()
+	{
+		if(!$this->uploaded_files)
+		{
+			$this->uploaded_files = $this->filterFiles();
+		}
+		return $this->uploaded_files;
+	}
+
+	/**
+	 * Get array of uploaded files
+	 *
+	 * 
+	 * @return Array matching file
+	 */
+	public function fetchFile($input_name)
+	{
+		if(!$this->uploaded_files)
+		{
+			$this->uploaded_files = $this->filterFiles();
+		}
+
+		if($this->hasFile($input_name))
+		{
+			return $this->uploaded_files[$input_name];
+		}
+	}
+
+	/**
+	 * Return matching POST parameter
+	 *
+	 * 
+	 * @return String Matching POST parameter, if exists
+	 */
+	public function fetchPostParam($parameter_key)
+	{
+		if($this->hasPostParam($parameter_key))
+		{
+			$params = $this->fetchPostParams();
+			return $params[$parameter_key];
+		}
+		return false;
+	}
+
+	/**
+	 * Return matching GET parameter
+	 *
+	 * 
+	 * @return Matching GET parameter, if exists
+	 */
+	public function fetchGetParam($parameter_key)
+	{
+		if($this->hasGetParam($parameter_key))
+		{
+			$params = $this->fetchGetParams();
+			return $params[$parameter_key];
+		}
+		return false;
 	}
 
 	/**

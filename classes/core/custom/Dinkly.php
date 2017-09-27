@@ -15,7 +15,27 @@ class Dinkly extends BaseDinkly
 	//Put your juicy overrides here
 
 	/**
+	 * (Legacy, use to preserve pre v3.12 behavior)
+	 *
+	 * Interpret friendly URLS and load app and module based on Context 
+	 * as well as interpreting parameters where applicable
+	 * @param string $uri default null to be parsed to get correct context
+	 * @return Array of matching objects or false if not found
+	 */
+	/*
+	public function route($uri = null)
+	{
+		$context = $this->getContext($uri);
+
+		$_SESSION['dinkly']['current_app_name'] = $context['current_app_name'];
+
+		$this->loadModule($context['current_app_name'], $context['module'], $context['view'], false, $context['get_params']);
+	}
+	*/
+
+	/**
 	 * Load desired module and redirect if necessary (Legacy, use to preserve pre v3.12 behavior)
+	 * Requires legacy route($uri) function to work properly
 	 * 
 	 *
 	 * @param string $app_name name of app we are trying to load
@@ -38,6 +58,7 @@ class Dinkly extends BaseDinkly
 
 	/**
 	 * Load previous module (Legacy, use to preserve pre v3.12 behavior)
+	 * Requires legacy route($uri) function to work properly
 	 *
 	 * @param string $depth How deep into the context stack you want to go. Default is 1, which returns the module 1
      *                      previous to the current.	                        
