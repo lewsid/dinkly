@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+09.27.17 (v3.21): Added fix to supress array notices when using loadComponent without parameters.
+
 08.23.17 (v3.20): Added filterFiles(), hasFile(), fetchFiles(), and fetchFile(). 
 
 08.23.17 (v3.19): Marked hasParameter() as deprecated. Added hasGetParam(), hasPostParam(), fetchGetParam(), fetchPostParam().

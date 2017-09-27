@@ -401,7 +401,10 @@ class BaseDinkly
 		{
 			$this->resetContext();
 
-			$this->context['get_params'] = array_replace($this->context['get_params'], $parameters);
+			if($parameters)
+			{
+				$this->context['get_params'] = array_replace($this->context['get_params'], $parameters);
+			}
 		}
 
 		//If the app_name is not passed, assume whichever is set as the default in config.yml
