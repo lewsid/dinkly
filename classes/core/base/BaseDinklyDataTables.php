@@ -138,7 +138,7 @@ class BaseDinklyDataTables
 		if(isset($request['order']) && count($request['order']))
 		{
 			$orderBy = array();
-			$dtColumns = self::pluck($columns, 'dt', $primary_table);
+			$dtColumns = static::pluck($columns, 'dt', $primary_table);
 
 			for($i = 0, $ien = count($request['order']); $i < $ien; $i++)
 			{
@@ -185,7 +185,7 @@ class BaseDinklyDataTables
 	{
 		$globalSearch = array();
 		$columnSearch = array();
-		$dtColumns = self::pluck($columns, 'dt', $primary_table);
+		$dtColumns = static::pluck($columns, 'dt', $primary_table);
 
 		if(isset($request['search']) && $request['search']['value'] != '')
 		{
@@ -199,7 +199,7 @@ class BaseDinklyDataTables
 
 				if($requestColumn['searchable'] == 'true')
 				{
-					$binding = self::setBinding($bindings, '%' . $str . '%', PDO::PARAM_STR);
+					$binding = static::setBinding($bindings, '%' . $str . '%', PDO::PARAM_STR);
 					$globalSearch[] = (isset($column['table']) ? $column['table']:$primary_table)
 						. ".`" . (isset($column['from']) ? $column['from']:$column['db']) . "` LIKE " . $binding;
 				}
@@ -219,7 +219,7 @@ class BaseDinklyDataTables
 
 				if($requestColumn['searchable'] == 'true' && $str != '')
 				{
-					$binding = self::setBinding($bindings, '%' . $str . '%', PDO::PARAM_STR);
+					$binding = static::setBinding($bindings, '%' . $str . '%', PDO::PARAM_STR);
 					$columnSearch[] = (isset($column['table']) ? $column['table']:$primary_table)
 						. ".`" . (isset($column['from']) ? $column['from']:$column['db']) . "` LIKE ".$binding;
 				}
@@ -302,12 +302,12 @@ class BaseDinklyDataTables
 			}
 		}
 
-		$select = implode(", ", self::pluck($columns, 'db', $primary_table));
+		$select = implode(", ", static::pluck($columns, 'db', $primary_table));
 
 		// Build the SQL query string from the request
-		$limit = self::constructLimitClause($request);
-		$order = self::constructOrderClause($request, $columns, $primary_table);
-		$where = self::constructWhereClause($request, $columns, $bindings, $primary_table);
+		$limit = static::constructLimitClause($request);
+		$order = static::constructOrderClause($request, $columns, $primary_table);
+		$where = static::constructWhereClause($request, $columns, $bindings, $primary_table);
 
 		if($where == '' && $additional_where)
 		{
@@ -332,18 +332,18 @@ class BaseDinklyDataTables
 					$limit";
 
 		error_log($query);
-
+					
 		// Main query to actually get the data
-		$data = self::executeSql($db, $bindings, $query);
+		$data = static::executeSql($db, $bindings, $query);
 
 		// Data set length after filtering
-		$result_filter_length = self::executeSql($db,
+		$result_filter_length = static::executeSql($db,
 			"SELECT FOUND_ROWS()"
 		);
 		$records_filtered = $result_filter_length[0][0];
 
 		// Total data set length
-		$result_total_length = self::executeSql($db,
+		$result_total_length = static::executeSql($db,
 			"SELECT COUNT(`{$primary_key}`)
 			 FROM   `$primary_table`"
 		);
@@ -363,7 +363,7 @@ class BaseDinklyDataTables
 			"draw"            => intval($draw),
 			"recordsTotal"    => intval($records_total),
 			"recordsFiltered" => intval($records_filtered),
-			"data"            => self::genDataOutput($columns, $data)
+			"data"            => static::genDataOutput($columns, $data)
 		);
 	}
 

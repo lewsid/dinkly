@@ -1,4 +1,4 @@
-Dinkly v3.21
+Dinkly v3.22
 ============
 
 The biggest little PHP framework

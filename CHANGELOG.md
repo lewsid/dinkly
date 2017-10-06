@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+10.05.17 (v3.22): Updated DinklyDataTables classes to utilize late static binding and subsequently overrides.
+
 09.27.17 (v3.21): Added fix to supress array notices when using loadComponent without parameters.
 
 08.23.17 (v3.20): Added filterFiles(), hasFile(), fetchFiles(), and fetchFile(). 
