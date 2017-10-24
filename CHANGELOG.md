@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+10.24.17 (v3.23): Fixed a routing bug that presented itself when zeros were passed as parameter values.
+
 10.05.17 (v3.22): Updated DinklyDataTables classes to utilize late static binding and subsequently overrides.
 
 09.27.17 (v3.21): Added fix to supress array notices when using loadComponent without parameters.
