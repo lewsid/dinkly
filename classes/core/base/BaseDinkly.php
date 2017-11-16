@@ -142,10 +142,10 @@ class BaseDinkly
 	 * 
 	 * @return Array refreshed context
 	 */
-	public function resetContext()
+	public function resetContext($uri = null)
 	{
 		$this->context = null;
-		return $this->getContext();
+		return $this->getContext($uri);
 	}
 
 	/**
