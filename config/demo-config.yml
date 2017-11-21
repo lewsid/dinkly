@@ -2,7 +2,7 @@
 
 global:
     settings:
-        dinkly_version: "3.23"
+        dinkly_version: "3.24"
         time_format: h:i a
         languages:
             english:
