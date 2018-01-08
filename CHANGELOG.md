@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+01.08.18 (v3.25): Forced query results to be utf8 encoded to prevent issues with rendering with DinklyDataTables
+
 11.16.17 (v3.24): Updated resetContext to accept URI string
 
 10.24.17 (v3.23): Fixed a routing bug that presented itself when zeros were passed as parameter values.

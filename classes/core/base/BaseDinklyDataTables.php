@@ -84,15 +84,15 @@ class BaseDinklyDataTables
 				}
 				else if(isset($column['count']) && isset($column['label']))
 				{
-					$row[$column['dt']] = $data[$i][$columns[$j]['label']];
+					$row[$column['dt']] = utf8_encode($data[$i][$columns[$j]['label']]);
 				}
 				else if(isset($column['label']))
 				{
-					$row[$column['dt']] = $data[$i][$columns[$j]['label']];
+					$row[$column['dt']] = utf8_encode($data[$i][$columns[$j]['label']]);
 				}
 				else
 				{
-					$row[$column['dt']] = $data[$i][$columns[$j]['db']];
+					$row[$column['dt']] = utf8_encode($data[$i][$columns[$j]['db']]);
 				}
 			}
 
