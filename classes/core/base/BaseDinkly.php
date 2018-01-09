@@ -733,11 +733,9 @@ class BaseDinkly
 	/**
 	 * Pass file variables through here, to be overloaded and filtered as needed
 	 * 
-	 * @param $files Array array of uploaded files indexed by input name
-	 * 
 	 * @return Array value of array of filtered files
 	 */
-	public function filterFiles($files) { return $_FILES; }
+	public function filterFiles() { return $_FILES; }
 
 	/**
 	 * Pass class variables through here to allow an override function where 
