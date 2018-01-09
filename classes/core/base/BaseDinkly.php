@@ -681,7 +681,8 @@ class BaseDinkly
 
 				if($is_plugin)
 				{
-					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'apps/' . $app_name . '/layout/footer.php';
+					$app_footer_path = $_SERVER['APPLICATION_ROOT'] . 'plugins/' . $plugin_name 
+						. '/apps/' . $app_name . '/layout/footer.php';
 				}
 				else
 				{

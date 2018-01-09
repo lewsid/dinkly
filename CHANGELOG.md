@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+01.09.18 (v3.27): Fixed bug preventing plugin footer from loading properly
+
 01.08.18 (v3.26): Removed extra paramter from filterFiles
 
 01.08.18 (v3.25): Forced query results to be utf8 encoded to prevent issues with rendering with DinklyDataTables
