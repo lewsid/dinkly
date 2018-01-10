@@ -1,0 +1,23 @@
+.dev-mode-indicator-label {
+	position: fixed;
+	bottom:15px;
+	right:15px;
+	z-index:100;
+}
+
+.dev-mode-info-label {
+	position: fixed;
+	left: 15px;
+	bottom:15px;
+	z-index:100;
+}
+
+.admin-login {
+	height: 400px;
+  	margin-top: 10%;
+}
+
+/* Utility to assign 100% height based on browser viewport */
+.viewport-height {
+	height: 100vh;
+}
