@@ -25,6 +25,7 @@ function dinkly_autoloader($class_name)
 	$custom_core_file  = $app_root . '/classes/core/custom/' . $class_name . '.php';
 	$base_model_file = $app_root . '/classes/models/base/' . $class_name . '.php';
 	$custom_model_file = $app_root . '/classes/models/custom/' . $class_name . '.php';
+	$core_model_file = $app_root . '/classes/models/core/' . $class_name . '.php';
 	
 	//third-party exceptions
 	$yaml_file        = $app_root . '/vendor/symfony/yaml/Symfony/Component/Yaml/' . $class_name . '.php';
@@ -101,6 +102,11 @@ function dinkly_autoloader($class_name)
 	else if(file_exists($custom_model_file))
 	{
 		require_once $custom_model_file;
+		return true;
+	}
+	else if(file_exists($core_model_file))
+	{
+		require_once $core_model_file;
 		return true;
 	}
 	else if(file_exists($yaml_file))
