@@ -769,7 +769,7 @@ class BaseDinklyBuilder extends Dinkly
 						$sql .= " DEFAULT '".$column[$col_name]['default']."'";
 					}
 
-					if(isset($column[$col_name]['allow_null']) && !$field_config[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
+					if(isset($column[$col_name]['allow_null']) && !$column[$col_name]['allow_null']) { $sql .= " NOT NULL"; }
 
 					if(isset($column[$col_name]['primary_key']) && $column[$col_name]['primary_key']) { $sql .= " PRIMARY KEY"; }
 
