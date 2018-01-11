@@ -1,7 +1,7 @@
 Dinkly Change Log
 =================
 
-01.09.18 (v3.29): Updated included bootstrap version from 3 to 4, as well as updated datatables, font-awesome, and jquery
+01.09.18 (v3.29): Included bootstrap version from 3 to 4, as well as updated datatables, font-awesome, and jquery
 
 01.09.18 (v3.28): Added support for model 'core' class autoloading to improve compatibility with plugins
 
