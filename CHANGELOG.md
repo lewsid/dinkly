@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+01.20.18 (v3.31): Updated bootstrap from beta to official v4 release
+
 01.10.18 (v3.30): Found and fixed a copy/paste typo in DinklyDataBuilder
 
 01.09.18 (v3.29): Included bootstrap version from 3 to 4, as well as updated datatables, font-awesome, and jquery

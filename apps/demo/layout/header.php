@@ -7,15 +7,10 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<link href="/css/bootstrap.4.0.0-beta.3.min.css" rel="stylesheet">
+	<link href="/css/bootstrap.4.0.0.min.css" rel="stylesheet">
 	<link href="/css/fontawesome-all.5.0.3.min.css" rel="stylesheet">
 	<link href="/css/datatables.1.10.16.combined.min.css" rel="stylesheet">
-	<link href="/css/dinkly.3.29.css" rel="stylesheet">
-
-	<script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-	<script type="text/javascript" src="/js/bootstrap.4.0.0-beta.3.min.js"></script>
-	<script type="text/javascript" src="/js/datatables.1.10.16.combined.min.js"></script>
-	<script type="text/javascript" src="/js/dinkly.3.29.js"></script>
+	<link href="/css/dinkly.3.31.css" rel="stylesheet">
 
 	<?php echo $this->getModuleHeader(); ?>
 </head>
