@@ -12,6 +12,11 @@
 	<link href="/css/datatables.1.10.16.combined.min.css" rel="stylesheet">
 	<link href="/css/dinkly.3.31.css" rel="stylesheet">
 
+	<script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.4.0.0.min.js"></script>
+	<script type="text/javascript" src="/js/datatables.1.10.16.combined.min.js"></script>
+	<script type="text/javascript" src="/js/dinkly.3.31.js"></script>
+
 	<?php echo $this->getModuleHeader(); ?>
 </head>
 <body>
