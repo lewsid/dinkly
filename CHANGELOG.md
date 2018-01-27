@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+01.20.18 (v3.32): Fix for nocache redirect
+
 01.20.18 (v3.31): Updated bootstrap from beta to official v4 release
 
 01.10.18 (v3.30): Found and fixed a copy/paste typo in DinklyDataBuilder
