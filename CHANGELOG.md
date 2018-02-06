@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+02.06.18 (v3.33): Added missing encoding fix to DinklyDataTables (credit: @alz-sinton)
+
 01.20.18 (v3.32): Fix for nocache redirect
 
 01.20.18 (v3.31): Updated bootstrap from beta to official v4 release

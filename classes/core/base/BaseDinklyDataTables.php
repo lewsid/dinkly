@@ -80,7 +80,7 @@ class BaseDinklyDataTables
 				//Is there a formatter?
 				if(isset($column['formatter']))
 				{
-					$row[$column['dt']] = $column['formatter']($data[$i][$column['db']], $data[$i]);
+					$row[$column['dt']] = $column['formatter'](utf8_encode($data[$i][$column['db']]), $data[$i]);
 				}
 				else if(isset($column['count']) && isset($column['label']))
 				{
