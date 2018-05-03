@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+05.03.18 (v3.34): Replaced references to deprecated create_func calls in camel casing functions
+
 02.06.18 (v3.33): Added missing encoding fix to DinklyDataTables (credit: @alz-sinton)
 
 01.20.18 (v3.32): Fix for nocache redirect

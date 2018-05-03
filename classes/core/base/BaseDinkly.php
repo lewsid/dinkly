@@ -1197,10 +1197,14 @@ class BaseDinkly
 	 */
 	public static function convertFromCamelCase($str)
 	{
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $str, $matches);
+		$ret = $matches[0];
 		
-		return preg_replace_callback('/([A-Z])/', $func, $str);
+		foreach($ret as &$match)
+		{
+			$match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+		}
+		return implode('_', $ret);
 	}
 
 	/**
@@ -1212,11 +1216,14 @@ class BaseDinkly
 	 */
 	public static function convertToCamelCase($str, $capitalise_first_char = false)
 	{
-		if($capitalise_first_char) $str[0] = strtoupper($str[0]);
+		$str = str_replace(' ', '', ucwords(str_replace('_', ' ', $str)));
 
-		$func = create_function('$c', 'return strtoupper($c[1]);');
-		
-		return preg_replace_callback('/_([a-z])/', $func, $str);
+	    if(!$capitalise_first_char)
+	    {
+	        $str[0] = strtolower($str[0]);
+	    }
+
+	    return $str;
 	}
 
 	/**
