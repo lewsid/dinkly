@@ -747,7 +747,7 @@ class BaseDinklyBuilder extends Dinkly
 					break;
 
 				case 'updated_at':
-					$sql .= "`updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP";
+					$sql .= "`updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
 					break;
 
 				default:
