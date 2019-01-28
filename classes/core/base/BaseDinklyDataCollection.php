@@ -186,5 +186,9 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 
 			return $arrObject;
 		}
+		else
+		{
+			return array();
+		}
 	}
 }

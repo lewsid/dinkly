@@ -1,6 +1,8 @@
 Dinkly Change Log
 =================
 
+01.28.19 (v3.36): Fixed collection results issue related to "count(): Parameter must be an array or an object that implements Countable"
+
 05.20.18 (v3.35): Fixed default value for update_at to fix compat issues with newer versions of MySQL
 
 05.03.18 (v3.34): Replaced references to deprecated create_func calls in camel casing functions
