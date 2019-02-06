@@ -1,6 +1,10 @@
 Dinkly Change Log
 =================
 
+02.06.19 (v3.37): Improved GET and POST variable migration when using loadComponent
+
+01.28.19 (v3.36): Fixed collection results issue related to "count(): Parameter must be an array or an object that implements Countable"
+
 01.28.19 (v3.36): Fixed collection results issue related to "count(): Parameter must be an array or an object that implements Countable"
 
 05.20.18 (v3.35): Fixed default value for update_at to fix compat issues with newer versions of MySQL

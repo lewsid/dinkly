@@ -909,12 +909,11 @@ class BaseDinkly
 	 */
 	public function fetchPostParams()
 	{
-		if(!$this->post_params)
+		$context = $this->getContext();
+		if(isset($context['post_params']))
 		{
-			$context = $this->getContext();
-			$this->post_params = $this->filterPostParameters($context['post_params']);
+			return $this->filterGetParameters($context['post_params']);
 		}
-		return $this->post_params;
 	}
 
 	/**
@@ -925,12 +924,11 @@ class BaseDinkly
 	 */
 	public function fetchGetParams()
 	{
-		if(!$this->get_params)
+		$context = $this->getContext();
+		if(isset($context['get_params']))
 		{
-			$context = $this->getContext();
-			$this->get_params = $this->filterGetParameters($context['get_params']);
+			return $this->filterGetParameters($context['get_params']);
 		}
-		return $this->get_params;
 	}
 
 	/**
