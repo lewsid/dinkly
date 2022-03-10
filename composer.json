@@ -1,10 +1,6 @@
 {
     "require": {
-        "symfony/yaml": "2.4.x-dev",
+        "symfony/yaml": "6.0.3",
         "erusev/parsedown": "dev-master"
-    },
-    "require-dev": {
-    	"phpdocumentor/phpdocumentor" :"2.*",
-    	"phpunit/phpunit": "4.0.*@dev"
     }
 }

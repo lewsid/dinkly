@@ -1080,7 +1080,7 @@ class BaseDinkly
 				throw new Exception('Missing config file: config/config.yml');
 			}
 
-			$raw_config = Yaml::parse($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
+			$raw_config = Yaml::parseFile($_SERVER['APPLICATION_ROOT'] . "config/config.yml");
 			$config = $raw_config['global'];
 
 			//Load Global Plugins Config

@@ -442,7 +442,7 @@ class BaseDinklyBuilder extends Dinkly
 			return false;
 		}
 
-		$yaml = Yaml::parse($file_path);
+		$yaml = Yaml::parseFile($file_path);
 
 		$table_name = $yaml['table_name'];
 
